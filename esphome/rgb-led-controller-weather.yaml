@@ -1,0 +1,98 @@
+esphome:
+  name: rgb-led-controller-weather
+  platform: ESP32
+  board: esp-wrover-kit
+
+wifi:
+  ssid: "Keenetic-5137"
+  password: "6BLpFzKi"
+  manual_ip:
+    static_ip: 192.168.0.240
+    gateway: 192.168.0.1
+    subnet: 255.255.0.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "rgb-led-controller-fallback"
+    password: "oyhBPITQDtnT"
+
+captive_portal:
+
+globals:
+  - id: temperature_value
+    type: float
+    restore_value: yes
+    initial_value: '0.0'
+
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  log_topic: esp32/rgb_led_controller_01/log
+  on_json_message:
+    topic: zigbee2mqtt/temperature_humidity_street
+    qos: 0
+    then:
+      - lambda: |-
+          if (x.containsKey("temperature"))
+          {
+            id(temperature_value) = x["temperature"];
+          }
+          
+          ESP_LOGD("on_json_message", "Global value is: %0.2f", id(temperature_value));
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret rgb_led_controller_01_ota_password
+
+ota:
+  password: !secret rgb_led_controller_01_ota_password
+
+light:
+  - platform: fastled_clockless
+    chipset: WS2812B
+    pin: GPIO12
+    num_leds: 144
+    rgb_order: GRB
+    name: "RGB LED Light"
+    effects:
+      - addressable_lambda:
+          name: "temperature"
+          update_interval: 1s
+          lambda: |-
+            // it.size() - Number of LEDs
+            // it[num] - Access the LED at index num.
+            // Set the LED at num to the given r, g, b values
+            // it[num] = Color(r, g, b);
+            // Get the color at index num (Color instance)
+            // it[num].get();
+
+            // -40 + 40 -> n + 40 (0..80) -> / 80 * it.size()
+            int led_id = (int)(1.0 * (float)(id(temperature_value) + 40) * (float)it.size() / 80.0);
+            
+            // clear old values
+            // it.all().fade_to_black(10);
+            
+            for (int i = 0; i < led_id; i++)
+            {
+              int r = 0;
+              int g = 0;
+              int b = 0;
+              // 0 .. 72 .. 144
+              if (i < it.size() / 3)
+                r = 0;
+              else
+                r = 255 * 2 * i / it.size() / 3;
+              if (i > it.size() * 2 / 3)
+                b = 0;
+              else
+                b = 255 * 2 * (it.size() - i) / it.size() / 3;
+              it[i] = Color(r, g, b);
+            }
+            
+            it.range(led_id, it.size()) = Color(0, 0, 0);
+            it[it.size() / 2] = Color(255, 255, 255);
+            return;

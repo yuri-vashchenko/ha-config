@@ -1,0 +1,18 @@
+# Прихожая
+
+homeassistant:
+  customize_glob:
+    # Датчики
+
+    # Входная двевь
+    "*158d000544a1a2*":
+      friendly_name: Входная дверь
+
+    "*door_entrance*":
+      friendly_name: Входная дверь
+
+    # Выключатели, кнопки
+
+    # Звонок
+    "*158d00041d99a1*":
+      friendly_name: Кнопка звонка

@@ -1,0 +1,14 @@
+automation:
+  - id: cert_checker
+    alias: Проверка https сертификата
+    trigger:
+      - platform: homeassistant
+        event: start
+      - platform: time
+        at: '02:00:00'
+    condition: >
+      {{ (states["sensor.cert_expiry_timestamp_vashchenko_me"].state | as_datetime - now()) < timedelta(days=30) }}
+    action:
+      service: hassio.addon_start
+      data:
+        addon: core_letsencrypt

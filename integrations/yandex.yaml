@@ -1,0 +1,43 @@
+yandex_smart_home:
+  filter:
+    include_entities:
+      - media_player.kitchen_tv
+      - media_player.tv_mama
+      - light.switch_kitchen
+      - light.switch_mama
+      - sensor.temperature_humidity_balcony_temperature
+      - sensor.temperature_humidity_balcony_humidity
+      - sensor.temperature_humidity_street_temperature
+      - sensor.temperature_humidity_street_humidity
+      - sensor.temperature_humidity_street_pressure
+      - script.update_shopping_list
+      - input_boolean.hold_light
+  entity_config:
+    media_player.kitchen_tv:
+      type: devices.types.media_device.tv
+      #relative_volume_only: false
+      channel_set_via_media_content_id: true
+      name: "Телевизор"
+      room: "Кухня"
+    light.switch_kitchen:
+      name: "Люстра"
+      room: "Кухня"
+    light.switch_mama:
+      name: "Лампа"
+      room: "Мама"
+    media_player.tv_mama:
+      name: "Телевизор"
+      room: "Мама"
+    temperature_humidity.street:
+      name: "Температура"
+      room: "Улица"
+      properties:
+        - type: temperature
+          entity: sensor.temperature_humidity_street_temperature
+        - type: humidity
+          entity: sensor.temperature_humidity_street_humidity
+        - type: pressure
+          entity: sensor.temperature_humidity_street_pressure
+    input_boolean.hold_light:
+      name: "Не выключать свет"
+      room: "Кухня"

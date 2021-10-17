@@ -1,0 +1,28 @@
+# Светина комната
+
+homeassistant:
+  customize:
+    # Камера
+    binary_sensor.camera_reolink_fron:
+      friendly_name: Камера reolink
+
+    # Влажность и температура
+    sensor.temperature_humidity_svetlana_temperature:
+      friendly_name: Света температура
+    sensor.temperature_humidity_svetlana_humidity:
+      friendly_name: Света влажность
+    sensor.temperature_humidity_svetlana_pressure:
+      friendly_name: Света давление
+
+  customize_glob:
+    # Датчики
+    "*158d00044f944b*":
+      friendly_name: Света движение
+    "*svetlana_occupancy*":
+      friendly_name: Света движение
+
+    # Влажность и температура
+    "*158d0006b110ee*":
+      friendly_name: Света климат
+    "*temperature_humidity_svetlana*":
+      friendly_name: Света климат

@@ -1,0 +1,15 @@
+# Ванная
+
+homeassistant:
+  customize:
+    # Розетка сервера mainsrv
+    switch.plug_bathroom_washer_power_outage_memory:
+      friendly_name: Розетка стиральной машины память отключения
+
+  customize_glob:
+    "*158d00047f8591*":
+      friendly_name: Ванна утечка воды
+    "*water_leak_bathroom*":
+      friendly_name: Ванна утечка воды
+    "*plug_bathroom_washer*":
+      friendly_name: Розетка стиральной машины

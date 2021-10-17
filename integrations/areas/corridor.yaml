@@ -1,0 +1,27 @@
+# Коридор
+
+homeassistant:
+  customize:
+    # Свет
+    light.gateway_light_50ec50c4f23d:
+      friendly_name: Лампочка mi hub
+      icon: mdi:star-circle-outline
+
+    # Сенсоры
+
+    # Датчик освещённости
+    sensor.illumination_50ec50c4f23d:
+      friendly_name: Датчик освещённости в mi hub
+      device_class: illuminance
+
+  customize_glob:
+    # Датчик движения
+    "*158d000543e101*":
+      friendly_name: Коридор движение
+    "*motion_corridor*":
+      friendly_name: Коридор движение
+
+    "*158d0006c3d86d*":
+      friendly_name: Коридор вход движение
+    "*motion_illumination_entrance*":
+      friendly_name: Коридор вход движение

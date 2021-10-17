@@ -1,0 +1,9 @@
+# Туалет
+
+homeassistant:
+  customize_glob:
+    "*158d0004776e1c*":
+      friendly_name: Туалет утечка воды
+
+    "*water_leak_toilet*":
+      friendly_name: Туалет утечка воды

@@ -1,0 +1,10 @@
+plug:
+  name: Розетки
+  entities:
+    - switch.plug_michael
+    - switch.plug_server
+    - switch.plug_bathroom_washer
+    - switch.plug_tv_mama
+    - group.plug_elena
+    - group.plug_kitchen
+  icon: mdi:power-socket-eu

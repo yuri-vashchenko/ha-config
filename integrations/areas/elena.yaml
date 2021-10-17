@@ -1,0 +1,74 @@
+# Ленина комната
+
+homeassistant:
+  customize:
+    # Климат
+    sensor.mi_t_e72e001268f1:
+      friendly_name: Юра температура
+    sensor.mi_h_e72e001268f1:
+      friendly_name: Юра влажность
+
+    # Розетка кондиционера
+    switch.plug_ac_power_outage_memory:
+      friendly_name: Розетка кондиционера память отключения
+
+    # Розетка кондиционера
+    switch.plug_tv_lena_power_outage_memory:
+      friendly_name: Розетка телевизора 65 память отключения
+
+      # Телевизор
+    media_player.tv:
+      friendly_name: TV
+      device_class: tv
+
+  customize_glob:
+    # Кнопки
+    "*158d0003d13dca*":
+      friendly_name: Лена кнопка
+    "*button_elena*":
+      friendly_name: Лена кнопка
+
+    "*158d00035846ec*":
+      friendly_name: Юра кнопка
+    "*button_yuri*":
+      friendly_name: Юра кнопка
+
+    # Розетка кондиционера
+    "*158d00032d3a92*":
+      friendly_name: Розетка кондиционера
+    "*plug_ac*":
+      friendly_name: Розетка кондиционера
+
+    # Розетка телевизора
+    "*158d0003c77e0c*":
+      friendly_name: Розетка телевизора 65
+    "*plug_tv_lena*":
+      friendly_name: Розетка телевизора 65
+
+    # Датчики
+    "*158d000460dde9*":
+      friendly_name: Дверь на балкон
+    "*door_balcony*":
+      friendly_name: Дверь на балкон  
+      device_class: door
+
+    "*158d000483f52f*":
+      friendly_name: Лена дверь
+    "*door_elena*":
+      friendly_name: Лена дверь
+      device_class: door
+
+    "*158d000464d3fc*":
+      friendly_name: Лена движение
+    "*motion_elena*":
+      friendly_name: Лена движение
+
+climate:
+  - platform: smartir
+    name: main_room_ac
+    unique_id: main_room_ac
+    device_code: 1401
+    controller_data: remote.remote_broadlink_elena
+    temperature_sensor: sensor.elena_0xe72e001268f1_temperature
+    humidity_sensor: sensor.elena_0xe72e001268f1_humidity
+    power_sensor: binary_sensor.ac_power

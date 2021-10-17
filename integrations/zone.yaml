@@ -1,0 +1,24 @@
+zone:
+  - name: Дом
+    latitude: !secret latitude_home
+    longitude: !secret longitude_home
+    radius: 100
+    icon: mdi:home
+
+  - name: Технический Лицей
+    latitude: !secret latitude_licee
+    longitude: !secret longitude_licee
+    radius: 250
+    icon: mdi:school
+
+  - name: ДЭК
+    latitude: !secret latitude_work_l
+    longitude: !secret longitude_work_l
+    radius: 250
+    icon: mdi:briefcase
+
+  - name: Ронда
+    latitude: !secret latitude_work_y
+    longitude: !secret longitude_work_y
+    radius: 250
+    icon: mdi:briefcase

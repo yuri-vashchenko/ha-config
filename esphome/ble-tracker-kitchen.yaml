@@ -1,0 +1,71 @@
+esphome:
+  name: ble-tracker-kitchen
+  platform: ESP32
+  board: nodemcu-32s
+
+wifi:
+  ssid: "Keenetic-5137"
+  password: !secret 'wi_fi_password'
+  manual_ip:
+    static_ip: 192.168.0.236
+    gateway: 192.168.0.1
+    subnet: 255.255.0.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "ble-tracker-kitchen-fallback"
+    password: !secret 'ble_tracker_kitchen_ap'
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret 'ble_tracker_kitchen_ota'
+
+ota:
+  password: !secret 'ble_tracker_kitchen_ota'
+
+esp32_ble_tracker:
+
+binary_sensor:
+  - platform: ble_presence
+    mac_address: FA:C7:AF:ED:9B:5E
+    name: kitchen_watch_0xfac7afed9b5e
+  - platform: ble_presence
+    mac_address: F2:5F:84:5D:3E:8F
+    name: kitchen_watch_0xf25f845d3e8f
+  - platform: ble_presence
+    mac_address: D3:CC:FA:54:BA:EB
+    name: kitchen_mi_band4_0xd3ccfa54baeb
+  - platform: ble_presence
+    mac_address: E4:D6:5A:55:B3:42
+    name: kitchen_mi_band4_0xe4d65a55b342
+  - platform: ble_presence
+    mac_address: C0:09:0A:1B:2E:09
+    name: kitchen_mi_band5_0xc0090a1b2e09
+  - platform: ble_presence
+    mac_address: C0:09:0A:15:2F:04
+    name: kitchen_mi_band5_0xc0090a152f04
+
+sensor:
+  - platform: ble_rssi
+    mac_address: FA:C7:AF:ED:9B:5E
+    name: kitchen_watch_0xfac7afed9b5e_rssi
+  - platform: ble_rssi
+    mac_address: F2:5F:84:5D:3E:8F
+    name: kitchen_watch_0xf25f845d3e8f_rssi
+  - platform: ble_rssi    
+    mac_address: D3:CC:FA:54:BA:EB
+    name: kitchen_mi_band4_0xd3ccfa54baeb_rssi
+  - platform: ble_rssi
+    mac_address: E4:D6:5A:55:B3:42
+    name: kitchen_mi_band4_0xe4d65a55b342_rssi
+  - platform: ble_rssi
+    mac_address: C0:09:0A:1B:2E:09
+    name: kitchen_mi_band5_0xc0090a1b2e09_rssi
+  - platform: ble_rssi
+    mac_address: C0:09:0A:15:2F:04
+    name: kitchen_mi_band5_0xc0090a152f04_rssi

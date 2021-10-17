@@ -1,0 +1,6 @@
+plug_kitchen:
+  name: Розетки на кухне
+  entities:
+    - switch.plug_multipot
+    - switch.plug_tv_kitchen
+  icon: mdi:power-socket-eu

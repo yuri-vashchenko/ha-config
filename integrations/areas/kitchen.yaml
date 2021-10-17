@@ -1,0 +1,96 @@
+# Кухня
+
+homeassistant:
+  customize:
+    # Розетки и выключатели
+    switch.kitchen_power_strip:
+      friendly_name: Удлинитель
+      icon: mdi:power-plug
+    sensor.kitchen_switch_load_power:
+      icon: mdi:gauge
+      unit: Вт
+    sensor.kitchen_plug_load_power:
+      icon: mdi:gauge
+      unit: Вт
+
+    # Розетка мультиварки
+    switch.plug_multipot_power_outage_memory:
+      friendly_name: Розетка mainsrv 65 память отключения
+
+    # Розетка телевизора на кухне
+    switch.plug_tv_kitchen_power_outage_memory:
+      friendly_name: Розетка телевизора на кухне память отключения
+
+    media_player.yandex_station_ff98f02959560d534ab998c1:
+      friendly_name: yandex_station_kitchen
+
+  customize_glob:
+    # Сенсоры и датчики
+    "*158d00047b3e6b*":
+      friendly_name: Кухня утечка воды
+    "*water_leak_kitchen*":
+      friendly_name: Кухня утечка воды
+
+    "*158d000462dce1*":
+      friendly_name: Кухня движение
+    "*motion_kitchen*":
+      friendly_name: Кухня движение
+
+    "*158d0006a2418e*":
+      friendly_name: Кухня движение освещение
+    "*motion_illumination_kitchen*":
+      friendly_name: Кухня движение освещение
+
+    # Розетки и выключатели
+    # Розетка мультиварки
+    "*158d00032d87d7*":
+      friendly_name: Розетка мультиварки
+    "*plug_multipot*":
+      friendly_name: Розетка мультиварки
+
+    # Розетка телевизора на кухне
+    "*158d00012cd224*":
+      friendly_name: Розетка телевизора на кухне
+    "*plug_tv_kitchen*":
+      friendly_name: Розетка телевизора на кухне
+
+
+    # Кухонный выключатель
+    "*.switch_kitchen*":
+      friendly_name: Кухонный выключатель
+
+    # Детекторы дыма
+    "*847127fffe044506*":
+      friendly_name: Кухонный детектор дыма
+    "*smoke_detector_kitchen*":
+      friendly_name: Кухонный детектор дыма
+
+# Prevents turning off the light
+input_number:
+  hold_light_timeout:
+    name: Время таймаута в минутах не выключать свет
+    icon: mdi:lightbulb-on
+    initial: 60
+    min: 1
+    max: 600
+    unit_of_measurement: "minutes"
+
+input_boolean:
+  hold_light:
+    name: Не выключать свет
+    icon: mdi:lightbulb-on
+
+# lights
+light:
+  - platform: switch
+    name: switch_kitchen
+    entity_id: switch.switch_kitchen
+
+# TV
+media_player:
+  - platform: smartir
+    name: kitchen-tv
+    unique_id: kitchen_tv
+    device_code: 1061
+    controller_data: remote.remote_broadlink_kitchen
+    power_sensor: binary_sensor.kitchen_tv_power

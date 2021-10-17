@@ -1,0 +1,34 @@
+# Мишина комната
+
+homeassistant:
+  customize:
+    # Влажность и температура
+    sensor.temperature_humidity_michael_temperature:
+      friendly_name: Миша температура
+    sensor.temperature_humidity_michael_humidity:
+      friendly_name: Миша влажность
+    sensor.temperature_humidity_michael_pressure:
+      friendly_name: Миша давление
+
+    # Розетка Миша
+    switch.plug_michael_power_outage_memory:
+      friendly_name: Розетка Миша память отключения
+
+  customize_glob:
+    # Датчик движения
+    "*158d000465a633*":
+      friendly_name: Миша движение
+    "*motion_michael*":
+      friendly_name: Миша движение
+
+    # Розетка
+    "*158d0003c77d8b*":
+      friendly_name: Розетка Миша
+    "*plug_michael*":
+      friendly_name: Розетка Миша
+
+    # Влажность и температура
+    "*158d0006b11191*":
+      friendly_name: Миша климат
+    "*temperature_humidity_michael*":
+      friendly_name: Миша климат

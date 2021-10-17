@@ -1,0 +1,9 @@
+secrets.yaml
+custom_components
+www/community
+www/images
+home-assistant.log*
+image
+.storage
+home-assistant_v2.db
+.HA_VERSION

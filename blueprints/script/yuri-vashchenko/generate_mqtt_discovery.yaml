@@ -1,0 +1,61 @@
+blueprint:
+  name: generate_mqtt_discovery
+  description: A script that generates Home assistant MQTT discovery topic for virtual entities
+  source_url: https://gist.github.com/yuri-vashchenko/
+  domain: script
+  input:
+    discovery_prefix:
+      name: Discovery Prefix
+      description: Prefix for discovery config message to publish to
+      default: homeassistant
+      selector:
+        text:
+    component:
+      name: Component for entity
+      description: One of the supported MQTT components, eg. binary_sensor.
+      selector:
+        text:
+    object_id:
+      name: Object ID
+      description:
+        The ID of the device. This is only to allow for separate topics for each device and is not used for the entity_id.
+        The ID of the device must only consist of characters from the character class [a-zA-Z0-9_-]
+        (alphanumerics, underscore and hyphen)
+        Best practice for entities with a unique_id is to set <object_id> to unique_id and omit the <node_id>.
+      selector:
+        text:
+    payload:
+      name: Payload
+      description:
+        The payload must be a JSON dictionary and will be checked like an entry in your configuration.yaml file if a new device is added.
+        This means that missing variables will be filled with the platform’s default values.
+        All configuration variables which are required must be present in the initial payload send to /config.
+
+        Subsequent messages on a topic where a valid payload has been received will be handled as a configuration update,
+        and a configuration update with an empty payload will cause a previously discovered device to be deleted.
+
+        The <node_id> level can be used by clients to only subscribe to their own (command) topics
+        by using one wildcard topic like <discovery_prefix>/+/<node_id>/+/set.
+
+        A base topic ~ may be defined in the payload to conserve memory when the same topic base is used multiple times.
+        In the value of configuration variables ending with _topic, ~ will be replaced with the base topic,
+        if the ~ occurs at the beginning or end of the value.
+
+        Configuration variable names in the discovery payload may be abbreviated to conserve memory when
+        sending a discovery message from memory constrained devices.
+      selector:
+        text:
+variables:
+  discovery_prefix: !input discovery_prefix
+  component: !input component
+  object_id: !input object_id
+  payload: !input payload
+  topic: >
+    {{ discovery_prefix + '/' + component + '/' + object_id + '/config'}}
+mode: queued
+sequence:
+  - service: mqtt.publish
+    data_template:
+      topic: "{{ topic }}"
+      payload_template: "{{ payload }}"
+      retain: true

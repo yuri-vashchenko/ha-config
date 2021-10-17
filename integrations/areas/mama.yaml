@@ -1,0 +1,62 @@
+# Мамина комната
+
+homeassistant:
+  customize:
+    # Выключатель
+    switch.switch_mama_switch:
+      friendly_name: Мама выключатель
+    light.switch_mama_0x00158d0005440c33:
+      friendly_name: Мама свет
+
+    # Розетка телевизора 49
+    switch.plug_tv_mama_power_outage_memory:
+      friendly_name: Розетка телевизора 49 память отключения
+
+    # Ping
+    binary_sensor.printer_hp:
+      friendly_name: Принтер hp
+
+    media_player.yandex_station_ff98f029014bad091f5988de:
+      friendly_name: yandex_station_mama
+
+    # Влажность и температура
+    sensor.temperature_humidity_mama_temperature:
+      friendly_name: Мама температура
+    sensor.temperature_humidity_mama_humidity:
+      friendly_name: Мама влажность
+    sensor.temperature_humidity_mama_pressure:
+      friendly_name: Мама давление
+  customize_glob:
+    # Кнопка
+    "*158d0003ce386f*":
+      friendly_name: Мама кнопка
+    "*button_mama*":
+      friendly_name: Мама кнопка
+
+    # Выключатель
+    "sensor.switch_mama*":
+      friendly_name: Мама выключатель
+
+    # Розетка телевизора
+    "*158d0001567169*":
+      friendly_name: Розетка телевизора 49
+    "*plug_tv_mama*":
+      friendly_name: Розетка телевизора 49
+
+    # Датчики
+    # Датчик движения
+    "*158d00044f94f4*":
+      friendly_name: Мама движение
+    "*motion_mama*":
+      friendly_name: Мама движение
+
+    # Влажность и температура
+    "*158d0006b1cd57*":
+      friendly_name: Мама климат
+    "*temperature_humidity_mama*":
+      friendly_name: Мама климат
+
+light:
+  - platform: switch
+    name: switch_mama
+    entity_id: switch.switch_mama

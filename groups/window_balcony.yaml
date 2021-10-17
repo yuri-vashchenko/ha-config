@@ -1,0 +1,9 @@
+window_balcony:
+  name: Окна на балконе
+  entities:
+    - binary_sensor.window_balcony_left_contact
+    - binary_sensor.0x158d00054481d7_contact
+    - binary_sensor.0x158d000482ffe3_contact
+#    - binary_sensor.window_balcony_middle_contact
+#    - binary_sensor.window_balcony_right_contact
+  icon: mdi:window-closed

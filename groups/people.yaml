@@ -1,0 +1,11 @@
+family:
+  name: Семья
+  entities:
+    - person.yuri_vashchenko
+    - person.svetlana_vashchenko
+    - person.oleg_vashchenko
+    - person.mikhail_vashchenko
+    - person.galina_vashchenko
+    - person.elena_vashchenko
+    - person.alexey_vashchenko
+  icon: mdi:human-male-female-child
