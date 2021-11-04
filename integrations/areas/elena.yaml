@@ -42,7 +42,7 @@ homeassistant:
     # Розетка телевизора
     "*158d0003c77e0c*":
       friendly_name: Розетка телевизора 65
-    "*plug_tv_lena*":
+    "*plug_tv_elena*":
       friendly_name: Розетка телевизора 65
 
     # Датчики
