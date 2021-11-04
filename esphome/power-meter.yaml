@@ -43,11 +43,23 @@ logger:
 # Enable Home Assistant API
 api:
   password: !secret power_meter_ota
+  services:
+  - service: reset_total
+    then:
+      - pulse_meter.set_total_pulses:
+          id: energy_pulse_meter
+          value: 0
 
 ota:
   safe_mode: true
   reboot_timeout: 10min
   num_attempts: 5
+
+web_server:
+  port: 80
+  auth:
+    username: !secret power_meter_web_username
+    password: !secret power_meter_web_password
 
 output:
   # - platform: gpio
@@ -88,6 +100,7 @@ text_sensor:
 
 sensor:
   - platform: pulse_meter
+    id: energy_pulse_meter
     name: '${friendly_name} - Power consumption'
     unit_of_measurement: 'W'
     state_class: measurement
