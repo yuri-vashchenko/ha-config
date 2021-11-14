@@ -1,6 +1,7 @@
 # Кухня
 
 homeassistant:
+  # customizations
   customize:
     # Розетки и выключатели
     switch.kitchen_power_strip:
@@ -26,59 +27,78 @@ homeassistant:
 
   customize_glob:
     # Сенсоры и датчики
-    "*158d00047b3e6b*":
-      friendly_name: Кухня утечка воды
     "*water_leak_kitchen*":
       friendly_name: Кухня утечка воды
 
-    "*158d000462dce1*":
-      friendly_name: Кухня движение
     "*motion_kitchen*":
       friendly_name: Кухня движение
 
-    "*158d0006a2418e*":
-      friendly_name: Кухня движение освещение
     "*motion_illumination_kitchen*":
       friendly_name: Кухня движение освещение
 
     # Розетки и выключатели
     # Розетка мультиварки
-    "*158d00032d87d7*":
-      friendly_name: Розетка мультиварки
     "*plug_multipot*":
       friendly_name: Розетка мультиварки
 
     # Розетка телевизора на кухне
-    "*158d00012cd224*":
-      friendly_name: Розетка телевизора на кухне
     "*plug_tv_kitchen*":
       friendly_name: Розетка телевизора на кухне
-
 
     # Кухонный выключатель
     "*.switch_kitchen*":
       friendly_name: Кухонный выключатель
 
     # Детекторы дыма
-    "*847127fffe044506*":
-      friendly_name: Кухонный детектор дыма
     "*smoke_detector_kitchen*":
       friendly_name: Кухонный детектор дыма
 
-# Prevents turning off the light
-input_number:
-  hold_light_timeout:
-    name: Время таймаута в минутах не выключать свет
+# Kitchen power strip - convert power to energy to be able to monitor daily consumption
+sensor:
+  - platform: template
+    sensors:
+      kitchen_switch_load_power:
+        friendly_name: "Кухонный удлинитель текущее потребление"
+        value_template: "{{ state_attr('switch.kitchen_power_strip', 'load_power') }}"
+
+  - platform: integration
+    source: sensor.kitchen_switch_load_power
+    name: kitchen_switch_energy
+    unit_prefix: k
+    round: 2
+
+binary_sensor:
+  - platform: template
+    sensors:
+      # 'on' when kitchen tv consumes power
+      kitchen_tv_power:
+        friendly_name: "Kitchen TV power"
+        value_template: >
+          {{ states('sensor.plug_tv_kitchen_power')|float > 10.0 }}
+
+      # Prevents turning off the light
+      hold_light:
+        friendly_name: Не выключать свет
+        value_template: "{{ states('switch.hold_light') }}"
+
+# switches
+switch:
+  # Prevents turning off the light
+  - platform: mqtt
+    name: hold_light
+    retain: true
+    command_topic: "kitchen_light/hold"
+    state_topic: "kitchen_light/hold"
+
+number:
+  - platform: mqtt
+    name: hold_light_timeout
+    command_topic: kitchen_light/hold_duration
+    state_topic: kitchen_light/hold_duration
+    retain: true
     icon: mdi:lightbulb-on
-    initial: 60
     min: 1
     max: 600
-    unit_of_measurement: "minutes"
-
-input_boolean:
-  hold_light:
-    name: Не выключать свет
-    icon: mdi:lightbulb-on
 
 # lights
 light:

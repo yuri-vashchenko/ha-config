@@ -1,0 +1,25 @@
+# Multi-instance control. Defines what instance controls what automations
+
+select:
+  - platform: mqtt
+    name: light_controller
+    command_topic: "automation_controller/light"
+    state_topic: "automation_controller/light"
+    retain: true
+    icon: "mdi:lightbulb-on"
+    options:
+      - "none"
+      - "192.168.0.5"
+      - "192.168.0.8"
+
+binary_sensor:
+  - platform: template
+    sensors:
+      light_control:
+        value_template: >-
+          {% set ip = states("sensor.local_ip") %}
+          {% if is_state("select.light_controller", ip) -%}
+              ON
+          {%- else -%}
+              OFF
+          {%- endif %}

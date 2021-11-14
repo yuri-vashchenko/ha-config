@@ -11,7 +11,7 @@ yandex_smart_home:
       - sensor.temperature_humidity_street_humidity
       - sensor.temperature_humidity_street_pressure
       - script.update_shopping_list
-      - input_boolean.hold_light
+      - switch.hold_light
   entity_config:
     media_player.kitchen_tv:
       type: devices.types.media_device.tv
@@ -38,6 +38,6 @@ yandex_smart_home:
           entity: sensor.temperature_humidity_street_humidity
         - type: pressure
           entity: sensor.temperature_humidity_street_pressure
-    input_boolean.hold_light:
+    switch.hold_light:
       name: "Не выключать свет"
       room: "Кухня"
