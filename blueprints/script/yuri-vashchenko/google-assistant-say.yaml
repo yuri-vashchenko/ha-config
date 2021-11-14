@@ -17,7 +17,7 @@ blueprint:
         (https://translate.google.com/intl/en_ALL/about/languages/) 
         (languages where -Talk- feature is enabled in Google Translate) 
         for allowed values.  
-        This defaults to en (english) so you do not have to send the 
+        This defaults to ru (russian) so you do not have to send the 
         data from the calling script if you don't need to change it. 
       default: ru
     announcement_message:
