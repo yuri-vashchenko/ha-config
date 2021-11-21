@@ -1,0 +1,7 @@
+# Text to speech
+# https://www.home-assistant.io/integrations/tts/
+
+tts:
+  - platform: google_translate
+    base_url: https://vashchenko.me
+    service_name: google_say

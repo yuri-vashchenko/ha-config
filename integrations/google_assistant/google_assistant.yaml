@@ -1,0 +1,139 @@
+# Google Assistant
+# https://www.home-assistant.io/integrations/google_assistant/
+
+google_assistant:
+  project_id: home-nev
+  service_account: !include home-nev-e68964a0d1bb.json
+  expose_by_default: false
+  report_state: true
+  entity_config:
+    # Lena's room
+    vacuum.berta:
+      name: Berta
+      expose: true
+      aliases:
+        - Bob
+        - Robert
+      room: Lena
+    light.yeelight_650:
+      name: Sun
+      expose: true
+      aliases:
+        - Star
+        - Light
+      room: Lena
+    light.yeelight_650_nightlight:
+      name: Moon
+      expose: true
+      aliases:
+        - Night Light
+      room: Lena
+    light.yeelight_650_ambilight:
+      name: Ambilight
+      expose: true
+      aliases:
+        - Color Light
+      room: Lena
+    climate.main_room_ac:
+      name: AC
+      expose: true
+      aliases:
+        - Air conditioner
+      room: Lena
+    sensor.e72e001268f1_temperature:
+      name: Temperature
+      expose: true
+      room: Lena
+    sensor.e72e001268f1_humidity:
+      name: Humidity
+      expose: true
+      room: Lena
+    script.led_strip_toggle:
+      name: LED
+      expose: true
+      aliases:
+        - LED Strip
+        - Romantic Light
+      room: Lena
+    script.romantic:
+      name: Romantic
+      expose: true
+      room: Lena
+    media_player.tv_lena:
+      name: TV
+      expose: true
+      aliases:
+        - Televisor
+      room: Lena
+    scene.movies:
+      name: Movies
+      expose: true
+      room: Lena
+    scene.sport:
+      name: Sport
+      expose: true
+      room: Lena
+
+    # Kitchen
+    light.switch_kitchen_0x00158d00054408ee:
+      name: Light
+      expose: true
+      room: Kitchen
+
+    # Mama
+    light.switch_mama_0x00158d0005440c33:
+      name: Light
+      expose: true
+      room: Mama
+    sensor.temperature_humidity_mama_temperature:
+      name: Temperature
+      expose: true
+      room: Mama
+    sensor.temperature_humidity_mama_humidity:
+      name: Humidity
+      expose: true
+      room: Mama
+
+    # Michael
+    sensor.temperature_humidity_michael_temperature:
+      name: Temperature
+      expose: true
+      room: Michael
+    sensor.temperature_humidity_michael_humidity:
+      name: Humidity
+      expose: true
+      room: Michael
+
+    # Michael
+    sensor.temperature_humidity_svetlana_temperature:
+      name: Temperature
+      expose: true
+      room: Svetlana
+    sensor.temperature_humidity_svetlana_humidity:
+      name: Humidity
+      expose: true
+      room: Svetlana
+
+    # Balcony
+    sensor.temperature_humidity_balcony_temperature:
+      name: Temperature
+      expose: true
+      room: Balcony
+    sensor.temperature_humidity_balcony_humidity:
+      name: Humidity
+      expose: true
+      room: Balcony
+
+    # Street
+    sensor.temperature_humidity_street_temperature:
+      name: Temperature
+      expose: true
+      room: Street
+    sensor.temperature_humidity_street_humidity:
+      name: Humidity
+      expose: true
+      room: Street
+    sensor.temperature_humidity_street_pressure:
+      name: Pressure
+      expose: true
+      room: Street
