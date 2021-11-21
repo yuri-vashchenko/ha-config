@@ -72,3 +72,39 @@ climate:
     temperature_sensor: sensor.elena_0xe72e001268f1_temperature
     humidity_sensor: sensor.elena_0xe72e001268f1_humidity
     power_sensor: binary_sensor.ac_power
+
+script:
+  led_strip_toggle:
+    alias: led_strip_toggle
+    sequence:
+      - service: remote.send_command
+        data:
+          entity_id: remote.remote_broadlink_elena
+          device: led_strip
+          command: power
+
+  learn_led_strip_toggle:
+    sequence:
+      - service: remote.learn_command
+        data:
+          entity_id: remote.remote_broadlink_elena
+          device: led_strip
+          command: power
+
+  romantic:
+    sequence:
+      - service: script.led_strip_toggle
+
+scene:
+  - name: Movies
+    entities:
+      light.yeelight_650_nightlight: "on"
+      media_player.tv:
+        state: "on"
+        source: "КиноПоиск: новинки в FullHD"
+  - name: Sport
+    entities:
+      light.yeelight_650_nightlight: "on"
+      media_player.tv:
+        state: "on"
+        source: "Eurosport Player"
