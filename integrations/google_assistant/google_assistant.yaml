@@ -3,7 +3,7 @@
 
 google_assistant:
   project_id: home-nev
-  service_account: !include home-nev-e68964a0d1bb.json
+  service_account: !include service_account.json
   expose_by_default: false
   report_state: true
   entity_config:
