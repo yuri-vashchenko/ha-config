@@ -1,0 +1,40 @@
+blueprint:
+  name: yandex station say
+  description: A script that uses media_player.play_media to send a message to a yandex
+    station
+  source_url: https://gist.github.com/yuri-vashchenko/5f6970b7d019f5faa7a3e2ef620ac806
+  domain: script
+  homeassistant:
+    min_version: 2021.11.0
+  input:
+    speaker_target:
+      name: Device(s) to speak thru
+      description: yandex station media player entity
+      selector:
+        entity:
+          domain: media_player
+    announcement_message:
+      name: Spoken message
+      description: Type your message here
+      default: Что-то случилось.
+      selector:
+        text:
+          multiline: true
+    volume_level:
+      name: Volume level
+      description: Volume level is a float number from 0 to 1
+      selector:
+        number:
+          min: 0.1
+          max: 1.0
+          step: 0.1
+          mode: slider
+mode: queued
+sequence:
+- service: media_player.play_media
+  entity_id: !input 'speaker_target'
+  data:
+    media_content_id: !input 'announcement_message'
+    media_content_type: text
+    extra:
+      volume_level: !input 'volume_level'
