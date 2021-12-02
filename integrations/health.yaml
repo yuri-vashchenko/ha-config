@@ -1,0 +1,95 @@
+# Health metrics
+
+sensor:
+  - platform: mqtt
+    name: system_state_192_168_0_5
+    state_topic: "instance/192.168.0.5/sensor/system/state"
+  - platform: mqtt
+    name: system_state_192_168_0_8
+    state_topic: "instance/192.168.0.8/sensor/system/state"
+  - platform: template
+    sensors:
+      system_state:
+        value_template: >-
+          {% set ip = states("sensor.local_ip") | replace('.', '_') %}
+          {% set sensor_name = 'sensor.system_state_' + ip %}
+          {{ states(sensor_name) }}
+
+  # uptime
+  - platform: uptime
+    name: uptime
+
+  # system monitor
+  - platform: systemmonitor
+    resources:
+    - type: processor_use
+    - type: disk_use_percent
+      arg: /
+    - type: memory_use_percent
+    - type: last_boot
+    - type: disk_free
+      arg: /
+
+automation:
+  - id: Старт системы
+    alias: system_start
+    initial_state: true
+    trigger:
+      - platform: homeassistant
+        event: start
+    action:
+      - service: mqtt.publish
+        data_template:
+          topic: "instance/{{ states('sensor.local_ip') }}/sensor/system/state"
+          payload_template: 'starting'
+          retain: true
+      - delay: 00:00:10
+      - service: mqtt.publish
+        data_template:
+          topic: "instance/{{ states('sensor.local_ip') }}/sensor/system/state"
+          payload_template: 'running'
+          retain: true
+
+  - id: Выключение системы
+    alias: system_shutdown
+    initial_state: true
+    trigger:
+      - platform: homeassistant
+        event: shutdown
+    action:
+      - service: mqtt.publish
+        data_template:
+          topic: "instance/{{ states('sensor.local_ip') }}/sensor/system/state"
+          payload_template: 'shutdown'
+          retain: true
+
+  - id: system_keepalive
+    alias: system_keepalive
+    initial_state: true
+    trigger:
+      - platform: homeassistant
+        event: start
+      - platform: event
+        event_type: automation_reloaded
+      - platform: state
+        entity_id: sensor.time_date
+    action:
+      - service: mqtt.publish
+        data_template:
+          topic: "instance/{{ states('sensor.local_ip') }}/sensor/keepalive/state"
+          payload: "{{ now() }}"
+          retain: true
+
+  - id: Неожиданная перезагрузка
+    alias: system_unexpected_reboot
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: sensor.system_state
+        from: 'running'
+        to: 'starting'
+    action:
+      - service: mqtt.publish
+        data_template:
+          topic: "instance/{{ states('sensor.local_ip') }}/sensor/unexpected_reboot"
+          payload: "1"
