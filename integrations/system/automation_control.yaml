@@ -12,6 +12,28 @@ select:
       - "192.168.0.5"
       - "192.168.0.8"
 
+  - platform: mqtt
+    name: main_controller
+    command_topic: "automation_controller/main"
+    state_topic: "automation_controller/main"
+    retain: true
+    icon: "mdi:gamepad-outline"
+    options:
+      - "none"
+      - "192.168.0.5"
+      - "192.168.0.8"
+
+  - platform: mqtt
+    name: sound_controller
+    command_topic: "automation_controller/sound"
+    state_topic: "automation_controller/sound"
+    retain: true
+    icon: "mdi:volume-high"
+    options:
+      - "none"
+      - "192.168.0.5"
+      - "192.168.0.8"
+
 binary_sensor:
   - platform: template
     sensors:
@@ -19,6 +41,22 @@ binary_sensor:
         value_template: >-
           {% set ip = states("sensor.local_ip") %}
           {% if is_state("select.light_controller", ip) -%}
+              ON
+          {%- else -%}
+              OFF
+          {%- endif %}
+      main_control:
+        value_template: >-
+          {% set ip = states("sensor.local_ip") %}
+          {% if is_state("select.main_controller", ip) -%}
+              ON
+          {%- else -%}
+              OFF
+          {%- endif %}
+      sound_control:
+        value_template: >-
+          {% set ip = states("sensor.local_ip") %}
+          {% if is_state("select.sound_controller", ip) -%}
               ON
           {%- else -%}
               OFF
