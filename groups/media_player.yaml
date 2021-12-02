@@ -8,3 +8,10 @@ media_player:
     - media_player.yandex_station_ff98f029014bad091f5988de
     - media_player.yandex_station_ff98f02959560d534ab998c1
   icon: mdi:play-box
+
+alice:
+  name: Yandex stations
+  entities:
+    - media_player.yandex_station_ff98f029014bad091f5988de
+    - media_player.yandex_station_ff98f02959560d534ab998c1
+  icon: mdi:play-box
