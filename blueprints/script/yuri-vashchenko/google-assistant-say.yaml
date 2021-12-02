@@ -1,36 +1,35 @@
 blueprint:
-  # thanks for this blueprint to SirGoodenough
-  name: TTS Google Translate Say Message_2021-10-03
-  description: A script that uses tts google_translate_say to send a message to a google speaker
+  name: tts.google_say Message_2021-11-20
+  description: A script that uses tts google say to send a message to a google speaker
   source_url: https://gist.github.com/yuri-vashchenko/3e6e29d1d3076040e50c1ea7164bfb48
   domain: script
+  homeassistant:
+    min_version: 2021.11.0
   input:
     speaker_target:
       name: Device(s) to speak thru
-      description: This uses google_translate to send a text message
+      description: ""
       selector:
         entity:
+          domain: media_player
     speaker_language:
       name: Speaker Language
-      description: 
-        Check the complete list of [supported languages]
-        (https://translate.google.com/intl/en_ALL/about/languages/) 
-        (languages where -Talk- feature is enabled in Google Translate) 
-        for allowed values.  
-        This defaults to ru (russian) so you do not have to send the 
-        data from the calling script if you don't need to change it. 
+      description:
+        "Select Language code.
+        This defaults to ru (russian) so you do not have to send the data from the
+        calling script if you don't need to change it. "
       default: ru
     announcement_message:
       name: Spoken message
-      description: "Type your message here:"
-      default: "Что-то произошло"
+      description: "Type your message here"
+      default: "Что-то случилось"
       selector:
         text:
           multiline: true
 mode: queued
 sequence:
-- service: tts.google_translate_say
-  data:
-    entity_id: !input 'speaker_target'
-    message: !input 'announcement_message'
-    language: !input 'speaker_language'
+  - service: tts.google_say
+    data:
+      entity_id: !input "speaker_target"
+      message: !input "announcement_message"
+      language: !input "speaker_language"
