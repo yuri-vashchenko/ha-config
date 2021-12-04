@@ -114,3 +114,62 @@ media_player:
     device_code: 1061
     controller_data: remote.remote_broadlink_kitchen
     power_sensor: binary_sensor.kitchen_tv_power
+
+automation:
+  - id: check_hold_light
+    alias: kitchen_check_hold_light_timeout
+    trigger:
+      - platform: homeassistant
+        event: start
+      - platform: event
+        event_type:
+          - automation_reloaded
+    action:
+      choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ states('number.hold_light_timeout') | int < 1 }}"
+          sequence:
+            - service: number.set_value
+              data:
+                entity_id: number.hold_light_timeout
+                value: '60'
+        - conditions:
+            - condition: template
+              value_template: "{{ is_state('switch.hold_light', 'on') }}"
+          sequence:
+            - service: switch.turn_off
+              target:
+                entity_id: switch.hold_light
+
+  - id: prevent_light_turn_off
+    alias: kitchen_hold_light_timout
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.hold_light
+        from: "off"
+        to: "on"
+    condition: "{{ states('binary_sensor.light_control').state == 'on' }}"
+    action:
+      - delay: "{{ (states('number.hold_light_timeout') | int) * 60 }}"
+      - service: switch.turn_off
+        target:
+          entity_id: switch.hold_light
+
+  - id: auto_turn_light_in_kitchen_on_motion_when_dark
+    alias: kitchen_light
+    description: ""
+    use_blueprint:
+      path: kevinxw/state_based_entity_control.yaml
+      input:
+        trigger_entity: group.motion_kitchen
+        target_entity: light.switch_kitchen
+        blocker_entity: binary_sensor.light_control
+        blocker_entity_state: "off"
+        timeout_blocker_entity: input_boolean.hold_light
+        timeout_blocker_entity_state: "on"
+        illuminance_sensor: sensor.motion_illumination_kitchen_illuminance_lux
+        illuminance_below: 15
+        sun_elevation_below: 7
+        trigger_timeout: 60
+        alt_trigger_timeouts: "17:00:00-22:00:00,1200;05:00:00-08:00:00,1200"

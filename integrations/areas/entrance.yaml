@@ -18,6 +18,18 @@ homeassistant:
       friendly_name: Кнопка звонка
 
 automation:
+  - id: Entrance_light_on_motion
+    alias: Entrance_light_on_motion
+    initial_state: true
+    use_blueprint:
+      path: kevinxw/state_based_entity_control.yaml
+      input:
+        trigger_entity: binary_sensor.motion_entrance_occupancy
+        target_entity: switch.switch_entrance
+        blocker_entity: binary_sensor.light_control
+        blocker_entity_state: "off"
+        trigger_timeout: 60
+
   - id: Entrance_door_opened_for_too_long
     alias: Entrance_door_opened_for_too_long
     initial_state: true
