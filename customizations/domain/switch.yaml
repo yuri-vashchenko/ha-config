@@ -1,0 +1,8 @@
+switch:
+  templates:
+    icon_color: >
+      if (state == 'on') return 'green';
+      return 'red';
+    icon: >
+      if (state == 'on') return 'mdi:toggle-switch-outline';
+      return 'mdi:toggle-switch-off-outline';

@@ -1,0 +1,5 @@
+light:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:lightbulb';
+      return 'mdi:lightbulb-outline';

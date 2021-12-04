@@ -1,0 +1,4 @@
+lock:
+  templates:
+    icon_color: >
+      if (state == 'locked') return 'green';  return 'red';

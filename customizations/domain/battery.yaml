@@ -1,0 +1,17 @@
+sensor.*_battery:
+  templates:
+    icon_color: >
+      if (state < 30) return 'red';
+      if (state < 80) return 'yellow';
+      return 'green';
+    icon: >
+      if (state < 15) return 'mdi:battery-10';
+      if (state < 25) return 'mdi:battery-20';
+      if (state < 35) return 'mdi:battery-30';
+      if (state < 45) return 'mdi:battery-40';
+      if (state < 55) return 'mdi:battery-50';
+      if (state < 65) return 'mdi:battery-60';
+      if (state < 75) return 'mdi:battery-70';
+      if (state < 85) return 'mdi:battery-80';
+      if (state < 95) return 'mdi:battery-90';
+      return 'mdi:battery';

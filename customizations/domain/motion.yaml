@@ -1,0 +1,8 @@
+binary_sensor.*_motion:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:motion-sensor';
+      return 'mdi:human-male';
+    icon_color: >
+      if (state == 'on') return 'yellow';
+      return 'grey';
