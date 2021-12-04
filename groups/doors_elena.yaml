@@ -1,0 +1,6 @@
+doors_elena:
+  name: Двери в Лениной комнатье
+  entities:
+    - binary_sensor.door_elena_contact
+    - binary_sensor.door_balcony_contact
+  icon: mdi:door-open

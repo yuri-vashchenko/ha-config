@@ -1,0 +1,6 @@
+water_leak:
+  name: Датчики протечки воды
+  entities:
+    - binary_sensor.water_leak_bathroom_water_leak
+    - binary_sensor.water_leak_kitchen_water_leak
+    - binary_sensor.water_leak_toilet_water_leak
