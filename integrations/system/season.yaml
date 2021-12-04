@@ -1,0 +1,5 @@
+# season
+
+sensor:
+  - platform: season
+    type: "meteorological"
