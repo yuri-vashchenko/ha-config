@@ -1,0 +1,41 @@
+# Record events as MQTT messages
+
+automation:
+  - id: Record_events_as_mqtt_messages
+    alias: Record_events_as_mqtt_messages
+    trigger:
+      - platform: state
+        entity_id:
+          # Water leak detectors
+          - binary_sensor.water_leak_toilet_water_leak
+          - binary_sensor.water_leak_bathroom_water_leak
+          - binary_sensor.water_leak_kitchen_water_leak
+          # Motion sensors
+          - binary_sensor.motion_corridor_occupancy
+          - binary_sensor.motion_elena_occupancy
+          - binary_sensor.motion_entrance_occupancy
+          - binary_sensor.motion_illumination_entrance_occupancy
+          - binary_sensor.motion_illumination_kitchen_occupancy
+          - binary_sensor.motion_kitchen_occupancy
+          - binary_sensor.motion_mama_occupancy
+          - binary_sensor.motion_michael_occupancy
+          - binary_sensor.motion_svetlana_occupancy
+          # Doors/windows
+          - binary_sensor.window_balcony_left_contact
+          - binary_sensor.window_balcony_middle_contact
+          - binary_sensor.window_balcony_right_contact
+          - binary_sensor.door_elena_contact
+          - binary_sensor.door_entrance_contact
+          - binary_sensor.door_balcony_contact
+          - binary_sensor.0x158d000482ffe3_contact
+          - binary_sensor.0x158d00054481d7_contact
+    condition:
+      - "{{ is_state('binary_sensor.main_control', 'on') }}"
+    action:
+      - alias: Publish event to MQTT topic
+        service: mqtt.publish
+        data_template:
+          topic: >
+            {{ 'events/date_time/' + trigger.to_state.object_id + '/' + trigger.to_state.state }}
+          payload: "{{ now() }}"
+          retain: true
