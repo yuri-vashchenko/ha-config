@@ -108,3 +108,134 @@ scene:
       media_player.tv:
         state: "on"
         source: "Eurosport Player"
+
+automation:
+  # Air Conditioner control
+  - alias: elena_ac_control
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: group.doors_elena
+        to: 'on'
+        for: "00:01:00"
+        id: door_opened
+      - platform: state
+        entity_id: group.doors_elena
+        to: 'off'
+        for: "00:01:00"
+        id: doors_closed
+      - platform: homeassistant
+        event: start
+        id: homeassistant_started
+      - platform: event
+        event_type:
+          - automation_reloaded
+        id: automation_reloaded
+      - platform: numeric_state
+        entity_id: sensor.e72e001268f1_temperature
+        above: 27
+        for: "00:01:00"
+        id: hot
+      - platform: numeric_state
+        entity_id: sensor.e72e001268f1_temperature
+        below: 22
+        for: "00:01:00"
+        id: cold
+      - platform: numeric_state
+        entity_id: sensor.e72e001268f1_temperature
+        below: 26
+        above: 23
+        for: "00:01:00"
+        id: warm
+    condition: "{{ is_state('binary_sensor.main_control', 'on') }}"
+    variables:
+      in_temp: >
+        {{ states("sensor.e72e001268f1_temperature") | float }}
+      is_cold: "{{ in_temp < 22 }}"
+      is_hot: "{{ in_temp > 27 }}"
+      is_worm: "{{ in_temp > 23 and in_temp < 26 }}"
+      out_temp: >
+        {{ states("sensor.temperature_humidity_street_temperature") | float }}
+      doors_state: >
+        {{ states("group.doors_elena") }}
+      ac_state: >
+        {{ states("climate.main_room_ac") }}
+      need_off: >
+        {{ (doors_state == 'on' or is_worm ) and ac_state == 'on' }}
+      can_heat: >
+        {{ doors_state == 'off' and out_temp < 10 and ac_state == 'off' }}
+      can_cool: >
+        {{ doors_state == 'off' and out_temp > 10 and ac_state == 'off' }}        
+    action:
+      choose:
+        - conditions:
+            condition: template
+            # turn off AC on homeassistant start or automation reloaded if needed
+            value_template: >
+              {{ (trigger.id == 'homeassistant_started' or trigger_id == 'automation_reloaded') and need_off }}
+          sequence:
+            service: climate.turn_off
+            target:
+              entity_id: climate.main_room_ac
+        - conditions:
+            condition: template
+            # turn off the AC on door open
+            value_template: >
+              {{ trigger.id == 'door_opened' and ac_state == 'on' }}
+          sequence:
+            service: climate.turn_off
+            target:
+              entity_id: climate.main_room_ac
+        - conditions:
+            condition: template
+            # turn on heating on homeassistant start or automation reloaded if cold
+            value_template: >
+              {{ (trigger.id == 'homeassistant_started' or trigger_id == 'automation_reloaded') and is_cold and can_heat }}
+          sequence:
+            service: climate.set_temperature
+            data:
+              entity_id: climate.main_room_ac
+              temperature: 30
+              hvac_mode: "heat"
+        - conditions:
+            condition: template
+            # turn on cooling on homeassistant start or automation reloaded if cold
+            value_template: >
+              {{ (trigger.id == 'homeassistant_started' or trigger_id == 'automation_reloaded') and is_hot and can_cool }}
+          sequence:
+            service: climate.set_temperature
+            data:
+              entity_id: climate.main_room_ac
+              temperature: 18
+              hvac_mode: "cool"
+        - conditions:
+            condition: template
+            # turn off the AC if warm
+            value_template: >
+              {{ trigger.id == 'warm' and ac_state == 'on' }}
+          sequence:
+            service: climate.turn_off
+            target:
+              entity_id: climate.main_room_ac
+        - conditions:
+            condition: template
+            # turn on heating if cold
+            value_template: >
+              {{ trigger.id == 'cold' and is_cold and can_heat }}
+          sequence:
+            service: climate.set_temperature
+            data:
+              entity_id: climate.main_room_ac
+              temperature: 30
+              hvac_mode: "heat"
+        - conditions:
+            condition: template
+            # turn on cooling if hot
+            value_template: >
+              {{ trigger.id == 'hot' and is_hot and can_cool }}
+          sequence:
+            service: climate.set_temperature
+            data:
+              entity_id: climate.main_room_ac
+              temperature: 18
+              hvac_mode: "cool"
