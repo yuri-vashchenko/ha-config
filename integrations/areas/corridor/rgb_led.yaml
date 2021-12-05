@@ -1,0 +1,60 @@
+# RGB LED in corridor
+
+sensor:
+  - platform: mqtt
+    name: corridor_rgb_led_state
+    state_topic: "home/corridor/rgb_led/state"
+
+select:
+  - platform: mqtt
+    command_topic: "home/corridor/rgb_led/state"
+    state_topic: "home/corridor/rgb_led/state"
+    name: corridor_rgb_led
+    retain: true
+    options:
+      - "Off"
+      - "Temperature"
+      - "Warning"
+      - "Alarm"
+
+automation:
+  - id: corridor_rgb_led_control
+    trigger:
+      - platform: mqtt
+        topic: "home/corridor/rgb_led/state"
+        payload: "Off"
+        id: "Off"
+      - platform: mqtt
+        topic: "home/corridor/rgb_led/state"
+        payload: "Temperature"
+        id: "Temperature"
+      - platform: mqtt
+        topic: "home/corridor/rgb_led/state"
+        payload: "Warning"
+        id: "Warning"
+      - platform: mqtt
+        topic: "home/corridor/rgb_led/state"
+        payload: "Alarm"
+        id: "Alarm"
+    condition:
+      condition: state
+      entity_id: binary_sensor.light_control
+      state: "on"
+    action:
+      choose:
+        - conditions:
+            condition: trigger
+            id: "Off"
+          sequence:
+            service: light.turn_off
+            target:
+              entity_id: light.rgb_led_light
+        - conditions:
+            condition: trigger
+            id: "Temperature"
+          sequence:
+            service: light.turn_on
+            target:
+              entity_id: light.rgb_led_light
+            data:
+              effect: "Temperature"
