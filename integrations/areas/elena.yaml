@@ -63,6 +63,14 @@ homeassistant:
     "*motion_elena*":
       friendly_name: Лена движение
 
+binary_sensor:
+  - platform: template
+    sensors:
+      ac_power:
+        friendly_name: "AC power"
+        value_template: >
+          {{ states('sensor.plug_ac_power')|float > 80.0 }}
+
 climate:
   - platform: smartir
     name: main_room_ac
@@ -98,13 +106,13 @@ script:
 scene:
   - name: Movies
     entities:
-      light.yeelight_650_nightlight: "on"
+      light.elena_yeelight_650_nightlight: "on"
       media_player.tv:
         state: "on"
         source: "КиноПоиск: новинки в FullHD"
   - name: Sport
     entities:
-      light.yeelight_650_nightlight: "on"
+      light.elena_yeelight_650_nightlight: "on"
       media_player.tv:
         state: "on"
         source: "Eurosport Player"
@@ -126,11 +134,11 @@ automation:
         id: doors_closed
       - platform: homeassistant
         event: start
-        id: homeassistant_started
+        id: started
       - platform: event
         event_type:
           - automation_reloaded
-        id: automation_reloaded
+        id: started
       - platform: numeric_state
         entity_id: sensor.e72e001268f1_temperature
         above: 27
@@ -169,28 +177,24 @@ automation:
     action:
       choose:
         - conditions:
-            condition: template
-            # turn off AC on homeassistant start or automation reloaded if needed
-            value_template: >
-              {{ (trigger.id == 'homeassistant_started' or trigger_id == 'automation_reloaded') and need_off }}
+            - condition: trigger
+              id:
+                - started
+                - door_opened
+                - warm
+            - "{{ need_off }}"
           sequence:
             service: climate.turn_off
             target:
               entity_id: climate.main_room_ac
         - conditions:
-            condition: template
-            # turn off the AC on door open
-            value_template: >
-              {{ trigger.id == 'door_opened' and ac_state == 'on' }}
-          sequence:
-            service: climate.turn_off
-            target:
-              entity_id: climate.main_room_ac
-        - conditions:
-            condition: template
             # turn on heating on homeassistant start or automation reloaded if cold
-            value_template: >
-              {{ (trigger.id == 'homeassistant_started' or trigger_id == 'automation_reloaded') and is_cold and can_heat }}
+            - condition: trigger
+              id:
+                - started
+                - doors_closed
+                - cold
+            - "{{ is_cold and can_heat }}"
           sequence:
             service: climate.set_temperature
             data:
@@ -198,44 +202,46 @@ automation:
               temperature: 30
               hvac_mode: "heat"
         - conditions:
-            condition: template
             # turn on cooling on homeassistant start or automation reloaded if cold
-            value_template: >
-              {{ (trigger.id == 'homeassistant_started' or trigger_id == 'automation_reloaded') and is_hot and can_cool }}
+            - condition: trigger
+              id:
+                - started
+                - doors_closed
+                - hot
+            - "{{ is_hot and can_cool }}"
           sequence:
             service: climate.set_temperature
             data:
               entity_id: climate.main_room_ac
-              temperature: 18
+              temperature: 16
               hvac_mode: "cool"
-        - conditions:
-            condition: template
-            # turn off the AC if warm
-            value_template: >
-              {{ trigger.id == 'warm' and ac_state == 'on' }}
-          sequence:
-            service: climate.turn_off
-            target:
-              entity_id: climate.main_room_ac
-        - conditions:
-            condition: template
-            # turn on heating if cold
-            value_template: >
-              {{ trigger.id == 'cold' and is_cold and can_heat }}
-          sequence:
-            service: climate.set_temperature
-            data:
-              entity_id: climate.main_room_ac
-              temperature: 30
-              hvac_mode: "heat"
-        - conditions:
-            condition: template
-            # turn on cooling if hot
-            value_template: >
-              {{ trigger.id == 'hot' and is_hot and can_cool }}
-          sequence:
-            service: climate.set_temperature
-            data:
-              entity_id: climate.main_room_ac
-              temperature: 18
-              hvac_mode: "cool"
+
+  - id: "elena_light_control_button_l"
+    alias: "elena_light_control_button_l"
+    description: "Control Yeelight 650 by Xiaomi button"
+    use_blueprint:
+      path: yuri-vashchenko/button_light_control.yaml
+      input:
+        trigger_entity: sensor.button_elena_action
+        mainlight_entity: light.elena_yeelight_650
+        nightlight_entity: light.elena_yeelight_650_nightlight
+        mode_entity: binary_sensor.yeelight_ceiling4_0x7d7a691_nightlight
+        ambilight_entity: light.elena_yeelight_650_ambilight
+        enabling_entity: binary_sensor.light_control
+        hold_action:
+          service: script.led_strip_toggle
+
+  - id: "elena_light_control_button_y"
+    alias: "elena_light_control_button_y"
+    description: "Control Yeelight 650 by Xiaomi button"
+    use_blueprint:
+      path: yuri-vashchenko/button_light_control.yaml
+      input:
+        trigger_entity: sensor.button_yuri_action
+        mainlight_entity: light.elena_yeelight_650
+        nightlight_entity: light.elena_yeelight_650_nightlight
+        mode_entity: binary_sensor.yeelight_ceiling4_0x7d7a691_nightlight
+        ambilight_entity: light.elena_yeelight_650_ambilight
+        enabling_entity: binary_sensor.light_control
+        hold_action:
+          service: script.led_strip_toggle
