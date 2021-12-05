@@ -1,0 +1,121 @@
+blueprint:
+  name: Control Yeelight 650 with Xiaomi Button
+  source_url: https://gist.github.com/yuri-vashchenko/bddb24fbafdac3ab5e4dece17a5ce2b5
+  description: "Control Yeelight 650 celing light with Xiaomi button:\n  - Single\
+    \ press: If the night light or main light is on, turns if off, otherwise turns\
+    \ on last active mode (night light or main light)\n  - Double press: Toggles main/night\
+    \ light; If night light is on, switches it to main light and vice versa.\n  -\
+    \ Long press: User action. In my case it triggers LED strip on/off.\n\nRequired\
+    \ inputs:\n  - Trigger Entity (Button)\n  - Mainlight entity (Yeelight 650 Main\
+    \ light entity)\n  - Nightlight entity (Yeelignt 650 Nightlight entity)\n  - Mode\
+    \ entity (Yeelight 650 Nightlight binary sensor\n\nOptional inputs:\n  - Action\
+    \ on long press (default is 'none' - do nothing)\n  - Ambilight Entity (Yeelight\
+    \ 650 Ambilight entity, will turn on/off at the same time with main/night light)\n\
+    \  - Enabling Entity (the automation will execute only when enabling_entity is\
+    \ in Enabling Entity State)\n  - Enabling Entity State (see Enabling Entity above)\n"
+  domain: automation
+  input:
+    trigger_entity:
+      name: Trigger Entity
+      description: When trigger entity enters trigger entity state (see below) it
+        will trigger light change
+      selector:
+        entity: {}
+    mainlight_entity:
+      name: mainlight_entity
+      description: Target Entity (Yeelight 650 Main light entity)
+      selector:
+        entity:
+          domain: light
+    nightlight_entity:
+      name: nightlight_entity
+      description: Nightlight Entity (Yeelight 650 Night light entity)
+      selector:
+        entity:
+          domain: light
+    mode_entity:
+      name: mode_entity
+      description: Mode Entity (Yeelight 650 Nightlight binary sensor)
+      selector:
+        entity:
+          domain: binary_sensor
+    ambilight_entity:
+      name: (Optional) Ambilight entity
+      description: Ambilight entity will be turened on/off with main or nighlight
+        entity
+      default: []
+      selector:
+        entity:
+          domain: light
+    hold_action:
+      name: (Optional) Action to execute on holding button
+      description: This optional action will execute on long button press (see trigger_entity
+        and trigger_entity_state3)
+      default: []
+      selector:
+        action: {}
+    enabling_entity:
+      name: (Optional) Enabling entity
+      description: If this entity's state is set to enable entity state (see below)
+        automation will trigger. This may be used to make automation triggering based
+        on other entity state
+      default:
+      selector:
+        entity: {}
+    enabling_entity_state:
+      name: (Optional) Enabling entity state
+      description: If enabling entity is in this state the automation will trigger
+      default: 'on'
+      selector:
+        entity:
+          domain: input_text
+variables:
+  trigger_entity: !input 'trigger_entity'
+  trigger_entity_state_value: '{{ states[trigger_entity].state }}'
+  mainlight_entity: !input 'mainlight_entity'
+  nightlight_entity: !input 'nightlight_entity'
+  mode_entity: !input 'mode_entity'
+  toggle_entity: "{% if states[mode_entity].state == 'off' %}\n  {{mainlight_entity}}\n\
+    {% else %}\n  {{nightlight_entity}}\n{% endif %}\n"
+  light_mode: "{% if states[mode_entity].state == 'off' %}\n  moonlight\n{% else %}\n\
+    \  normal\n{% endif %}\n"
+  change_mode_entity: "{% if states[mode_entity].state == 'on' %}\n  {{ mainlight_entity\
+    \ }}\n{% else %}\n  {{ nightlight_entity }}\n{% endif %}\n"
+  ambilight_service: "{% if states[mainlight_entity].state == 'off' and states[nightlight_entity].state\
+    \ == 'off' %}\n  light.turn_on\n{% else %}\n  light.turn_off\n{% endif %}\n"
+  hold_action: !input 'hold_action'
+  enabling_entity: !input 'enabling_entity'
+  enabling_entity_state: !input 'enabling_entity_state'
+trigger:
+- platform: state
+  entity_id: !input 'trigger_entity'
+  to:
+  - single
+  - double
+  - hold
+condition: '{{ enabling_entity == none or is_state(enabling_entity, enabling_entity_state)
+  }}'
+action:
+- choose:
+  - conditions: '{{ trigger.to_state.state == ''single'' }}'
+    sequence:
+    - service: light.toggle
+      data_template:
+        entity_id: '{{ toggle_entity }}'
+    - service: '{{ambilight_service}}'
+      entity_id: !input 'ambilight_entity'
+  - conditions: '{{ trigger.to_state.state == ''double'' }}'
+    sequence:
+    - service: yeelight.set_mode
+      data_template:
+        entity_id: '{{ mainlight_entity }}'
+        mode: '{{ light_mode }}'
+    - service: light.turn_on
+      entity_id: !input 'ambilight_entity'
+  - conditions:
+    - '{{ hold_action != "" }}'
+    - '{{ trigger.to_state.state == ''hold'' }}'
+    sequence: !input 'hold_action'
+  default: []
+mode: single
+max_exceeded: silent
