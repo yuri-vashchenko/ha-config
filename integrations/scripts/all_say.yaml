@@ -8,8 +8,8 @@ script:
         description: "The message to say"
         example: "Как прекрасен этот мир"
       volume:
-        description: "The volume from 0 to 1"
-        example: "0.8"
+        description: "The volume from 0 to 100"
+        example: "80"
     use_blueprint:
       path: yuri-vashchenko/yandex-station-say.yaml
       input:
@@ -37,8 +37,8 @@ script:
         description: "The message to say"
         example: "Как прекрасен этот мир"
       volume:
-        description: "The volume from 0 to 1"
-        example: 0.8
+        description: "The volume from 0 to 100"
+        example: 80
     sequence:
       - service: script.turn_on
         target:
@@ -54,4 +54,3 @@ script:
         data:
           variables:
             message: "{{ message }}"
-
