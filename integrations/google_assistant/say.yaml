@@ -1,0 +1,53 @@
+# Google say
+
+automation:
+  - id: Publish google_say when all_say message received
+    alias: publish_google_say_on_all_say
+    trigger:
+      - platform: mqtt
+        topic: "home/system/announcement/all"
+    condition:
+      - alias: "main controller"
+        condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+    variables:
+      message: >
+        {{ trigger.payload_json['message'] or 'Что-то случилось' }}
+      volume: >
+        {{ trigger.payload_json['volume'] or '80' }}
+      google_target: >
+        {{ trigger.payload_json['google_target'] or 'media_player.nest' }}
+      language: >
+        {{ trigger.payload_json['language'] or 'ru' }}
+    action:
+      - alias: "publish google_say mqtt message"
+        service: mqtt.publish
+        data:
+          topic: "home/system/announcement/google"
+          payload: >
+            {{ "{ \"message\": \"" + message + "\", \"target\": \"" + google_target + "\", \"language\": \"" + language + "\" }" }}
+
+  - id: Announce message via google_say when received mqtt message
+    alias: google_say_message_on_mqtt
+    trigger:
+      - platform: mqtt
+        topic: "home/system/announcement/google"
+    condition:
+      - alias: "sound controller"
+        condition: state
+        entity_id: binary_sensor.sound_control
+        state: "on"
+    variables:
+      message: >
+        {{ trigger.payload_json['message'] or 'Что-то случилось' }}
+      target: >
+        {{ trigger.payload_json['target'] or 'media_player.nest' }}
+      language: >
+        {{ trigger.payload_json['language'] or 'ru' }}
+    action:
+      - service: tts.google_say
+        data:
+          entity_id: "{{ target }}"
+          message: "{{ message }}"
+          language: "{{ language }}"
