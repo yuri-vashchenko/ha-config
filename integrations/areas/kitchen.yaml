@@ -87,14 +87,14 @@ switch:
   - platform: mqtt
     name: hold_light
     retain: true
-    command_topic: "kitchen_light/hold"
-    state_topic: "kitchen_light/hold"
+    command_topic: "home/kitchen/light/hold"
+    state_topic: "home/kitchen/light/hold"
 
 number:
   - platform: mqtt
     name: hold_light_timeout
-    command_topic: kitchen_light/hold_duration
-    state_topic: kitchen_light/hold_duration
+    command_topic: "home/kitchen/light/hold_duration"
+    state_topic: "home/kitchen/light/hold_duration"
     retain: true
     icon: mdi:lightbulb-on
     min: 1
@@ -149,7 +149,7 @@ automation:
         entity_id: binary_sensor.hold_light
         from: "off"
         to: "on"
-    condition: "{{ states('binary_sensor.light_control').state == 'on' }}"
+    condition: "{{ is_state('binary_sensor.light_control', 'on') }}"
     action:
       - delay: "{{ (states('number.hold_light_timeout') | int) * 60 }}"
       - service: switch.turn_off
@@ -172,4 +172,4 @@ automation:
         illuminance_below: 15
         sun_elevation_below: 7
         trigger_timeout: 60
-        alt_trigger_timeout: "17:00:00-22:00:00,1200;05:00:00-08:00:00,1200"
+        alt_trigger_timeouts: "17:00:00-22:00:00,1200;05:00:00-08:00:00,1200"
