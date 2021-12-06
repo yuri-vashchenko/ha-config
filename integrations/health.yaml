@@ -93,3 +93,4 @@ automation:
         data_template:
           topic: "instance/{{ states('sensor.local_ip') }}/sensor/unexpected_reboot"
           payload: "1"
+          retain: false

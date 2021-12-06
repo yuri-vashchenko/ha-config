@@ -49,6 +49,7 @@ automation:
         data:
           topic: "warning/entrance_door_opened"
           payload: "on"
+          retain: false
       - wait_for_trigger:
         - platform: state
           entity_id: binary_sensor.door_entrance_contact
@@ -58,6 +59,7 @@ automation:
         data:
           topic: "warning/entrance_door_opened"
           payload: "off"
+          retain: false
     mode: restart
 
   - id: Announce_opened_entrance_door
