@@ -34,6 +34,7 @@ script:
         data:
           topic: wallpanel/corridorwallpanel/command
           payload: "{\"wake\": true}"
+          retain: false
 
 # sensors
 sensor:
@@ -78,14 +79,14 @@ automation:
         conditions:
           - condition: state
             entity_id: select.corridor_rgb_led
-            state: "Warning"
+            state: "warning"
           - condition: state
             entity_id: select.corridor_rgb_led
-            state: "Alarm"
+            state: "alarm"
     action:
       - service: select.select_option
         data:
-          option: "Temperature"
+          option: "temperature"
         target:
           entity_id: select.corridor_rgb_led
       - wait_for_trigger:
@@ -95,7 +96,7 @@ automation:
             to: "off"
       - service: select.select_option
         data:
-          option: "Off"
+          option: "off"
         target:
           entity_id: select.corridor_rgb_led
     mode: restart
