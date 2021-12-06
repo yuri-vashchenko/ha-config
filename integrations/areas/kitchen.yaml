@@ -126,17 +126,17 @@ automation:
           - automation_reloaded
     action:
       choose:
-        - conditions:
-            - condition: template
-              value_template: "{{ states('number.hold_light_timeout') | int < 1 }}"
+        - alias: fix_kitchen_hold_light_timeout_on_start
+          conditions:
+            - "{{ (states('number.hold_light_timeout') or '60') | int < 1 }}"
           sequence:
             - service: number.set_value
               data:
                 entity_id: number.hold_light_timeout
                 value: '60'
-        - conditions:
-            - condition: template
-              value_template: "{{ is_state('switch.hold_light', 'on') }}"
+        - alias: fix_kitchen_hold_light_switch_on_start
+          conditions:
+            - "{{ is_state('switch.hold_light', 'on') }}"
           sequence:
             - service: switch.turn_off
               target:

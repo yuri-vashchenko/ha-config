@@ -176,7 +176,8 @@ automation:
         {{ doors_state == 'off' and out_temp > 10 and ac_state == 'off' }}        
     action:
       choose:
-        - conditions:
+        - alias: elena_ac_turn_off
+          conditions:
             - condition: trigger
               id:
                 - started
@@ -187,7 +188,8 @@ automation:
             service: climate.turn_off
             target:
               entity_id: climate.main_room_ac
-        - conditions:
+        - alias: elena_ac_heat
+          conditions:
             # turn on heating on homeassistant start or automation reloaded if cold
             - condition: trigger
               id:
@@ -201,7 +203,8 @@ automation:
               entity_id: climate.main_room_ac
               temperature: 30
               hvac_mode: "heat"
-        - conditions:
+        - alias: elena_ac_cool
+          conditions:
             # turn on cooling on homeassistant start or automation reloaded if cold
             - condition: trigger
               id:

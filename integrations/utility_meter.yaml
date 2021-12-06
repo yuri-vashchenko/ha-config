@@ -32,7 +32,8 @@ automation:
         at: "23:00:00"
     action:
         choose:
-        - conditions: "{{ now().month < 7 and (now().hour < 7 or now().hour >= 23 ) }}"
+        - alias: energy_tariff_set_h1_night
+          conditions: "{{ now().month < 7 and (now().hour < 7 or now().hour >= 23 ) }}"
           sequence:
             - service: utility_meter.select_tariff
               entity_id: utility_meter.daily_energy
@@ -42,7 +43,8 @@ automation:
               entity_id: utility_meter.monthly_energy
               data:
                 tariff: h1_night
-        - conditions: "{{ now().month < 7 and (now().hour >= 7 and now().hour < 23 ) }}"
+        - alias: energy_tariff_set_h1_day
+          conditions: "{{ now().month < 7 and (now().hour >= 7 and now().hour < 23 ) }}"
           sequence:
             - service: utility_meter.select_tariff
               entity_id: utility_meter.daily_energy
@@ -52,7 +54,8 @@ automation:
               entity_id: utility_meter.monthly_energy
               data:
                 tariff: h1_day
-        - conditions: "{{ now().month >= 7 and (now().hour < 7 or now().hour >= 23 ) }}"
+        - alias: energy_tariff_set_h2_night
+          conditions: "{{ now().month >= 7 and (now().hour < 7 or now().hour >= 23 ) }}"
           sequence:
             - service: utility_meter.select_tariff
               entity_id: utility_meter.daily_energy
@@ -62,7 +65,8 @@ automation:
               entity_id: utility_meter.monthly_energy
               data:
                 tariff: h2_night
-        - conditions: "{{ now().month >= 7 and (now().hour >= 7 and now().hour < 23 ) }}"
+        - alias: energy_tariff_set_h2_day
+          conditions: "{{ now().month >= 7 and (now().hour >= 7 and now().hour < 23 ) }}"
           sequence:
             - service: utility_meter.select_tariff
               entity_id: utility_meter.daily_energy
