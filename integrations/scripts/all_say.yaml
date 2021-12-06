@@ -38,7 +38,7 @@ script:
         example: "Как прекрасен этот мир"
       volume:
         description: "The volume from 0 to 100"
-        example: 80
+        example: '80'
     sequence:
       - service: script.turn_on
         target:
