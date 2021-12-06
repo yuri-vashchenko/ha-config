@@ -3,6 +3,7 @@
 automation:
   - id: Publish google_say when all_say message received
     alias: publish_google_say_on_all_say
+    initial_state: true
     trigger:
       - platform: mqtt
         topic: "home/system/announcement/all"
@@ -13,10 +14,8 @@ automation:
         state: "on"
     variables:
       message: >
-        {{ trigger.payload_json['message'] or 'Что-то случилось' }}
-      volume: >
-        {{ trigger.payload_json['volume'] or '80' }}
-      google_target: >
+        {{ trigger.payload_json['message'] or '' }}
+      target: >
         {{ trigger.payload_json['google_target'] or 'media_player.nest' }}
       language: >
         {{ trigger.payload_json['language'] or 'ru' }}
@@ -24,12 +23,14 @@ automation:
       - alias: "publish google_say mqtt message"
         service: mqtt.publish
         data:
+          retain: false
           topic: "home/system/announcement/google"
           payload: >
             {{ "{ \"message\": \"" + message + "\", \"target\": \"" + google_target + "\", \"language\": \"" + language + "\" }" }}
 
   - id: Announce message via google_say when received mqtt message
     alias: google_say_message_on_mqtt
+    initial_state: true
     trigger:
       - platform: mqtt
         topic: "home/system/announcement/google"
@@ -40,7 +41,7 @@ automation:
         state: "on"
     variables:
       message: >
-        {{ trigger.payload_json['message'] or 'Что-то случилось' }}
+        {{ trigger.payload_json['message'] or '' }}
       target: >
         {{ trigger.payload_json['target'] or 'media_player.nest' }}
       language: >
