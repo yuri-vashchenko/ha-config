@@ -32,7 +32,7 @@ script:
       - alias: "Wake corridor wall panel"
         service: mqtt.publish
         data:
-          topic: wallpanel/corridorwallpanel/command
+          topic: home/corridor/wallpanel/command
           payload: "{\"wake\": true}"
           retain: false
 
