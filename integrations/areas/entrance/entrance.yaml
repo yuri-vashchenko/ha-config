@@ -30,15 +30,15 @@ automation:
         blocker_entity_state: "off"
         trigger_timeout: 60
 
-  - id: Entrance_door_opened_for_too_long
-    alias: Entrance_door_opened_for_too_long
+  - id: entrance_door_opened_for_too_long
+    alias: entrance_door_opened_for_too_long
     initial_state: true
     trigger:
       - platform: state
         entity_id: binary_sensor.door_entrance_contact
         to: "on"
         for:
-          minutes: 1
+          seconds: "{{states('number.entrance_door_warning_open_duration') | int}}"
     condition:
       - condition: state
         entity_id: binary_sensor.main_control
