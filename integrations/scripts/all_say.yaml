@@ -43,7 +43,7 @@ script:
       - service: script.turn_on
         target:
           entity_id: script.alice_say
-        data:
+        data_template:
           variables:
             message: "{{ message }}"
             volume: "{{ volume }}"
@@ -51,6 +51,6 @@ script:
         service: script.turn_on
         target:
           entity_id: script.nest_say
-        data:
+        data_template:
           variables:
             message: "{{ message }}"
