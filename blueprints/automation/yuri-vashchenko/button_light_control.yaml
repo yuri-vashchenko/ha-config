@@ -74,15 +74,38 @@ variables:
   trigger_entity_state_value: '{{ states[trigger_entity].state }}'
   mainlight_entity: !input 'mainlight_entity'
   nightlight_entity: !input 'nightlight_entity'
+  ambilight_entity: !input 'ambilight_entity'
   mode_entity: !input 'mode_entity'
-  toggle_entity: "{% if states[mode_entity].state == 'off' %}\n  {{mainlight_entity}}\n\
-    {% else %}\n  {{nightlight_entity}}\n{% endif %}\n"
-  light_mode: "{% if states[mode_entity].state == 'off' %}\n  moonlight\n{% else %}\n\
-    \  normal\n{% endif %}\n"
-  change_mode_entity: "{% if states[mode_entity].state == 'on' %}\n  {{ mainlight_entity\
-    \ }}\n{% else %}\n  {{ nightlight_entity }}\n{% endif %}\n"
-  ambilight_service: "{% if states[mainlight_entity].state == 'off' and states[nightlight_entity].state\
-    \ == 'off' %}\n  light.turn_on\n{% else %}\n  light.turn_off\n{% endif %}\n"
+  toggle_entity: >
+    {% if states[mode_entity].state == 'off' %}
+      {{mainlight_entity}}
+    {% else %}
+      {{nightlight_entity}}
+    {% endif %}
+  toggle_service: >
+    {% if states[toggle_entity].state == 'off' %}
+      light.turn_on
+    {% else %}
+      light.turn_off
+    {% endif %}
+  light_mode: >
+    {% if states[mode_entity].state == 'off' %}
+      moonlight
+    {% else %}
+      normal
+    {% endif %}
+  change_mode_entity: >
+    {% if states[mode_entity].state == 'on' %}
+      {{ mainlight_entity}}
+    {% else %}
+      {{ nightlight_entity }}
+    {% endif %}
+  ambilight_service: >
+    {% if states[mainlight_entity].state == 'off' and states[nightlight_entity].state == 'off' %}
+      light.turn_on
+    {% else %}
+      light.turn_off
+    {% endif %}
   hold_action: !input 'hold_action'
   enabling_entity: !input 'enabling_entity'
   enabling_entity_state: !input 'enabling_entity_state'
@@ -93,29 +116,58 @@ trigger:
   - single
   - double
   - hold
-condition: '{{ enabling_entity == none or is_state(enabling_entity, enabling_entity_state)
-  }}'
+condition: >
+  {{ enabling_entity == none or is_state(enabling_entity, enabling_entity_state) }}
 action:
 - choose:
-  - conditions: '{{ trigger.to_state.state == ''single'' }}'
+  - conditions: >
+      {{ trigger.to_state.state == 'single' }}
     sequence:
-    - service: light.toggle
-      data_template:
-        entity_id: '{{ toggle_entity }}'
-    - service: '{{ambilight_service}}'
-      entity_id: !input 'ambilight_entity'
-  - conditions: '{{ trigger.to_state.state == ''double'' }}'
+      - alias: "log single click event"
+        service: logbook.log
+        data_template:
+          name: "Button single click"
+          message: >
+            Processing button {{ trigger.entity_id }} single click.
+            toggle_entity: {{ toggle_entity }},
+            toggle_service: {{ toggle_service }},
+            ambilight_service: {{ ambilight_service }}
+          entity_id: "{{ toggle_entity }}"
+          domain: light
+      - alias: "toggle ambilight"
+        service: "{{ ambilight_service }}"
+        target:
+          entity_id: "{{ ambilight_entity }}"
+      - alias: "toogle light"
+        service: "{{ toggle_service }}"
+        target:
+          entity_id: "{{ toggle_entity }}"
+  - conditions: >
+      {{ trigger.to_state.state == 'double' }}
     sequence:
-    - service: yeelight.set_mode
-      data_template:
-        entity_id: '{{ mainlight_entity }}'
-        mode: '{{ light_mode }}'
-    - service: light.turn_on
-      entity_id: !input 'ambilight_entity'
+      - alias: "log double click event"
+        service: logbook.log
+        data_template:
+          name: "Button double click"
+          message: >
+            Processing button {{ trigger.entity_id }} double click.
+            mainlight_entity: {{ mainlight_entity }},
+            ambilight_service: {{ ambilight_entity }}
+          entity_id: "{{ toggle_entity }}"
+          domain: light
+      - alias: "set mode main/nightlight"
+        service: yeelight.set_mode
+        target:
+          entity_id: '{{ mainlight_entity }}'
+        data_template:
+          mode: '{{ light_mode }}'
+      - alias: "turn on ambilight"
+        service: light.turn_on
+        target:
+          entity_id: "{{ ambilight_entity }}"
   - conditions:
-    - '{{ hold_action != "" }}'
-    - '{{ trigger.to_state.state == ''hold'' }}'
+    - "{{ hold_action != '' }}"
+    - "{{ trigger.to_state.state == 'hold' }}"
     sequence: !input 'hold_action'
   default: []
-mode: single
-max_exceeded: silent
+mode: restart
