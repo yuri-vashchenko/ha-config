@@ -22,10 +22,10 @@ automation:
     action:
       - alias: "publish yandex_say mqtt message"
         service: mqtt.publish
-        data:
+        data_template:
           topic: "home/system/announcement/yandex"
           retain: false
-          payload: >
+          payload_template: >
             {{ "{ \"message\": \"" + message + "\", \"target\": \"" + target + "\", \"volume\": \"" + volume | string + "\" }" }}
 
   - id: Announce message via yandex_say when received mqtt message
@@ -50,7 +50,7 @@ automation:
       - service: media_player.play_media
         target:
           entity_id: "{{ target }}"
-        data:
+        data_template:
           media_content_id: "{{ message }}"
           media_content_type: text
           extra:

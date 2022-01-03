@@ -7,16 +7,24 @@ yandex_smart_home:
       - light.switch_mama
       - sensor.temperature_humidity_balcony_temperature
       - sensor.temperature_humidity_balcony_humidity
+      - sensor.temperature_humidity_svetlana_temperature
+      - sensor.temperature_humidity_svetlana_humidity
+      - sensor.temperature_humidity_michael_temperature
+      - sensor.temperature_humidity_michael_humidity
+      - sensor.temperature_humidity_mama_temperature
+      - sensor.temperature_humidity_mama_humidity
+      - sensor.elena_0xe72e001268f1_temperature
+      - sensor.elena_0xe72e001268f1_humidity
       - sensor.temperature_humidity_street_temperature
       - sensor.temperature_humidity_street_humidity
       - sensor.temperature_humidity_street_pressure
       - script.update_shopping_list
-      - switch.hold_light
+      - switch.kitchen_hold_light_on
+      - switch.kitchen_hold_light_off
   entity_config:
     media_player.kitchen_tv:
       type: devices.types.media_device.tv
       #relative_volume_only: false
-      channel_set_via_media_content_id: true
       name: "Телевизор"
       room: "Кухня"
     light.switch_kitchen:
@@ -38,6 +46,50 @@ yandex_smart_home:
           entity: sensor.temperature_humidity_street_humidity
         - type: pressure
           entity: sensor.temperature_humidity_street_pressure
-    switch.hold_light:
+    temperature_humidity.balcony:
+      name: "Температура"
+      room: "Балкон"
+      properties:
+        - type: temperature
+          entity: sensor.temperature_humidity_balcony_temperature
+        - type: humidity
+          entity: sensor.temperature_humidity_balcony_humidity
+    temperature_humidity.svetlana:
+      name: "Температура"
+      room: "Света"
+      properties:
+        - type: temperature
+          entity: sensor.temperature_humidity_svetlana_temperature
+        - type: humidity
+          entity: sensor.temperature_humidity_svetlana_humidity
+    temperature_humidity.michael:
+      name: "Температура"
+      room: "Миша"
+      properties:
+        - type: temperature
+          entity: sensor.temperature_humidity_michael_temperature
+        - type: humidity
+          entity: sensor.temperature_humidity_michael_humidity
+    temperature_humidity.mama:
+      name: "Температура"
+      room: "Мама"
+      properties:
+        - type: temperature
+          entity: sensor.temperature_humidity_mama_temperature
+        - type: humidity
+          entity: sensor.temperature_humidity_mama_humidity
+    temperature_humidity.elena:
+      name: "Температура"
+      room: "Лена"
+      properties:
+        - type: temperature
+          entity: sensor.elena_0xe72e001268f1_temperature
+        - type: humidity
+          entity: sensor.elena_0xe72e001268f1_humidity
+
+    switch.kitchen_hold_light_on:
       name: "Не выключать свет"
+      room: "Кухня"
+    switch.kitchen_hold_light_off:
+      name: "Не включать свет"
       room: "Кухня"
