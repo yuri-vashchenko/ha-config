@@ -7,8 +7,15 @@ automation:
       - platform: time
         at: '02:00:00'
     condition: >
-      {{ (states["sensor.cert_expiry_timestamp_vashchenko_me"].state | as_datetime - now()) < timedelta(days=30) }}
+      {{ states('sensor.cert_expiry_timestamp_vashchenko_me') not in
+        ['unknown', 'unavailable'] }}
     action:
-      service: hassio.addon_start
-      data:
-        addon: core_letsencrypt
+      - alias: "first check if need to renew"
+        condition: template
+        value_template: >
+          {{ (states('sensor.cert_expiry_timestamp_vashchenko_me') |
+            as_datetime - now()) < timedelta(days=30) }}
+      - alias: "review certificate"
+        service: hassio.addon_start
+        data:
+          addon: core_letsencrypt
