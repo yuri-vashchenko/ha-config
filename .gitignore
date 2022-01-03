@@ -6,3 +6,4 @@ image
 home-assistant_v2.db
 .HA_VERSION
 tts
+known_devices.yaml
