@@ -322,7 +322,7 @@ variables:
         {%- endfor %}
       {% endif %}
   sun_elevation_below: !input sun_elevation_below
-  
+
 trigger:
   - platform: event
     # Check immediately after the automation is changed.
