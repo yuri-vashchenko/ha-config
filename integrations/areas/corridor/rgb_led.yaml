@@ -14,6 +14,7 @@ select:
     options:
       - "off"
       - "temperature"
+      - "notification"
       - "warning"
       - "alarm"
 
@@ -29,6 +30,10 @@ automation:
         topic: "home/corridor/rgb_led/state"
         payload: "temperature"
         id: "temperature"
+      - platform: mqtt
+        topic: "home/corridor/rgb_led/state"
+        payload: "nofitication"
+        id: "notification"
       - platform: mqtt
         topic: "home/corridor/rgb_led/state"
         payload: "warning"
@@ -61,3 +66,4 @@ automation:
               entity_id: light.rgb_led_light
             data:
               effect: "Temperature"
+    mode: restart
