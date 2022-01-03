@@ -15,20 +15,20 @@ google_assistant:
         - Bob
         - Robert
       room: Lena
-    light.elena_yeelight_650:
+    light.yeelight_elena:
       name: Sun
       expose: true
       aliases:
         - Star
         - Light
       room: Lena
-    light.elena_yeelight_650_nightlight:
+    light.yeelight_elena_nightlight:
       name: Moon
       expose: true
       aliases:
         - Night Light
       room: Lena
-    light.elena_yeelight_650_ambilight:
+    light.yeelight_elena_ambilight:
       name: Ambilight
       expose: true
       aliases:

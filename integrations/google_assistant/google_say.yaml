@@ -22,11 +22,11 @@ automation:
     action:
       - alias: "publish google_say mqtt message"
         service: mqtt.publish
-        data:
+        data_template:
           retain: false
           topic: "home/system/announcement/google"
-          payload: >
-            {{ "{ \"message\": \"" + message + "\", \"target\": \"" + google_target + "\", \"language\": \"" + language + "\" }" }}
+          payload_template: >
+            { "message": "{{message}}", "target": "{{target}}", "language": "{{language}}" }
 
   - id: Announce message via google_say when received mqtt message
     alias: google_say_message_on_mqtt
@@ -48,7 +48,7 @@ automation:
         {{ trigger.payload_json['language'] or 'ru' }}
     action:
       - service: tts.google_say
-        data:
+        data_template:
           entity_id: "{{ target }}"
           message: "{{ message }}"
           language: "{{ language }}"
