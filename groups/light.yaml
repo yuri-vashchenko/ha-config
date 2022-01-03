@@ -2,7 +2,7 @@ light:
   name: Освещение в доме
   entities:
     - light.gateway_light_50ec50c4f23d
-    - light.switch_kitchen_0x00158d00054408ee
-    - light.switch_mama_0x00158d0005440c33
-    - group.light_elena
+    - light.switch_kitchen
+    - light.switch_mama
+    - group.light_elena_yeelight
   icon: mdi:lightbulb

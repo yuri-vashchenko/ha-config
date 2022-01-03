@@ -9,3 +9,15 @@ family:
     - person.elena_vashchenko
     - person.alexey_vashchenko
   icon: mdi:human-male-female-child
+
+papa_trackers:
+  name: Папа
+  entities:
+    - device_tracker.elena_phone_papa
+    - device_tracker.mama_phone_papa
+    - device_tracker.michael_phone_papa
+    - device_tracker.kitchen_phone_papa
+    - device_tracker.mama_watch_papa
+    - device_tracker.michael_watch_papa
+    - device_tracker.elena_watch_papa
+    - device_tracker.kitchen_watch_papa

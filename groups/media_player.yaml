@@ -1,10 +1,10 @@
 media_player:
   name: Проигрыватели
   entities:
-    - media_player.tv_kitchen
+    - media_player.kitchen_tv
     - media_player.tv_elena
     - media_player.tv_mama
-    - media_player.nesthub2007
+    - media_player.nest
     - media_player.yandex_station_ff98f029014bad091f5988de
     - media_player.yandex_station_ff98f02959560d534ab998c1
   icon: mdi:play-box
