@@ -1,0 +1,7 @@
+switch_elena_yeelight:
+  name: Свет в Лениной комнате - mqtt
+  entities:
+    - switch.elena_yeelight_main
+    - switch.elena_yeelight_ambilight
+    - switch.elena_yeelight_nightlight
+  icon: mdi:lightbulb
