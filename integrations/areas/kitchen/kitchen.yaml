@@ -67,6 +67,22 @@ sensor:
     unit_prefix: k
     round: 2
 
+# switches
+switch:
+  # Prevents turning off the light
+  - platform: mqtt
+    name: kitchen_hold_light_on
+    retain: true
+    command_topic: "home/kitchen/light/hold_on"
+    state_topic: "home/kitchen/light/hold_on"
+
+  # Prevents turning on the light
+  - platform: mqtt
+    name: kitchen_hold_light_off
+    retain: true
+    command_topic: "home/kitchen/light/hold_off"
+    state_topic: "home/kitchen/light/hold_off"
+
 binary_sensor:
   - platform: template
     sensors:
@@ -74,31 +90,25 @@ binary_sensor:
       kitchen_tv_power:
         friendly_name: "Kitchen TV power"
         value_template: >
-          {{ states('sensor.plug_tv_kitchen_power')|float > 10.0 }}
+          {%- if states('sensor.plug_tv_kitchen_power') not in ['unknown', 'unavailable']-%}
+            {{ states('sensor.plug_tv_kitchen_power') | float > 10.0 }}
+          {%- else -%}
+            false
+          {%- endif -%}
+
+      # Prevents turning on the light
+      kitchen_hold_light_off:
+        friendly_name: Не включать свет
+        value_template: >
+          {{ states('binary_sensor.light_control') == 'off' or
+            states('switch.kitchen_hold_light_off') == 'on' }}
 
       # Prevents turning off the light
-      hold_light:
+      kitchen_hold_light_on:
         friendly_name: Не выключать свет
-        value_template: "{{ states('switch.hold_light') }}"
-
-# switches
-switch:
-  # Prevents turning off the light
-  - platform: mqtt
-    name: hold_light
-    retain: true
-    command_topic: "home/kitchen/light/hold"
-    state_topic: "home/kitchen/light/hold"
-
-number:
-  - platform: mqtt
-    name: hold_light_timeout
-    command_topic: "home/kitchen/light/hold_duration"
-    state_topic: "home/kitchen/light/hold_duration"
-    retain: true
-    icon: mdi:lightbulb-on
-    min: 1
-    max: 600
+        value_template: >
+          {{ states('binary_sensor.light_control') == 'off' or
+            states('switch.kitchen_hold_light_on') == 'on' }}
 
 # lights
 light:
@@ -116,45 +126,43 @@ media_player:
     power_sensor: binary_sensor.kitchen_tv_power
 
 automation:
-  - id: check_hold_light
-    alias: kitchen_check_hold_light_timeout
+  - id: kitchen_hold_light_on_timer
+    alias: kitchen_hold_light_on_timer
     trigger:
       - platform: homeassistant
         event: start
       - platform: event
         event_type:
           - automation_reloaded
-    action:
-      choose:
-        - alias: fix_kitchen_hold_light_timeout_on_start
-          conditions:
-            - "{{ (states('number.hold_light_timeout') or '60') | int < 1 }}"
-          sequence:
-            - service: number.set_value
-              data:
-                entity_id: number.hold_light_timeout
-                value: '60'
-        - alias: fix_kitchen_hold_light_switch_on_start
-          conditions:
-            - "{{ is_state('switch.hold_light', 'on') }}"
-          sequence:
-            - service: switch.turn_off
-              target:
-                entity_id: switch.hold_light
-
-  - id: prevent_light_turn_off
-    alias: kitchen_hold_light_timout
-    trigger:
       - platform: state
-        entity_id: binary_sensor.hold_light
-        from: "off"
-        to: "on"
-    condition: "{{ is_state('binary_sensor.light_control', 'on') }}"
+        entity_id: switch.kitchen_hold_light_on
+    condition: "{{ states('binary_sensor.light_control') == 'on' }}"
     action:
-      - delay: "{{ (states('number.hold_light_timeout') | int) * 60 }}"
+      - delay:
+          minutes: "{{ (states('number.kitchen_hold_light_on_timeout') | int) }}"
       - service: switch.turn_off
         target:
-          entity_id: switch.hold_light
+          entity_id: switch.kitchen_hold_light_on
+    mode: restart
+
+  - id: kitchen_hold_light_off_timer
+    alias: kitchen_hold_light_off_timer
+    trigger:
+      - platform: homeassistant
+        event: start
+      - platform: event
+        event_type:
+          - automation_reloaded
+      - platform: state
+        entity_id: switch.kitchen_hold_light_off
+    condition: "{{ states('binary_sensor.light_control') == 'on' }}"
+    action:
+      - delay:
+          minutes: "{{ (states('number.kitchen_hold_light_off_timeout') | int) }}"
+      - service: switch.turn_off
+        target:
+          entity_id: switch.kitchen_hold_light_off
+    mode: restart
 
   - id: auto_turn_light_in_kitchen_on_motion_when_dark
     alias: kitchen_light
@@ -164,12 +172,12 @@ automation:
       input:
         trigger_entity: group.motion_kitchen
         target_entity: light.switch_kitchen
-        blocker_entity: binary_sensor.light_control
-        blocker_entity_state: "off"
-        timeout_blocker_entity: input_boolean.hold_light
-        timeout_blocker_entity_state: "on"
+        blocker_entity: binary_sensor.kitchen_hold_light_off
+        blocker_entity_state: 'on'
+        timeout_blocker_entity: binary_sensor.kitchen_hold_light_on
+        timeout_blocker_entity_state: 'on'
         illuminance_sensor: sensor.motion_illumination_kitchen_illuminance_lux
-        illuminance_below: 15
+        illuminance_below: 14
         sun_elevation_below: 7
         trigger_timeout: 60
         alt_trigger_timeouts: "17:00:00-22:00:00,1200;05:00:00-08:00:00,1200"
