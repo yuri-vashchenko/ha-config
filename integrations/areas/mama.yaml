@@ -58,5 +58,65 @@ homeassistant:
 
 light:
   - platform: switch
-    name: switch_mama
+    name: light_mama
     entity_id: switch.switch_mama
+
+# switches
+switch:
+  - platform: mqtt
+    name: switch_mqtt_mama
+    retain: true
+    command_topic: "home/mama/light"
+    state_topic: "home/mama/light"
+    payload_on: "on"
+    payload_off: "off"
+
+automation:
+  - id: mama_sync_switches
+    alias: "Mama synchronize mqtt and phisical switches"
+    trigger:
+      - platform: homeassistant
+        event: start
+        id: started
+      - platform: event
+        event_type: automation_reloaded
+        id: started
+      - platform: state
+        entity_id:
+          - switch.switch_mama
+          - switch.switch_mqtt_mama
+        id: switch_state_change
+    condition:
+      - alias: "main control"
+        condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+    action:
+      - alias: "Sync mqtt switch with phisical switch"
+        choose:
+        - conditions:
+            - alias: "on start"
+              condition: trigger
+              id: started
+          sequence:
+            - alias: "set mqtt switch to physical switch state"
+              service: mqtt.publish
+              data_template:
+                topic: "home/mama/light"
+                payload_template: "{{ states('switch.switch_mama') }}"
+        - conditions:
+            - alias: "on phisical switch state change"
+              condition: trigger
+              id: switch_state_change
+          sequence:
+            - alias: "check for valid states"
+              condition: template
+              value_template: "{{ trigger.to_state.state in ['on', 'off'] }}"
+            - alias: "set mqtt switch to new physical switch state"
+              service: "{{ 'switch.turn_' + trigger.to_state.state }}"
+              target:
+                entity_id:
+                  - switch.switch_mama
+                  - switch.switch_mqtt_mama
+    mode: single
+    max_exceeded: silent
