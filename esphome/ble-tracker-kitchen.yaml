@@ -33,39 +33,176 @@ esp32_ble_tracker:
 binary_sensor:
   - platform: ble_presence
     mac_address: FA:C7:AF:ED:9B:5E
-    name: kitchen_watch_0xfac7afed9b5e
-  - platform: ble_presence
-    mac_address: F2:5F:84:5D:3E:8F
-    name: kitchen_watch_0xf25f845d3e8f
+    name: kitchen_watch_papa
+    id: kitchen_watch_papa
+    on_state:
+      then:
+        - if:
+            condition: 
+              binary_sensor.is_on: kitchen_watch_papa
+            then:
+              - homeassistant.service:
+                  service: device_tracker.see
+                  data:
+                    dev_id: kitchen_watch_papa
+                    location_name: 'home'
+            else:
+              - homeassistant.service:
+                  service: device_tracker.see
+                  data:
+                    dev_id: kitchen_watch_papa
+                    location_name: 'not_home'
   - platform: ble_presence
     mac_address: D3:CC:FA:54:BA:EB
-    name: kitchen_mi_band4_0xd3ccfa54baeb
-  - platform: ble_presence
-    mac_address: E4:D6:5A:55:B3:42
-    name: kitchen_mi_band4_0xe4d65a55b342
+    name: kitchen_mi_band4_mama
+    id: kitchen_mi_band4_mama
+    on_state:
+      then:
+        - if:
+            condition: 
+              binary_sensor.is_on: kitchen_mi_band4_mama
+            then:
+              - homeassistant.service:
+                  service: device_tracker.see
+                  data:
+                    dev_id: kitchen_mi_band4_mama
+                    location_name: 'home'
+            else:
+              - homeassistant.service:
+                  service: device_tracker.see
+                  data:
+                    dev_id: kitchen_mi_band4_mama
+                    location_name: 'not_home'
   - platform: ble_presence
     mac_address: C0:09:0A:1B:2E:09
-    name: kitchen_mi_band5_0xc0090a1b2e09
+    name: kitchen_mi_band5_michael
+    id: kitchen_mi_band5_michael
+    on_state:
+      then:
+        - if:
+            condition: 
+              binary_sensor.is_on: kitchen_mi_band5_michael
+            then:
+              - homeassistant.service:
+                  service: device_tracker.see
+                  data:
+                    dev_id: kitchen_mi_band5_michael
+                    location_name: 'home'
+            else:
+              - homeassistant.service:
+                  service: device_tracker.see
+                  data:
+                    dev_id: kitchen_mi_band5_michael
+                    location_name: 'not_home'
   - platform: ble_presence
-    mac_address: C0:09:0A:15:2F:04
-    name: kitchen_mi_band5_0xc0090a152f04
+    mac_address: F2:54:2A:E6:F8:BD
+    name: kitchen_mi_band6_elena
+    id: kitchen_mi_band6_elena
+    on_state:
+      then:
+        - if:
+            condition: 
+              binary_sensor.is_on: kitchen_mi_band6_elena
+            then:
+              - homeassistant.service:
+                  service: device_tracker.see
+                  data:
+                    dev_id: kitchen_mi_band6_elena
+                    location_name: 'home'
+            else:
+              - homeassistant.service:
+                  service: device_tracker.see
+                  data:
+                    dev_id: kitchen_mi_band6_elena
+                    location_name: 'not_home'
+  - platform: ble_presence
+    mac_address: C1:09:0A:09:4C:4E
+    name: kitchen_mi_band6_yuri
+    id: kitchen_mi_band6_yuri
+    on_state:
+      then:
+        - if:
+            condition: 
+              binary_sensor.is_on: kitchen_mi_band6_yuri
+            then:
+              - homeassistant.service:
+                  service: device_tracker.see
+                  data:
+                    dev_id: kitchen_mi_band6_yuri
+                    location_name: 'home'
+            else:
+              - homeassistant.service:
+                  service: device_tracker.see
+                  data:
+                    dev_id: kitchen_mi_band6_yuri
+                    location_name: 'not_home'
+  - platform: ble_presence
+    mac_address: 5D:41:73:FC:62:60
+    name: kitchen_phone_mama
+    id: kitchen_phone_mama
+    on_state:
+      then:
+        - if:
+            condition: 
+              binary_sensor.is_on: kitchen_phone_mama
+            then:
+              - homeassistant.service:
+                  service: device_tracker.see
+                  data:
+                    dev_id: kitchen_phone_mama
+                    location_name: 'home'
+            else:
+              - homeassistant.service:
+                  service: device_tracker.see
+                  data:
+                    dev_id: kitchen_phone_mama
+                    location_name: 'not_home'
+
+  - platform: ble_presence
+    mac_address: 9C:E9:51:2A:74:82
+    name: kitchen_phone_papa
+    id: kitchen_phone_papa
+    on_state:
+      then:
+        - if:
+            condition: 
+              binary_sensor.is_on: kitchen_phone_papa
+            then:
+              - homeassistant.service:
+                  service: device_tracker.see
+                  data:
+                    dev_id: kitchen_phone_papa
+                    location_name: 'home'
+            else:
+              - homeassistant.service:
+                  service: device_tracker.see
+                  data:
+                    dev_id: kitchen_phone_papa
+                    location_name: 'not_home'
 
 sensor:
+  # ble trackers
   - platform: ble_rssi
     mac_address: FA:C7:AF:ED:9B:5E
-    name: kitchen_watch_0xfac7afed9b5e_rssi
-  - platform: ble_rssi
-    mac_address: F2:5F:84:5D:3E:8F
-    name: kitchen_watch_0xf25f845d3e8f_rssi
+    name: kitchen_watch_papa_rssi
   - platform: ble_rssi    
     mac_address: D3:CC:FA:54:BA:EB
-    name: kitchen_mi_band4_0xd3ccfa54baeb_rssi
-  - platform: ble_rssi
-    mac_address: E4:D6:5A:55:B3:42
-    name: kitchen_mi_band4_0xe4d65a55b342_rssi
+    name: kitchen_mi_band4_mama_rssi
   - platform: ble_rssi
     mac_address: C0:09:0A:1B:2E:09
-    name: kitchen_mi_band5_0xc0090a1b2e09_rssi
+    name: kitchen_mi_band5_michael_rssi
   - platform: ble_rssi
-    mac_address: C0:09:0A:15:2F:04
-    name: kitchen_mi_band5_0xc0090a152f04_rssi
+    mac_address: F2:54:2A:E6:F8:BD
+    name: kitchen_mi_band6_elena_rssi
+  - platform: ble_rssi
+    mac_address: C1:09:0A:09:4C:4E
+    name: kitchen_mi_band6_yuri_rssi
+  - platform: ble_rssi
+    mac_address: 5D:41:73:FC:62:60
+    name: kitchen_phone_mama_rssi
+  - platform: ble_rssi
+    mac_address: 9C:E9:51:2A:74:82
+    name: kitchen_phone_papa_rssi
+  - platform: ble_rssi
+    mac_address: E7:2E:00:12:68:F1
+    name: kitchen_0xe72e001268f1_rssi
