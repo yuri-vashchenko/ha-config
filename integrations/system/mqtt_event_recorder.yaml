@@ -39,3 +39,4 @@ automation:
             {{ 'events/date_time/' + trigger.to_state.object_id + '/' + trigger.to_state.state }}
           payload: "{{ now() }}"
           retain: true
+    mode: queued
