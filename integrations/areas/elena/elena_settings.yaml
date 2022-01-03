@@ -1,0 +1,40 @@
+# settings for devices in Elena room
+
+# Elena Air conditioner
+
+number:
+  # Low temperature threshold for 'cold' condition
+  - platform: mqtt
+    name: "Холодно, если температура ниже"
+    object_id: elena_ac_cold_threshold
+    icon: "mdi:thermometer-low"
+    command_topic: "home/elena/settings/ac/cold_threshold"
+    state_topic: "home/elena/settings/ac/cold_threshold"
+    min: 10.0
+    max: 25.0
+    step: 1
+    retain: true
+
+  # High temperature threshold for 'hot' condition
+  - platform: mqtt
+    name: "Жарко, если температура выше"
+    object_id: elena_ac_hot_threshold
+    icon: "mdi:thermometer-high"
+    command_topic: "home/elena/settings/ac/hot_threshold"
+    state_topic: "home/elena/settings/ac/hot_threshold"
+    min: 25.0
+    max: 40.0
+    step: 1
+    retain: true
+
+  # Doors open duration (seconds) to turn off the AC
+  - platform: mqtt
+    name: "Кондиционер выключится, если двери открыты дольше чем (секунд)"
+    object_id: elena_ac_door_open_duration
+    icon: "mdi:thermometer-high"
+    command_topic: "home/elena/settings/ac/door_open_duration"
+    state_topic: "home/elena/settings/ac/door_open_duration"
+    min: 0
+    max: 600
+    step: 1
+    retain: true

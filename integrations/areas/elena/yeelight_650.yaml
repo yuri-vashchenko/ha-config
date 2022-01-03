@@ -1,0 +1,101 @@
+# Yeelight ceiling light control
+
+# switches
+switch:
+  - platform: mqtt
+    name: elena_yeelight_main
+    retain: true
+    command_topic: "home/elena/yeelight/main"
+    state_topic: "home/elena/yeelight/main"
+    payload_on: "on"
+    payload_off: "off"
+  - platform: mqtt
+    name: elena_yeelight_nightlight
+    retain: true
+    command_topic: "home/elena/yeelight/nightlight"
+    state_topic: "home/elena/yeelight/nightlight"
+    payload_on: "on"
+    payload_off: "off"
+  - platform: mqtt
+    name: elena_yeelight_ambilight
+    retain: true
+    command_topic: "home/elena/yeelight/ambilight"
+    state_topic: "home/elena/yeelight/ambilight"
+    payload_on: "on"
+    payload_off: "off"
+
+# automation:
+#   - id: elena_yeelight_sync_switches
+#     alias: "Elena synchronize mqtt and phisical light states"
+#     trigger_variables:
+#       switch_list: >
+#         {{ expand('group.switch_elena_yeelight')|map(attribute='entity_id')|list }}
+#       light_list: >
+#         {{ expand('group.light_elena_yeelight')|map(attribute='entity_id')|list }}
+#       all_list: >
+#         {{ switch_list + light_list }}
+#     trigger:
+#       - platform: homeassistant
+#         event: start
+#         id: started
+#       - platform: event
+#         event_type: automation_reloaded
+#         id: started
+#       - platform: state
+#         entity_id:
+#           - "{{all_list}}"
+#         id: state_change
+#     condition:
+#       - alias: "main control"
+#         condition: state
+#         entity_id: binary_sensor.main_control
+#         state: "on"
+#       - alias: "light control"
+#         condition: state
+#         entity_id: binary_sensor.light_control
+#         state: "on"
+#     variables:
+#       switch_list: >
+#         {{ expand('group.switch_elena_yeelight')|map(attribute='entity_id')|list }}
+#       light_list: >
+#         {{ expand('group.light_elena_yeelight')|map(attribute='entity_id')|list }}
+#       all_list: >
+#         {{ switch_list + light_list }}
+#       entity_map: >
+#         {
+#           'switch.elena_yeelight_main' : 'light.elena_yeelight_650',
+#           'switch.elena_yeelight_nightlight' : 'light.elena_yeelight_650_nightlight',
+#           'switch.elena_yeelight_ambilight' : 'light.elena_yeelight_650_ambilight',
+#           'light.elena_yeelight_650' : 'switch.elena_yeelight_main',
+#           'light.elena_yeelight_650_nightlight' : 'switch.elena_yeelight_nightlight',
+#           'light.elena_yeelight_650_ambilight' : 'switch.elena_yeelight_ambilight',
+#         }
+#     action:
+#       - alias: "Sync mqtt switch with phisical switch"
+#         choose:
+#         - conditions:
+#             - alias: "on start/reload"
+#               condition: trigger
+#               id: started
+#           sequence:
+#             - alias: "set mqtt switch to physical light state"
+#               repeat:
+#                 count: "{{light_list|count}}"
+#                 sequence:
+#                   service: switch.turn_{{states(light_list[index - 1])}}
+#                   target:
+#                     entity_id: "{{entity_map[states(light_list[index - 1])]}}"
+#         - conditions:
+#             - alias: "on state change"
+#               condition: trigger
+#               id: state_change
+#           sequence:
+#             - alias: "check for valid states"
+#               condition: template
+#               value_template: "{{ trigger.to_state.state in ['on', 'off'] }}"
+#             - alias: "if light state changed, change switch state and vice versa"
+#               service: homeassistant.turn_{{trigger.to_state.state}}
+#               target:
+#                 entity_id: "{{entity_map[trigger.entity_id]}}"
+#     mode: single
+#     max_exceeded: silent
