@@ -34,6 +34,17 @@ select:
       - "192.168.0.5"
       - "192.168.0.8"
 
+  - platform: mqtt
+    name: climate_controller
+    command_topic: "automation_controller/climate"
+    state_topic: "automation_controller/climate"
+    retain: true
+    icon: "mdi:home-thermometer"
+    options:
+      - "none"
+      - "192.168.0.5"
+      - "192.168.0.8"
+
 binary_sensor:
   - platform: template
     sensors:
@@ -57,6 +68,14 @@ binary_sensor:
         value_template: >-
           {% set ip = states("sensor.local_ip") %}
           {% if is_state("select.sound_controller", ip) -%}
+              ON
+          {%- else -%}
+              OFF
+          {%- endif %}
+      climate_control:
+        value_template: >-
+          {% set ip = states("sensor.local_ip") %}
+          {% if is_state("select.climate_controller", ip) -%}
               ON
           {%- else -%}
               OFF
