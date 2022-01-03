@@ -1,0 +1,197 @@
+# Doorbell corridor
+
+script:
+  doorbell_action_single:
+    alias: "doorbell_action_single"
+    description: "doorbell action on single click"
+    use_blueprint:
+      path: "yuri-vashchenko/event_action.yaml"
+      input:
+        event_severity: "notification"
+        event_type: "doorbell"
+        event_id: "single"
+        ringtone_id: "10"
+        announcement_message: "Кто-то пришёл. Откройте дверь!"
+        wait_entity: binary_sensor.door_entrance_contact
+        wait_entity_state: 'on'
+
+  doorbell_action_double:
+    alias: "doorbell_action_double"
+    description: "doorbell action on double click"
+    use_blueprint:
+      path: "yuri-vashchenko/event_action.yaml"
+      input:
+        event_severity: "notification"
+        event_type: "doorbell"
+        event_id: "double"
+        ringtone_id: "11"
+        announcement_message: "Кто-то свой пришёл. Откройте дверь!"
+        wait_entity: binary_sensor.door_entrance_contact
+        wait_entity_state: 'on'
+
+  doorbell_action_triple:
+    alias: "doorbell_action_triple"
+    description: "doorbell action on triple click"
+    use_blueprint:
+      path: "yuri-vashchenko/event_action.yaml"
+      input:
+        event_severity: "notification"
+        event_type: "doorbell"
+        event_id: "triple"
+        ringtone_id: "12"
+        announcement_message: "Юра пришёл. Откройте дверь!"
+        wait_entity: binary_sensor.door_entrance_contact
+        wait_entity_state: 'on'
+
+  doorbell_action_quadruple:
+    alias: "doorbell_action_quadruple"
+    description: "doorbell action on quadruple click"
+    use_blueprint:
+      path: "yuri-vashchenko/event_action.yaml"
+      input:
+        event_severity: "notification"
+        event_type: "doorbell"
+        event_id: "quadruple"
+        ringtone_id: "20"
+        ringtone_volume: "70"
+        announcement_message: "Лена пришла. Откройте дверь!"
+        wait_entity: binary_sensor.door_entrance_contact
+        wait_entity_state: 'on'
+
+  doorbell_action_hold:
+    alias: "doorbell_action_hold"
+    description: "doorbell action on hold"
+    use_blueprint:
+      path: "yuri-vashchenko/event_action.yaml"
+      input:
+        event_severity: "notification"
+        event_type: "doorbell"
+        event_id: "hold"
+        ringtone_id: "8"
+        announcement_message: "Кто-то пришёл. Откройте дверь!"
+        wait_entity: binary_sensor.door_entrance_contact
+        wait_entity_state: 'on'
+
+sensor:
+  - platform: mqtt
+    name: corridor_doorbell_state
+    state_topic: "home/corridor/doorbell/state"
+
+select:
+  - platform: mqtt
+    command_topic: "home/corridor/doorbell/state"
+    state_topic: "home/corridor/doorbell/state"
+    name: corridor_doorbell
+    options:
+      - "off"
+      - "single"
+      - "double"
+      - "triple"
+      - "quadruple"
+      - "hold"
+      - "release"
+      - "many"
+
+automation:
+  - id: corridor_doorbell_control
+    alias: corridor_doorbell_control
+    trigger:
+      - platform: state
+        entity_id: sensor.button_doorbell_action
+        to:
+        - "single"
+        - "double"
+        - "triple"
+        - "quadruple"
+        - "hold"
+        - "release"
+        - "many"
+    condition:
+      - alias: "main control"
+        condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+    action:
+      - alias: "publish mqtt message on button click"
+        service: mqtt.publish
+        data_template:
+          topic: "home/corridor/doorbell/state"
+          payload_template: "{{ trigger.to_state.state or 'off' }}"
+    mode: queued
+
+  - id: corridor_doorbell_mqtt_control
+    alias: corridor_doorbell_mqtt_control
+    trigger:
+      - platform: mqtt
+        topic: "home/corridor/doorbell/state"
+        payload: "off"
+        id: "off"
+      - platform: mqtt
+        topic: "home/corridor/doorbell/state"
+        payload: "single"
+        id: "single"
+      - platform: mqtt
+        topic: "home/corridor/doorbell/state"
+        payload: "double"
+        id: "double"
+      - platform: mqtt
+        topic: "home/corridor/doorbell/state"
+        payload: "triple"
+        id: "triple"
+      - platform: mqtt
+        topic: "home/corridor/doorbell/state"
+        payload: "quadruple"
+        id: "quadruple"
+      - platform: mqtt
+        topic: "home/corridor/doorbell/state"
+        payload: "hold"
+        id: "hold"
+      - platform: mqtt
+        topic: "home/corridor/doorbell/state"
+        payload: "release"
+        id: "release"
+      - platform: mqtt
+        topic: "home/corridor/doorbell/state"
+        payload: "many"
+        id: "many"
+      - platform: mqtt
+        topic: "home/corridor/doorbell/state"
+        payload: "undefined"
+        id: "undefined"
+    condition:
+      condition: state
+      entity_id: binary_sensor.main_control
+      state: "on"
+    action:
+      choose:
+        - alias: "single"
+          conditions:
+            condition: trigger
+            id: "single"
+          sequence:
+            service: script.doorbell_action_single
+        - alias: "double"
+          conditions:
+            condition: trigger
+            id: "double"
+          sequence:
+            service: script.doorbell_action_double
+        - alias: "triple"
+          conditions:
+            condition: trigger
+            id: "triple"
+          sequence:
+            service: script.doorbell_action_triple
+        - alias: "quadruple"
+          conditions:
+            condition: trigger
+            id: "quadruple"
+          sequence:
+            service: script.doorbell_action_quadruple
+        - alias: "hold"
+          conditions:
+            condition: trigger
+            id: "hold"
+          sequence:
+            service: script.doorbell_action_hold
+    mode: queued

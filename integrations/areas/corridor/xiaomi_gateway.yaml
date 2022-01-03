@@ -1,0 +1,31 @@
+# Xiaomi gateway
+
+# topic: home/xiaomi/play_ringtone
+# payload: {"ringtone": "28", "volume": "100"}
+
+automation:
+  - id: Play ringtone on Xiaomi gateway
+    alias: xiaomi_gateway_play_ringtone_on_mqtt
+    initial_state: true
+    trigger:
+      - platform: mqtt
+        topic: "home/system/notification/xiaomi/play_ringtone"
+    condition:
+      - alias: "sound controller"
+        condition: state
+        entity_id: binary_sensor.sound_control
+        state: "on"
+    variables:
+      mac: >
+        {{ trigger.payload_json['mac'] or '50EC50C4F23D' }}
+      ringtone: >
+        {{ trigger.payload_json['ringtone'] or '10' }}
+      volume: >
+        {{ trigger.payload_json['volume'] or '100' }}
+    action:
+      - alias: "play ringtone"
+        service: xiaomi_aqara.play_ringtone
+        data_template:
+          gw_mac: "{{ mac }}"
+          ringtone_id: "{{ ringtone }}"
+          ringtone_vol: "{{ volume }}"
