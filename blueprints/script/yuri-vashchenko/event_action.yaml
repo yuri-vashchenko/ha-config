@@ -1,0 +1,143 @@
+# Action to execute on different events
+blueprint:
+  name: event_action
+  description: A script that triggers speakers 'say', xiaomi_gateway play ringtone and RGB LED illumination
+  source_url: https://gist.github.com/yuri-vashchenko/
+  domain: script
+  homeassistant:
+    min_version: 2021.11.0
+  input:
+    event_severity:
+      name: Event severity
+      description: severity of event
+      default:
+      selector:
+        text:
+    event_type:
+      name: Event type
+      description: type of event
+      default:
+      selector:
+        text:
+    event_id:
+      name: Event id
+      description: id of event
+      default:
+      selector:
+        text:
+    announcement_message:
+      name: Spoken message
+      description: Type your message here
+      default:
+      selector:
+        text:
+          multiline: true
+    announcement_volume:
+      name: Announcement Volume level
+      description: Volume level (percent) is an integer from 0 to 100
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+          mode: slider
+      default: 80
+    ringtone_id:
+      name: Ringtone ID
+      # https://www.home-assistant.io/integrations/xiaomi_aqara/#service-xiaomi_aqaraplay_ringtone
+      description: Ringtone id
+      default: 10
+      selector:
+        number:
+          min: 0
+          max: 100000
+          step: 1
+          mode: box
+    ringtone_volume:
+      name: Ringtone Volume level
+      description: Volume level is an integer number from 0 to 100
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+          mode: slider
+      default: 100
+    gateway_mac:
+      name: Xiaomi aqara gateway MAC
+      description: Xiaomi aqara gateway MAC address to play ringtone on
+      selector:
+        text:
+      default: "50EC50C4F23D"
+    wait_entity:
+      name: Clear event Entity ID
+      description: Entity to wait for state change to clear event
+      selector:
+        entity:
+    wait_entity_state:
+      name: Clear event entity state
+      description: Entity state to wait for state change to clear event
+      selector:
+        text:
+mode: restart
+variables:
+  event_severity: !input 'event_severity'
+  event_type: !input 'event_type'
+  event_id: !input 'event_id'
+  announcement_message: !input 'announcement_message'
+  announcement_volume: !input 'announcement_volume'
+  ringtone_id: !input 'ringtone_id'
+  ringtone_volume: !input 'ringtone_volume'
+  gateway_mac: !input 'gateway_mac'
+  play_ringtone_payload: >
+    {{"{\"mac\": \"" + gateway_mac + "\",
+      \"ringtone\": \"" + ringtone_id | string + "\",
+      \"volume\": \"" + ringtone_volume | string + "\"}"}}
+  announcement_payload: >
+    {{"{\"message\": \"" + announcement_message + "\",
+      \"volume\": \"" + announcement_volume | string + "\"}"}}
+sequence:
+- alias: "record doorbell trigger"
+  service: mqtt.publish
+  data_template:
+    topic: >
+      {{ "events/date_time/" + event_severity + "/" + event_type + "/" +
+        event_id }}
+    payload_template: "{{ now() }}"
+    retain: true
+- alias: "record doorbell trigger (any)"
+  service: mqtt.publish
+  data_template:
+    topic: >
+      {{"events/date_time/" + event_severity + "/" + event_type }}
+    payload_template: "{{ now() }}"
+    retain: true
+- alias: "publish play ringtone mqtt message"
+  service: mqtt.publish
+  data_template:
+    topic: "home/system/notification/xiaomi/play_ringtone"
+    payload_template: "{{play_ringtone_payload}}"
+- alias: "publish announcement mqtt message"
+  service: mqtt.publish
+  data_template:
+    topic: "home/system/announcement/all"
+    payload_template: "{{announcement_payload}}"
+- alias: "publish warning mqtt message for RBG LED state"
+  service: mqtt.publish
+  data_template:
+    topic: >
+      {{ "home/system/" + event_severity + "/on" }}
+    payload: "true"
+    retain: false
+- alias: "wait for door opened"
+  wait_for_trigger:
+    platform: state
+    entity_id: !input wait_entity
+    to: !input wait_entity_state
+- alias: "disable RGB LED warning by publishing mqtt message"
+  service: mqtt.publish
+  data:
+    topic: >
+      {{ "home/system/" + event_severity + "/on" }}
+    payload: "false"
+    retain: false
