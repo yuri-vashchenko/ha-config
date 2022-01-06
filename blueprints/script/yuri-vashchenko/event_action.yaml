@@ -10,9 +10,13 @@ blueprint:
     event_severity:
       name: Event severity
       description: severity of event
-      default:
+      default: "notification"
       selector:
-        text:
+        select:
+          options:
+            - notification
+            - warning
+            - alarm
     event_type:
       name: Event type
       description: type of event
@@ -26,8 +30,8 @@ blueprint:
       selector:
         text:
     announcement_message:
-      name: Spoken message
-      description: Type your message here
+      name: announcement_message_on_event_start
+      description: Message to say when event happens
       default:
       selector:
         text:
@@ -42,6 +46,35 @@ blueprint:
           step: 1
           mode: slider
       default: 80
+    announcement_message_repeat:
+      name: announcement_message_to_repeat_until_event_ends
+      description: Message to repeat while event is in progress
+      default: ""
+      selector:
+        text:
+          multiline: true
+    announcement_message_end:
+      name: announcement_message_to_say_on_event_end
+      description: Message to say when event ended
+      default: ""
+      selector:
+        text:
+          multiline: true
+    delay_between_repeats:
+      name: delay_between_messages_repeat
+      description: delay between messages repeat
+      default:
+        seconds: 60
+      selector:
+        time:
+    max_repeats:
+      name: maximum_number_of_repeats
+      description: maximum number of repeats
+      default: 0
+      selector:
+        number:
+          max: 100
+          min: 0
     ringtone_id:
       name: Ringtone ID
       # https://www.home-assistant.io/integrations/xiaomi_aqara/#service-xiaomi_aqaraplay_ringtone
@@ -82,34 +115,62 @@ blueprint:
 mode: restart
 variables:
   event_severity: !input 'event_severity'
-  event_type: !input 'event_type'
+  _event_type: !input 'event_type'
+  event_type: "{{ _event_type or '' | lower | trim }}"
   event_id: !input 'event_id'
-  announcement_message: !input 'announcement_message'
+  _announcement_message: !input 'announcement_message'
+  _am: "{{ _announcement_message or '' }}"
+  announcement_message: >-
+    {% if _am == '' %}
+      {% if event_type == "notification" %}
+        Уведомление
+      {% elif _event_type == "warning" %}
+        Внимание!
+      {% elif _event_type == "alarm" %}
+        Тревога!
+      {% endif %}
+    {% else %}
+      {{ _am }}
+    {% endif %}
   announcement_volume: !input 'announcement_volume'
+  _announcement_message_repeat: !input 'announcement_message_repeat'
+  announcement_message_repeat: >-
+    {{ _announcement_message_repeat or "Повторяю! " + announcement_message }}
+  _announcement_message_end: !input 'announcement_message_end'
+  announcement_message_end: "{{ _announcement_message_end or '' }}"
   ringtone_id: !input 'ringtone_id'
   ringtone_volume: !input 'ringtone_volume'
   gateway_mac: !input 'gateway_mac'
+  max_repeats: !input 'max_repeats'
+  wait_entity: !input 'wait_entity'
+  _wait_entity_state: !input 'wait_entity_state'
+  wait_entity_state: "{{ _wait_entity_state or '' }}"
   play_ringtone_payload: >
-    {{"{\"mac\": \"" + gateway_mac + "\",
-      \"ringtone\": \"" + ringtone_id | string + "\",
-      \"volume\": \"" + ringtone_volume | string + "\"}"}}
+    {"mac": "{{ gateway_mac }}",
+      "ringtone": "{{ ringtone_id }}",
+      "volume": "{{ ringtone_volume }}"}
   announcement_payload: >
-    {{"{\"message\": \"" + announcement_message + "\",
-      \"volume\": \"" + announcement_volume | string + "\"}"}}
+    {"message": "{{ announcement_message }}",
+      "volume": "{{ announcement_volume }}"}
+  announcement_payload_repeat: >
+    {"message": "{{ announcement_message_repeat }}",
+      "volume": "{{ announcement_volume }}"}
+  announcement_payload_end: >
+    {"message": "{{ announcement_message_end }}",
+      "volume": "{{ announcement_volume }}"}
 sequence:
-- alias: "record doorbell trigger"
+- alias: "record event trigger date time"
   service: mqtt.publish
   data_template:
     topic: >
-      {{ "events/date_time/" + event_severity + "/" + event_type + "/" +
-        event_id }}
+      events/date_time/{{ event_severity }}/{{ event_type }}/{{ event_id }}
     payload_template: "{{ now() }}"
     retain: true
-- alias: "record doorbell trigger (any)"
+- alias: "record event trigger (any)"
   service: mqtt.publish
   data_template:
     topic: >
-      {{"events/date_time/" + event_severity + "/" + event_type }}
+      events/date_time/{{ event_severity }}/{{ event_type }}
     payload_template: "{{ now() }}"
     retain: true
 - alias: "publish play ringtone mqtt message"
@@ -122,22 +183,48 @@ sequence:
   data_template:
     topic: "home/system/announcement/all"
     payload_template: "{{announcement_payload}}"
-- alias: "publish warning mqtt message for RBG LED state"
+- alias: "publish notification/warning/alarm mqtt message ON"
   service: mqtt.publish
   data_template:
-    topic: >
-      {{ "home/system/" + event_severity + "/on" }}
+    topic: "home/system/{{ event_severity }}/on"
     payload: "true"
     retain: false
-- alias: "wait for door opened"
-  wait_for_trigger:
-    platform: state
-    entity_id: !input wait_entity
-    to: !input wait_entity_state
-- alias: "disable RGB LED warning by publishing mqtt message"
+- alias: "wait for event end"
+  repeat:
+    while: >
+      {{ (states(wait_entity) or '') != wait_entity_state and
+        (max_repeats == 0 or repeat.index <= max_repeats) }}
+    sequence:
+      - alias: "publish play ringtone mqtt message"
+        service: mqtt.publish
+        data_template:
+          topic: "home/system/notification/xiaomi/play_ringtone"
+          payload_template: "{{play_ringtone_payload}}"
+      - alias: "publish announcement mqtt message"
+        service: mqtt.publish
+        data_template:
+          topic: "home/system/announcement/all"
+          payload_template: "{{ announcement_payload_repeat }}"
+      - alias: "publish notification/warning/alarm mqtt message ON"
+        service: mqtt.publish
+        data_template:
+          topic: "home/system/{{ event_severity }}/on"
+          payload: "true"
+          retain: false
+      - alias: "delay"
+        wait_template: >
+          {{ (states(wait_entity) or '') != wait_entity_state }}
+        timeout: !input 'delay_between_repeats'
+- alias: "publish notification/warning/alarm mqtt message OFF"
   service: mqtt.publish
   data:
-    topic: >
-      {{ "home/system/" + event_severity + "/on" }}
+    topic: "home/system/{{ event_severity }}/on"
     payload: "false"
     retain: false
+- condition: template
+  value_template: "{{ announcement_message_end != '' }}"
+- alias: "publish announcement mqtt message"
+  service: mqtt.publish
+  data_template:
+    topic: "home/system/announcement/all"
+    payload_template: "{{ announcement_payload_end }}"
