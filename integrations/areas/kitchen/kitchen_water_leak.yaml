@@ -1,0 +1,56 @@
+# Кухня. Утечка воды
+
+homeassistant:
+  # customizations
+  customize_glob:
+    # Сенсоры и датчики
+    "*water_leak_kitchen*":
+      friendly_name: Кухня утечка воды
+
+binary_sensor:
+  - platform: mqtt
+    name: kitchen_water_leak
+    state_topic: "home/kitchen/water_leak"
+    payload_on: "on"
+    payload_off: "off"
+
+script:
+  kitchen_water_leak_triggered:
+    alias: "Kitchen water leak detector triggered"
+    description: "Kitchen water leak detector triggered"
+    use_blueprint:
+      path: "yuri-vashchenko/event_action.yaml"
+      input:
+        event_severity: "alarm"
+        event_type: "kitchen"
+        event_id: "water_leak"
+        ringtone_id: "2"
+        ringtone_volume: "100"
+        announcement_message: "Тревога! Обнаружена протечка воды на кухне"
+        wait_entity: binary_sensor.kitchen_water_leak
+        wait_entity_state: 'off'
+        delay_between_repeats: "00:01:00"
+        max_repeats: 0
+        announcement_message_end: "Протечка воды на кухне устранена"
+
+automation:
+  - id: kitchen_water_leak_detector_publish_mqtt
+    alias: kitchen_water_leak_detector_publish_mqtt
+    description: "publish MQTT message when kitchen water leak detector state changes"
+    use_blueprint:
+      path: yuri-vashchenko/publish_mqtt_on_entity_state_change.yaml
+      input:
+        trigger_entity: binary_sensor.water_leak_kitchen_water_leak
+        topic: "home/kitchen/water_leak"
+        retain: true
+        enabling_entity: binary_sensor.main_control
+  - id: kitchen_water_leak_detector_alarm
+    alias: kitchen_water_leak_detector_alarm
+    description: "Trigger alarm on MQTT message when kitchen water leak triggers"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.kitchen_water_leak
+        to: 'on'
+    condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
+    action:
+      service: script.kitchen_water_leak_triggered

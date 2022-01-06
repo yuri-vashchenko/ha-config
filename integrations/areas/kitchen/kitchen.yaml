@@ -27,8 +27,6 @@ homeassistant:
 
   customize_glob:
     # Сенсоры и датчики
-    "*water_leak_kitchen*":
-      friendly_name: Кухня утечка воды
 
     "*motion_kitchen*":
       friendly_name: Кухня движение
@@ -48,10 +46,6 @@ homeassistant:
     # Кухонный выключатель
     "*.switch_kitchen*":
       friendly_name: Кухонный выключатель
-
-    # Детекторы дыма
-    "*smoke_detector_kitchen*":
-      friendly_name: Кухонный детектор дыма
 
 # Kitchen power strip - convert power to energy to be able to monitor daily consumption
 sensor:
@@ -124,6 +118,7 @@ media_player:
     device_code: 1061
     controller_data: remote.remote_broadlink_kitchen
     power_sensor: binary_sensor.kitchen_tv_power
+
 
 automation:
   - id: kitchen_hold_light_on_timer

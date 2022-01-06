@@ -13,3 +13,51 @@ homeassistant:
       friendly_name: Ванна утечка воды
     "*plug_bathroom_washer*":
       friendly_name: Розетка стиральной машины
+
+binary_sensor:
+  - platform: mqtt
+    name: bathroom_water_leak
+    state_topic: "home/bathroom/water_leak"
+    payload_on: "on"
+    payload_off: "off"
+
+script:
+  bathroom_water_leak_triggered:
+    alias: "bathroom water leak detector triggered"
+    description: "bathroom water leak detector triggered"
+    use_blueprint:
+      path: "yuri-vashchenko/event_action.yaml"
+      input:
+        event_severity: "alarm"
+        event_type: "bathroom"
+        event_id: "water_leak"
+        ringtone_id: "2"
+        ringtone_volume: "100"
+        announcement_message: "Тревога! Обнаружена протечка воды на кухне"
+        wait_entity: binary_sensor.bathroom_water_leak
+        wait_entity_state: 'off'
+        delay_between_repeats: "00:01:00"
+        max_repeats: 0
+        announcement_message_end: "Протечка воды на кухне устранена"
+
+automation:
+  - id: bathroom_water_leak_detector_publish_mqtt
+    alias: bathroom_water_leak_detector_publish_mqtt
+    description: "publish MQTT message when bathroom water leak detector state changes"
+    use_blueprint:
+      path: yuri-vashchenko/publish_mqtt_on_entity_state_change.yaml
+      input:
+        trigger_entity: binary_sensor.water_leak_bathroom_water_leak
+        topic: "home/bathroom/water_leak"
+        retain: true
+        enabling_entity: binary_sensor.main_control
+  - id: bathroom_water_leak_detector_alarm
+    alias: bathroom_water_leak_detector_alarm
+    description: "Trigger alarm on MQTT message when bathroom water leak triggers"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.bathroom_water_leak
+        to: 'on'
+    condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
+    action:
+      service: script.bathroom_water_leak_triggered
