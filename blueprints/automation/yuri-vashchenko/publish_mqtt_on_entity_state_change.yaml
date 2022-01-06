@@ -1,0 +1,80 @@
+blueprint:
+  name: publish MQTT message on entity state change
+  description: This blueprint publishes MQTT message on entity state change
+  source_url: "https://gist.github.com/yuri-vashchenko/"
+  domain: automation
+  homeassistant:
+    min_version: 2021.11.0
+  input:
+    trigger_entity:
+      name: Trigger Entity
+      description: When trigger entity changes its state corresponding MQTT
+        message will be published
+      selector:
+        entity: {}
+    topic:
+      name: topic
+      description: topic to publish MQTT message to
+      selector:
+        text:
+          multiline: false
+    retain:
+      name: retain
+      description: retain MQTT message
+      default: false
+      selector:
+        boolean:
+    enabling_entity:
+      name: (Optional) Enabling entity
+      description: If this entity's state is set to enable entity state (see below)
+        automation will trigger. This may be used to make automation triggering based
+        on other entity state
+      default:
+      selector:
+        entity: {}
+    enabling_entity_state:
+      name: (Optional) Enabling entity state
+      description: If enabling entity is in this state the automation will trigger
+      default: 'on'
+      selector:
+        entity:
+          domain: input_text
+variables:
+  enabling_entity: !input 'enabling_entity'
+  enabling_entity_state: !input 'enabling_entity_state'
+  trigger_entity: !input 'trigger_entity'
+trigger:
+  - platform: homeassistant
+    event: "start"
+    id: "start"
+  - platform: event
+    event_type: automation_reloaded
+    id: "start"
+  - platform: state
+    entity_id: !input "trigger_entity"
+    id: "state"
+condition: >
+  {{ enabling_entity == none or is_state(enabling_entity, enabling_entity_state) }}
+action:
+  choose:
+    - alias: "start"
+      conditions:
+        condition: trigger
+        id: "start"
+      sequence:
+        service: mqtt.publish
+        data:
+          topic: !input 'topic'
+          payload: "{{ states(trigger_entity) }}"
+          retain: !input 'retain'
+    - alias: "state"
+      conditions:
+        condition: trigger
+        id: "state"
+      sequence:
+        service: mqtt.publish
+        data:
+          topic: !input 'topic'
+          payload: "{{ trigger.to_state.state }}"
+          retain: !input 'retain'
+mode: queued

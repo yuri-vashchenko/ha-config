@@ -1,0 +1,17 @@
+# Notification/Warning/Alarm
+binary_sensor:
+  - platform: mqtt
+    name: is_notification
+    state_topic: "home/system/notification/on"
+    payload_on: "true"
+    payload_off: "false"
+  - platform: mqtt
+    name: is_warning
+    state_topic: "home/system/warning/on"
+    payload_on: "true"
+    payload_off: "false"
+  - platform: mqtt
+    name: is_alarm
+    state_topic: "home/system/alarm/on"
+    payload_on: "true"
+    payload_off: "false"

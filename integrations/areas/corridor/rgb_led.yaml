@@ -32,7 +32,7 @@ automation:
         id: "temperature"
       - platform: mqtt
         topic: "home/corridor/rgb_led/state"
-        payload: "nofitication"
+        payload: "notification"
         id: "notification"
       - platform: mqtt
         topic: "home/corridor/rgb_led/state"
@@ -66,4 +66,34 @@ automation:
               entity_id: light.rgb_led_light
             data:
               effect: "Temperature"
+        - alias: corridor_rgb_led_notification
+          conditions:
+            condition: trigger
+            id: "notification"
+          sequence:
+            service: light.turn_on
+            target:
+              entity_id: light.rgb_led_light
+            data:
+              effect: "notification"
+        - alias: corridor_rgb_led_warning
+          conditions:
+            condition: trigger
+            id: "warning"
+          sequence:
+            service: light.turn_on
+            target:
+              entity_id: light.rgb_led_light
+            data:
+              effect: "warning"
+        - alias: corridor_rgb_led_alarm
+          conditions:
+            condition: trigger
+            id: "alarm"
+          sequence:
+            service: light.turn_on
+            target:
+              entity_id: light.rgb_led_light
+            data:
+              effect: "alarm"
     mode: restart
