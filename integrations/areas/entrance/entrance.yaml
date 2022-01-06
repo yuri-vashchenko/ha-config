@@ -17,6 +17,25 @@ homeassistant:
     "*158d00041d99a1*":
       friendly_name: Кнопка звонка
 
+script:
+  entrance_door_opened:
+    alias: "Entrance doorbell opened for too long"
+    description: "Entrance doorbell opened for too long"
+    use_blueprint:
+      path: "yuri-vashchenko/event_action.yaml"
+      input:
+        event_severity: "warning"
+        event_type: "entrance_door"
+        event_id: "opened"
+        ringtone_id: "29"
+        ringtone_volume: "70"
+        announcement_message: "Внимание! Входная дверь открыта"
+        wait_entity: binary_sensor.door_entrance_contact
+        wait_entity_state: 'off'
+        delay_between_repeats: "00:01:00"
+        max_repeats: 0
+        announcement_message_end: "Входная дверь закрыта"
+
 automation:
   - id: Entrance_light_on_motion
     alias: Entrance_light_on_motion
@@ -44,44 +63,5 @@ automation:
         entity_id: binary_sensor.main_control
         state: "on"
     action:
-      - alias: "Publish Warning"
-        service: mqtt.publish
-        data:
-          topic: "warning/entrance_door_opened"
-          payload: "on"
-          retain: false
-      - wait_for_trigger:
-        - platform: state
-          entity_id: binary_sensor.door_entrance_contact
-          to: "off"
-      - alias: "Publish Warning"
-        service: mqtt.publish
-        data:
-          topic: "warning/entrance_door_opened"
-          payload: "off"
-          retain: false
+      service: script.entrance_door_opened
     mode: restart
-
-  - id: Announce_opened_entrance_door
-    alias: Announce_opened_entrance_door
-    initial_state: true
-    trigger:
-      - platform: mqtt
-        topic: "warning/entrance_door_opened"
-    variables:
-      message: >-
-        {% if (trigger.payload == 'on') %}
-          "Внимание! Входная дверь открыта!"
-        {% elif (trigger.payload == 'off') %}
-          "Входная дверь закрыта"
-        {% endif %}
-    condition:
-      condition: state
-      entity_id: binary_sensor.sound_control
-      state: "on"
-    action:
-      - alias: "announce opened / closed door"
-        service: script.all_say
-        data_template:
-          message: "{{ message }}"
-          volume: 0.8
