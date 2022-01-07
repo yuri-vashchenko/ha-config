@@ -8,7 +8,7 @@ homeassistant:
     "*158d000544a1a2*":
       friendly_name: Входная дверь
 
-    "*door_entrance*":
+    "*entrance_door*":
       friendly_name: Входная дверь
 
     # Выключатели, кнопки
@@ -30,8 +30,8 @@ script:
         ringtone_id: "29"
         ringtone_volume: "70"
         announcement_message: "Внимание! Входная дверь открыта"
-        wait_entity: binary_sensor.door_entrance_contact
-        wait_entity_state: 'off'
+        wait_entity: binary_sensor.entrance_door_contact
+        wait_entity_state: "off"
         delay_between_repeats: "00:01:00"
         max_repeats: 0
         announcement_message_end: "Входная дверь закрыта"
@@ -43,8 +43,8 @@ automation:
     use_blueprint:
       path: kevinxw/state_based_entity_control.yaml
       input:
-        trigger_entity: binary_sensor.motion_entrance_occupancy
-        target_entity: switch.switch_entrance
+        trigger_entity: binary_sensor.entrance_motion_occupancy
+        target_entity: switch.entrance_switch_light
         blocker_entity: binary_sensor.light_control
         blocker_entity_state: "off"
         trigger_timeout: 60
@@ -54,7 +54,7 @@ automation:
     initial_state: true
     trigger:
       - platform: state
-        entity_id: binary_sensor.door_entrance_contact
+        entity_id: binary_sensor.entrance_door_contact
         to: "on"
         for:
           seconds: "{{states('number.entrance_door_warning_open_duration') | int}}"

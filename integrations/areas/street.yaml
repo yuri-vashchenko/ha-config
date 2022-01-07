@@ -3,13 +3,13 @@
 homeassistant:
   customize:
     # Влажность и температура
-    sensor.temperature_humidity_street_temperature:
+    sensor.street_thermometer_temperature:
       friendly_name: Улица температура
-    sensor.temperature_humidity_street_humidity:
+    sensor.street_thermometer_humidity:
       friendly_name: Улица влажность
-    sensor.temperature_humidity_street_pressure:
+    sensor.street_thermometer_pressure:
       friendly_name: Улица давление
-    sensor.temperature_humidity_street_battery:
+    sensor.street_thermometer_battery:
       friendly_name: Улица климат
-    sensor.temperature_humidity_street_linkquality:
+    sensor.street_thermometer_linkquality:
       friendly_name: Улица климат

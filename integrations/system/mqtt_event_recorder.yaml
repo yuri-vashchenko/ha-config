@@ -7,28 +7,28 @@ automation:
       - platform: state
         entity_id:
           # Water leak detectors
-          - binary_sensor.water_leak_toilet_water_leak
-          - binary_sensor.water_leak_bathroom_water_leak
-          - binary_sensor.water_leak_kitchen_water_leak
+          - binary_sensor.toilet_water_leak_water_leak
+          - binary_sensor.bathroom_water_leak_water_leak
+          - binary_sensor.kitchen_water_leak_water_leak
           # Motion sensors
-          - binary_sensor.motion_corridor_occupancy
-          - binary_sensor.motion_elena_occupancy
-          - binary_sensor.motion_entrance_occupancy
-          - binary_sensor.motion_illumination_entrance_occupancy
-          - binary_sensor.motion_illumination_kitchen_occupancy
-          - binary_sensor.motion_kitchen_occupancy
-          - binary_sensor.motion_mama_occupancy
-          - binary_sensor.motion_michael_occupancy
-          - binary_sensor.motion_svetlana_occupancy
+          - binary_sensor.corridor_motion_bathroom_occupancy
+          - binary_sensor.elena_motion_occupancy
+          - binary_sensor.entrance_motion_occupancy
+          - binary_sensor.corridor_motion_entrance_occupancy
+          - binary_sensor.kitchen_motion_sink_occupancy
+          - binary_sensor.kitchen_motion_window_occupancy
+          - binary_sensor.mama_motion_occupancy
+          - binary_sensor.michael_motion_occupancy
+          - binary_sensor.svetlana_motion_occupancy
           # Doors/windows
-          - binary_sensor.window_balcony_left_contact
-          - binary_sensor.window_balcony_middle_contact
-          - binary_sensor.window_balcony_right_contact
-          - binary_sensor.door_elena_contact
-          - binary_sensor.door_entrance_contact
-          - binary_sensor.door_balcony_contact
-          - binary_sensor.0x158d000482ffe3_contact
-          - binary_sensor.0x158d00054481d7_contact
+          - binary_sensor.balcony_window_left_contact
+          - binary_sensor.balcony_window_middle_contact
+          - binary_sensor.balcony_window_right_contact
+          - binary_sensor.elena_door_contact
+          - binary_sensor.entrance_door_contact
+          - binary_sensor.balcony_elena_door_contact
+          - binary_sensor.balcony_window_right_contact
+          - binary_sensor.balcony_window_middle_contact
     condition:
       - "{{ is_state('binary_sensor.main_control', 'on') }}"
     action:

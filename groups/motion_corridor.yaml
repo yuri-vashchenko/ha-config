@@ -1,6 +1,0 @@
-motion_corridor:
-  name: Движение в коридоре
-  entities:
-    - binary_sensor.motion_corridor_occupancy
-    - binary_sensor.motion_illumination_entrance_occupancy
-  icon: mdi:motion-sensor

@@ -203,6 +203,3 @@ sensor:
   - platform: ble_rssi
     mac_address: 9C:E9:51:2A:74:82
     name: kitchen_phone_papa_rssi
-  - platform: ble_rssi
-    mac_address: E7:2E:00:12:68:F1
-    name: kitchen_0xe72e001268f1_rssi

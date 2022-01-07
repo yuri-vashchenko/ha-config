@@ -5,7 +5,7 @@ homeassistant:
   customize_glob:
     # Сенсоры и датчики
     # Детекторы дыма
-    "*smoke_detector_kitchen*":
+    "*kitchen_smoke_detector*":
       friendly_name: Кухонный детектор дыма
 
 binary_sensor:
@@ -29,7 +29,7 @@ script:
         ringtone_volume: "100"
         announcement_message: "Тревога! Дым на кухне"
         wait_entity: binary_sensor.kitchen_smoke_detector
-        wait_entity_state: 'off'
+        wait_entity_state: "off"
         delay_between_repeats: "00:01:00"
         max_repeats: 0
         announcement_message_end: "Тревога на дым отключена"
@@ -41,7 +41,7 @@ automation:
     use_blueprint:
       path: yuri-vashchenko/publish_mqtt_on_entity_state_change.yaml
       input:
-        trigger_entity: binary_sensor.smoke_detector_kitchen_smoke
+        trigger_entity: binary_sensor.kitchen_smoke_detector_smoke
         topic: "home/kitchen/smoke_detector"
         retain: true
         enabling_entity: binary_sensor.main_control
@@ -51,8 +51,7 @@ automation:
     trigger:
       - platform: state
         entity_id: binary_sensor.kitchen_smoke_detector
-        to: 'on'
+        to: "on"
     condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
     action:
       service: script.kitchen_smoke_detector_triggered
-

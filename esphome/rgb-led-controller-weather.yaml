@@ -30,7 +30,7 @@ mqtt:
   password: !secret mqtt_password
   log_topic: esp32/rgb_led_controller_01/log
   on_json_message:
-    topic: zigbee2mqtt/temperature_humidity_street
+    topic: zigbee2mqtt/street_thermometer
     qos: 0
     then:
       - lambda: |-

@@ -23,13 +23,12 @@ switch:
     state_topic: "home/elena/yeelight/ambilight"
     payload_on: "on"
     payload_off: "off"
-
 # automation:
 #   - id: elena_yeelight_sync_switches
 #     alias: "Elena synchronize mqtt and phisical light states"
 #     trigger_variables:
 #       switch_list: >
-#         {{ expand('group.switch_elena_yeelight')|map(attribute='entity_id')|list }}
+#         {{ expand('group.elena_switch_yeelight')|map(attribute='entity_id')|list }}
 #       light_list: >
 #         {{ expand('group.light_elena_yeelight')|map(attribute='entity_id')|list }}
 #       all_list: >
@@ -56,7 +55,7 @@ switch:
 #         state: "on"
 #     variables:
 #       switch_list: >
-#         {{ expand('group.switch_elena_yeelight')|map(attribute='entity_id')|list }}
+#         {{ expand('group.elena_switch_yeelight')|map(attribute='entity_id')|list }}
 #       light_list: >
 #         {{ expand('group.light_elena_yeelight')|map(attribute='entity_id')|list }}
 #       all_list: >

@@ -1,0 +1,17 @@
+MQTT topics:
+Devices and areas
+<home>/<area>/<device_type>/<device_id>/<type>[/<value>]
+
+<home> - home
+<area> - room or area in the home
+<device_type> - type of the device, e.g. light, motion, switch, plug, etc
+<device_id> - if of the specific device in the area
+<type> - information type, e.g. state, date_time, settings
+<value> - optional value, e.g. setting name
+
+Examples:
+home/kitchen/light/ceiling/settings/hold_on
+home/kitchen/light/ceiling/settings/hold_on_timeout
+
+System
+<home>/system/

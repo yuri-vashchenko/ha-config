@@ -10,16 +10,13 @@ homeassistant:
     sensor.kitchen_switch_load_power:
       icon: mdi:gauge
       unit: Вт
-    sensor.kitchen_plug_load_power:
-      icon: mdi:gauge
-      unit: Вт
 
     # Розетка мультиварки
-    switch.plug_multipot_power_outage_memory:
+    switch.kitchen_plug_multipot_power_outage_memory:
       friendly_name: Розетка mainsrv 65 память отключения
 
     # Розетка телевизора на кухне
-    switch.plug_tv_kitchen_power_outage_memory:
+    switch.kitchen_plug_tv_power_outage_memory:
       friendly_name: Розетка телевизора на кухне память отключения
 
     media_player.yandex_station_ff98f02959560d534ab998c1:
@@ -28,23 +25,23 @@ homeassistant:
   customize_glob:
     # Сенсоры и датчики
 
-    "*motion_kitchen*":
+    "*kitchen_motion_window*":
       friendly_name: Кухня движение
 
-    "*motion_illumination_kitchen*":
+    "*kitchen_motion_sink*":
       friendly_name: Кухня движение освещение
 
     # Розетки и выключатели
     # Розетка мультиварки
-    "*plug_multipot*":
+    "*kitchen_plug_multipot*":
       friendly_name: Розетка мультиварки
 
     # Розетка телевизора на кухне
-    "*plug_tv_kitchen*":
+    "*kitchen_plug_tv*":
       friendly_name: Розетка телевизора на кухне
 
     # Кухонный выключатель
-    "*.switch_kitchen*":
+    "*kitchen_switch_light*":
       friendly_name: Кухонный выключатель
 
 # Kitchen power strip - convert power to energy to be able to monitor daily consumption
@@ -84,8 +81,8 @@ binary_sensor:
       kitchen_tv_power:
         friendly_name: "Kitchen TV power"
         value_template: >
-          {%- if states('sensor.plug_tv_kitchen_power') not in ['unknown', 'unavailable']-%}
-            {{ states('sensor.plug_tv_kitchen_power') | float > 10.0 }}
+          {%- if states('sensor.kitchen_plug_tv_power') not in ['unknown', 'unavailable']-%}
+            {{ states('sensor.kitchen_plug_tv_power') | float > 10.0 }}
           {%- else -%}
             false
           {%- endif -%}
@@ -107,8 +104,8 @@ binary_sensor:
 # lights
 light:
   - platform: switch
-    name: switch_kitchen
-    entity_id: switch.switch_kitchen
+    name: kitchen_switch_light
+    entity_id: switch.kitchen_switch_light
 
 # TV
 media_player:
@@ -116,9 +113,8 @@ media_player:
     name: kitchen-tv
     unique_id: kitchen_tv
     device_code: 1061
-    controller_data: remote.remote_broadlink_kitchen
+    controller_data: remote.kitchen_remote_broadlink
     power_sensor: binary_sensor.kitchen_tv_power
-
 
 automation:
   - id: kitchen_hold_light_on_timer
@@ -165,13 +161,13 @@ automation:
     use_blueprint:
       path: kevinxw/state_based_entity_control.yaml
       input:
-        trigger_entity: group.motion_kitchen
-        target_entity: light.switch_kitchen
+        trigger_entity: group.kitchen_motion
+        target_entity: light.kitchen_switch_light
         blocker_entity: binary_sensor.kitchen_hold_light_off
-        blocker_entity_state: 'on'
+        blocker_entity_state: "on"
         timeout_blocker_entity: binary_sensor.kitchen_hold_light_on
-        timeout_blocker_entity_state: 'on'
-        illuminance_sensor: sensor.motion_illumination_kitchen_illuminance_lux
+        timeout_blocker_entity_state: "on"
+        illuminance_sensor: sensor.kitchen_motion_sink_illuminance_lux
         illuminance_below: 14
         sun_elevation_below: 7
         trigger_timeout: 60

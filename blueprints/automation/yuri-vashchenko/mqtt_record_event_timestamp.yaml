@@ -1,0 +1,82 @@
+blueprint:
+  name: Record Event timestamp
+  source_url: https://gist.github.com/yuri-vashchenko/ec3ee9c008af7b44071aabdf44b51df5
+  description: "Publish a message with timestamp to MQTT topic when monitored entity\
+    \ state changes to specifc value or any value\nRequired inputs:\n  - Topic (MQTT\
+    \ root topic)\n  - Trigger Entity (entity to monitor state changes)\n\nOptional\
+    \ inputs:\n  - Trigger Entity State:\n    - if specified the MQTT message will\
+    \ be published only when Trigger Entity state changes to this state\n    - if\
+    \ not specified any state change wil generate corresponding MQTT message\n  -\
+    \ retain (if set to true, corresponding MQTT message will be retained)\n  - Enabling\
+    \ Entity (the automation will execute only when enabling_entity is in Enablign\
+    \ Entity State)\n  - Enabling Entity State (see Enabling Entity above)\n"
+  domain: automation
+  input:
+    topic:
+      name: Topic (path) of the MQTT topic
+      description: The full topic will be '<topic>/<trigger_entity_name>/<trigger_entity_state>'
+      selector:
+        entity:
+          domain: input_text
+    trigger_entity:
+      name: Trigger Entity
+      description: When trigger entity enters trigger entity state (see below) the
+        corresponding MQTT message will be published
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: motion
+    trigger_entity_state:
+      name: (Optional) Trigger Entity State
+      description: When trigger entity's (see above) state changes to Trigger Entity
+        State the corresponding MQTT message will be published
+      default:
+      selector:
+        entity:
+          domain: input_text
+    retain:
+      name: (Optional) retain
+      description: Set this to 'true' if you want MQTT message to be retained
+      default: true
+      selector:
+        entity:
+          domain: input_boolean
+    enabling_entity:
+      name: (Optional) Enabling entity
+      description: If this entity's state is set to enable entity state (see below)
+        automation will trigger. This may be used to make automation triggering based
+        on other entity state
+      default:
+      selector:
+        entity: {}
+    enabling_entity_state:
+      name: (Optional) Enabling entity state
+      description: If enabling entity is in this state the automation will trigger
+      default: 'on'
+      selector:
+        entity:
+          domain: input_text
+variables:
+  trigger_entity: !input 'trigger_entity'
+  trigger_entity_state: !input 'trigger_entity_state'
+  trigger_entity_state_value: '{{ states[trigger_entity].state }}'
+  trigger_entity_name: '{{ states[trigger_entity].entity_id.split(''.'')[1] }}'
+  topic: !input 'topic'
+  enabling_entity: !input 'enabling_entity'
+  enabling_entity_state: !input 'enabling_entity_state'
+trigger:
+  - platform: state
+    entity_id: !input 'trigger_entity'
+condition:
+  - '{{ trigger_entity_state == none or is_state(trigger_entity, trigger_entity_state) }}'
+  - '{{ trigger_entity_state_value != none and trigger_entity_state_value != "" }}'
+  - '{{ enabling_entity == none or is_state(enabling_entity, enabling_entity_state) }}'
+action:
+  - service: mqtt.publish
+    data_template:
+      topic: '{{ topic }}/{{ trigger_entity_name }}/{{ trigger_entity_state_value }}'
+      payload: '{{ now() }}'
+      retain: !input 'retain'
+mode: parallel
+max: 50
+max_exceeded: warning

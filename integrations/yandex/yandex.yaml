@@ -2,22 +2,22 @@ yandex_smart_home:
   filter:
     include_entities:
       - media_player.kitchen_tv
-      - media_player.tv_mama
-      - light.switch_kitchen
-      - light.switch_mama
-      - sensor.temperature_humidity_balcony_temperature
-      - sensor.temperature_humidity_balcony_humidity
-      - sensor.temperature_humidity_svetlana_temperature
-      - sensor.temperature_humidity_svetlana_humidity
-      - sensor.temperature_humidity_michael_temperature
-      - sensor.temperature_humidity_michael_humidity
-      - sensor.temperature_humidity_mama_temperature
-      - sensor.temperature_humidity_mama_humidity
+      - media_player.mama_tv
+      - light.kitchen_switch_light
+      - light.mama_switch_light
+      - sensor.balcony_thermometer_temperature
+      - sensor.balcony_thermometer_humidity
+      - sensor.svetlana_thermometer_temperature
+      - sensor.svetlana_thermometer_humidity
+      - sensor.michael_thermometer_temperature
+      - sensor.michael_thermometer_humidity
+      - sensor.mama_thermometer_temperature
+      - sensor.mama_thermometer_humidity
       - sensor.elena_0xe72e001268f1_temperature
       - sensor.elena_0xe72e001268f1_humidity
-      - sensor.temperature_humidity_street_temperature
-      - sensor.temperature_humidity_street_humidity
-      - sensor.temperature_humidity_street_pressure
+      - sensor.street_thermometer_temperature
+      - sensor.street_thermometer_humidity
+      - sensor.street_thermometer_pressure
       - script.update_shopping_list
       - switch.kitchen_hold_light_on
       - switch.kitchen_hold_light_off
@@ -27,13 +27,13 @@ yandex_smart_home:
       #relative_volume_only: false
       name: "Телевизор"
       room: "Кухня"
-    light.switch_kitchen:
+    light.kitchen_switch_light:
       name: "Люстра"
       room: "Кухня"
-    light.switch_mama:
+    light.mama_switch_light:
       name: "Лампа"
       room: "Мама"
-    media_player.tv_mama:
+    media_player.mama_tv:
       name: "Телевизор"
       room: "Мама"
     temperature_humidity.street:
@@ -41,43 +41,43 @@ yandex_smart_home:
       room: "Улица"
       properties:
         - type: temperature
-          entity: sensor.temperature_humidity_street_temperature
+          entity: sensor.street_thermometer_temperature
         - type: humidity
-          entity: sensor.temperature_humidity_street_humidity
+          entity: sensor.street_thermometer_humidity
         - type: pressure
-          entity: sensor.temperature_humidity_street_pressure
+          entity: sensor.street_thermometer_pressure
     temperature_humidity.balcony:
       name: "Температура"
       room: "Балкон"
       properties:
         - type: temperature
-          entity: sensor.temperature_humidity_balcony_temperature
+          entity: sensor.balcony_thermometer_temperature
         - type: humidity
-          entity: sensor.temperature_humidity_balcony_humidity
+          entity: sensor.balcony_thermometer_humidity
     temperature_humidity.svetlana:
       name: "Температура"
       room: "Света"
       properties:
         - type: temperature
-          entity: sensor.temperature_humidity_svetlana_temperature
+          entity: sensor.svetlana_thermometer_temperature
         - type: humidity
-          entity: sensor.temperature_humidity_svetlana_humidity
+          entity: sensor.svetlana_thermometer_humidity
     temperature_humidity.michael:
       name: "Температура"
       room: "Миша"
       properties:
         - type: temperature
-          entity: sensor.temperature_humidity_michael_temperature
+          entity: sensor.michael_thermometer_temperature
         - type: humidity
-          entity: sensor.temperature_humidity_michael_humidity
+          entity: sensor.michael_thermometer_humidity
     temperature_humidity.mama:
       name: "Температура"
       room: "Мама"
       properties:
         - type: temperature
-          entity: sensor.temperature_humidity_mama_temperature
+          entity: sensor.mama_thermometer_temperature
         - type: humidity
-          entity: sensor.temperature_humidity_mama_humidity
+          entity: sensor.mama_thermometer_humidity
     temperature_humidity.elena:
       name: "Температура"
       room: "Лена"

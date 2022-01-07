@@ -1,6 +1,0 @@
-plug_elena:
-  name: Розетки в Лениной комнате
-  entities:
-    - switch.plug_tv_elena
-    - switch.plug_ac
-  icon: mdi:power-socket-eu

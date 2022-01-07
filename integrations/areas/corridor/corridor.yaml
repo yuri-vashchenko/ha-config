@@ -3,14 +3,14 @@
 homeassistant:
   customize:
     # Свет
-    light.gateway_light_50ec50c4f23d:
+    light.corridor_hub_xiaomi_light:
       friendly_name: Лампочка mi hub
       icon: mdi:star-circle-outline
 
     # Сенсоры
 
     # Датчик освещённости
-    sensor.illumination_50ec50c4f23d:
+    sensor.corridor_hub_xiaomi_illumination:
       friendly_name: Датчик освещённости в mi hub
       device_class: illuminance
 
@@ -18,12 +18,12 @@ homeassistant:
     # Датчик движения
     "*158d000543e101*":
       friendly_name: Коридор движение
-    "*motion_corridor*":
+    "*corridor_motion_bathroom*":
       friendly_name: Коридор движение
 
     "*158d0006c3d86d*":
       friendly_name: Коридор вход движение
-    "*motion_illumination_entrance*":
+    "*corridor_motion_entrance*":
       friendly_name: Коридор вход движение
 
 script:
@@ -33,20 +33,25 @@ script:
         service: mqtt.publish
         data:
           topic: home/corridor/wallpanel/command
-          payload: "{\"wake\": true}"
+          payload: '{"wake": true}'
           retain: false
 
 # sensors
 sensor:
   # mqtt sensors
   - platform: mqtt
-    name: last_event_motion_corridor_occupancy
+    name: corridor_events_motion_bathroom
     device_class: timestamp
-    state_topic: "events/date_time/motion_corridor_occupancy/on"
+    state_topic: "home/corridor/events/motion/corridor_motion_bathroom_occupancy/on"
   - platform: mqtt
-    name: last_event_motion_illumination_entrance_occupancy
+    name: corridor_events_motion_entrance
     device_class: timestamp
-    state_topic: "events/date_time/motion_illumination_entrance_occupancy/on"
+    state_topic: "home/corridor/events/motion/corridor_motion_entrance_occupancy/on"
+
+  - platform: mqtt
+    name: last_event_svetlana_motion_occupancy
+    device_class: timestamp
+    state_topic: "home/svetlana/svetlana_motion_occupancy/on"
 
 automation:
   - id: corridor_turn_on_tablet_on_motion
@@ -54,7 +59,7 @@ automation:
     description: "turn on tablet screen on motion"
     trigger:
       platform: state
-      entity_id: binary_sensor.motion_illumination_entrance_occupancy
+      entity_id: binary_sensor.corridor_motion_entrance_occupancy
       to: "on"
     condition:
       - condition: state
@@ -74,7 +79,7 @@ automation:
         event_type: automation_reloaded
         id: "off"
       - platform: state
-        entity_id: binary_sensor.motion_illumination_entrance_occupancy
+        entity_id: binary_sensor.corridor_motion_entrance_occupancy
         from: "off"
         to: "on"
         id: "motion"
@@ -117,7 +122,7 @@ automation:
                 entity_id: select.corridor_rgb_led
             - wait_for_trigger:
                 - platform: state
-                  entity_id: binary_sensor.motion_illumination_entrance_occupancy
+                  entity_id: binary_sensor.corridor_motion_entrance_occupancy
                   from: "on"
                   to: "off"
             - service: select.select_option

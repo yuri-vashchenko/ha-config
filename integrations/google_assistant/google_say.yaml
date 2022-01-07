@@ -16,7 +16,7 @@ automation:
       message: >
         {{ trigger.payload_json['message'] or '' }}
       target: >
-        {{ trigger.payload_json['google_target'] or 'media_player.nest' }}
+        {{ trigger.payload_json['google_target'] or 'media_player.elena_nest' }}
       language: >
         {{ trigger.payload_json['language'] or 'ru' }}
     action:
@@ -43,7 +43,7 @@ automation:
       message: >
         {{ trigger.payload_json['message'] or '' }}
       target: >
-        {{ trigger.payload_json['target'] or 'media_player.nest' }}
+        {{ trigger.payload_json['target'] or 'media_player.elena_nest' }}
       language: >
         {{ trigger.payload_json['language'] or 'ru' }}
     action:

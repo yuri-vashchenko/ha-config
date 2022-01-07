@@ -17,7 +17,7 @@ script:
         announcement_message: "{{ message }}"
         volume_level: "{{ volume }}"
 
-  nest_say:
+  elena_nest_say:
     alias: google_assistant_say
     description: ""
     fields:
@@ -27,7 +27,7 @@ script:
     use_blueprint:
       path: yuri-vashchenko/google-assistant-say.yaml
       input:
-        speaker_target: media_player.nest
+        speaker_target: media_player.elena_nest
         announcement_message: "{{ message }}"
 
   all_say:
@@ -38,7 +38,7 @@ script:
         example: "Как прекрасен этот мир"
       volume:
         description: "The volume from 0 to 100"
-        example: '80'
+        example: "80"
     sequence:
       - service: script.turn_on
         target:
@@ -47,10 +47,10 @@ script:
           variables:
             message: "{{ message }}"
             volume: "{{ volume }}"
-      - alias: call_nest_say
+      - alias: call_elena_nest_say
         service: script.turn_on
         target:
-          entity_id: script.nest_say
+          entity_id: script.elena_nest_say
         data_template:
           variables:
             message: "{{ message }}"

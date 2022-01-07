@@ -12,8 +12,8 @@ script:
         event_id: "single"
         ringtone_id: "10"
         announcement_message: "Кто-то пришёл. Откройте дверь!"
-        wait_entity: binary_sensor.door_entrance_contact
-        wait_entity_state: 'on'
+        wait_entity: binary_sensor.entrance_door_contact
+        wait_entity_state: "on"
         delay_between_repeats: "00:00:10"
         max_repeats: 10
 
@@ -28,8 +28,8 @@ script:
         event_id: "double"
         ringtone_id: "11"
         announcement_message: "Кто-то свой пришёл. Откройте дверь!"
-        wait_entity: binary_sensor.door_entrance_contact
-        wait_entity_state: 'on'
+        wait_entity: binary_sensor.entrance_door_contact
+        wait_entity_state: "on"
         delay_between_repeats: "00:00:10"
         max_repeats: 10
 
@@ -44,8 +44,8 @@ script:
         event_id: "triple"
         ringtone_id: "12"
         announcement_message: "Юра пришёл. Откройте дверь!"
-        wait_entity: binary_sensor.door_entrance_contact
-        wait_entity_state:  'on'
+        wait_entity: binary_sensor.entrance_door_contact
+        wait_entity_state: "on"
         delay_between_repeats: "00:00:10"
         max_repeats: 10
 
@@ -61,8 +61,8 @@ script:
         ringtone_id: "20"
         ringtone_volume: "70"
         announcement_message: "Лена пришла. Откройте дверь!"
-        wait_entity: binary_sensor.door_entrance_contact
-        wait_entity_state: 'on'
+        wait_entity: binary_sensor.entrance_door_contact
+        wait_entity_state: "on"
         delay_between_repeats: "00:00:10"
         max_repeats: 10
 
@@ -77,20 +77,20 @@ script:
         event_id: "hold"
         ringtone_id: "8"
         announcement_message: "Кто-то пришёл. Откройте дверь!"
-        wait_entity: binary_sensor.door_entrance_contact
-        wait_entity_state: 'on'
+        wait_entity: binary_sensor.entrance_door_contact
+        wait_entity_state: "on"
         delay_between_repeats: "00:00:10"
         max_repeats: 10
 
 sensor:
   - platform: mqtt
     name: corridor_doorbell_state
-    state_topic: "home/corridor/doorbell/state"
+    state_topic: "home/entrance/button/doorbell/state"
 
 select:
   - platform: mqtt
-    command_topic: "home/corridor/doorbell/state"
-    state_topic: "home/corridor/doorbell/state"
+    command_topic: "home/entrance/button/doorbell/state"
+    state_topic: "home/entrance/button/doorbell/state"
     name: corridor_doorbell
     options:
       - "off"
@@ -107,15 +107,15 @@ automation:
     alias: corridor_doorbell_control
     trigger:
       - platform: state
-        entity_id: sensor.button_doorbell_action
+        entity_id: sensor.entrance_button_doorbell_action
         to:
-        - "single"
-        - "double"
-        - "triple"
-        - "quadruple"
-        - "hold"
-        - "release"
-        - "many"
+          - "single"
+          - "double"
+          - "triple"
+          - "quadruple"
+          - "hold"
+          - "release"
+          - "many"
     condition:
       - alias: "main control"
         condition: state
@@ -125,7 +125,7 @@ automation:
       - alias: "publish mqtt message on button click"
         service: mqtt.publish
         data_template:
-          topic: "home/corridor/doorbell/state"
+          topic: "home/entrance/button/doorbell/state"
           payload_template: "{{ trigger.to_state.state or 'off' }}"
     mode: queued
 
@@ -133,39 +133,39 @@ automation:
     alias: corridor_doorbell_mqtt_control
     trigger:
       - platform: mqtt
-        topic: "home/corridor/doorbell/state"
+        topic: "home/entrance/button/doorbell/state"
         payload: "off"
         id: "off"
       - platform: mqtt
-        topic: "home/corridor/doorbell/state"
+        topic: "home/entrance/button/doorbell/state"
         payload: "single"
         id: "single"
       - platform: mqtt
-        topic: "home/corridor/doorbell/state"
+        topic: "home/entrance/button/doorbell/state"
         payload: "double"
         id: "double"
       - platform: mqtt
-        topic: "home/corridor/doorbell/state"
+        topic: "home/entrance/button/doorbell/state"
         payload: "triple"
         id: "triple"
       - platform: mqtt
-        topic: "home/corridor/doorbell/state"
+        topic: "home/entrance/button/doorbell/state"
         payload: "quadruple"
         id: "quadruple"
       - platform: mqtt
-        topic: "home/corridor/doorbell/state"
+        topic: "home/entrance/button/doorbell/state"
         payload: "hold"
         id: "hold"
       - platform: mqtt
-        topic: "home/corridor/doorbell/state"
+        topic: "home/entrance/button/doorbell/state"
         payload: "release"
         id: "release"
       - platform: mqtt
-        topic: "home/corridor/doorbell/state"
+        topic: "home/entrance/button/doorbell/state"
         payload: "many"
         id: "many"
       - platform: mqtt
-        topic: "home/corridor/doorbell/state"
+        topic: "home/entrance/button/doorbell/state"
         payload: "undefined"
         id: "undefined"
     condition:

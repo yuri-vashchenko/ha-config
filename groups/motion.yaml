@@ -1,10 +1,10 @@
-motion:
+home_motion:
   name: Движение в доме
   entities:
-    - binary_sensor.motion_elena_occupancy
-    - binary_sensor.motion_mama_occupancy
-    - binary_sensor.motion_michael_occupancy
-    - binary_sensor.motion_svetlana_occupancy
-    - group.motion_corridor
-    - group.motion_kitchen
+    - binary_sensor.elena_motion_occupancy
+    - binary_sensor.mama_motion_occupancy
+    - binary_sensor.michael_motion_occupancy
+    - binary_sensor.svetlana_motion_occupancy
+    - group.corridor_motion
+    - group.kitchen_motion
   icon: mdi:motion-sensor

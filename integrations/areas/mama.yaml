@@ -3,13 +3,13 @@
 homeassistant:
   customize:
     # Выключатель
-    switch.switch_mama_switch:
+    switch.mama_switch_light_switch:
       friendly_name: Мама выключатель
-    light.switch_mama_0x00158d0005440c33:
+    light.mama_switch_light:
       friendly_name: Мама свет
 
     # Розетка телевизора 49
-    switch.plug_tv_mama_power_outage_memory:
+    switch.mama_plug_tv_power_outage_memory:
       friendly_name: Розетка телевизора 49 память отключения
 
     # Ping
@@ -20,11 +20,11 @@ homeassistant:
       friendly_name: yandex_station_mama
 
     # Влажность и температура
-    sensor.temperature_humidity_mama_temperature:
+    sensor.mama_thermometer_temperature:
       friendly_name: Мама температура
-    sensor.temperature_humidity_mama_humidity:
+    sensor.mama_thermometer_humidity:
       friendly_name: Мама влажность
-    sensor.temperature_humidity_mama_pressure:
+    sensor.mama_thermometer_pressure:
       friendly_name: Мама давление
   customize_glob:
     # Кнопка
@@ -34,37 +34,37 @@ homeassistant:
       friendly_name: Мама кнопка
 
     # Выключатель
-    "sensor.switch_mama*":
+    "sensor.mama_switch_light*":
       friendly_name: Мама выключатель
 
     # Розетка телевизора
     "*158d0001567169*":
       friendly_name: Розетка телевизора 49
-    "*plug_tv_mama*":
+    "*mama_plug_tv*":
       friendly_name: Розетка телевизора 49
 
     # Датчики
     # Датчик движения
     "*158d00044f94f4*":
       friendly_name: Мама движение
-    "*motion_mama*":
+    "*mama_motion*":
       friendly_name: Мама движение
 
     # Влажность и температура
     "*158d0006b1cd57*":
       friendly_name: Мама климат
-    "*temperature_humidity_mama*":
+    "*mama_thermometer*":
       friendly_name: Мама климат
 
 light:
   - platform: switch
-    name: light_mama
-    entity_id: switch.switch_mama
+    name: mama_switch_light
+    entity_id: switch.mama_switch_light
 
 # switches
 switch:
   - platform: mqtt
-    name: switch_mqtt_mama
+    name: mama_switch_mqtt
     retain: true
     command_topic: "home/mama/light"
     state_topic: "home/mama/light"
@@ -83,8 +83,8 @@ automation:
         id: started
       - platform: state
         entity_id:
-          - switch.switch_mama
-          - switch.switch_mqtt_mama
+          - switch.mama_switch_light
+          - switch.mama_switch_mqtt
         id: switch_state_change
     condition:
       - alias: "main control"
@@ -94,29 +94,29 @@ automation:
     action:
       - alias: "Sync mqtt switch with phisical switch"
         choose:
-        - conditions:
-            - alias: "on start"
-              condition: trigger
-              id: started
-          sequence:
-            - alias: "set mqtt switch to physical switch state"
-              service: mqtt.publish
-              data_template:
-                topic: "home/mama/light"
-                payload_template: "{{ states('switch.switch_mama') }}"
-        - conditions:
-            - alias: "on phisical switch state change"
-              condition: trigger
-              id: switch_state_change
-          sequence:
-            - alias: "check for valid states"
-              condition: template
-              value_template: "{{ trigger.to_state.state in ['on', 'off'] }}"
-            - alias: "set mqtt switch to new physical switch state"
-              service: "{{ 'switch.turn_' + trigger.to_state.state }}"
-              target:
-                entity_id:
-                  - switch.switch_mama
-                  - switch.switch_mqtt_mama
+          - conditions:
+              - alias: "on start"
+                condition: trigger
+                id: started
+            sequence:
+              - alias: "set mqtt switch to physical switch state"
+                service: mqtt.publish
+                data_template:
+                  topic: "home/mama/light"
+                  payload_template: "{{ states('switch.mama_switch_light') }}"
+          - conditions:
+              - alias: "on phisical switch state change"
+                condition: trigger
+                id: switch_state_change
+            sequence:
+              - alias: "check for valid states"
+                condition: template
+                value_template: "{{ trigger.to_state.state in ['on', 'off'] }}"
+              - alias: "set mqtt switch to new physical switch state"
+                service: "{{ 'switch.turn_' + trigger.to_state.state }}"
+                target:
+                  entity_id:
+                    - switch.mama_switch_light
+                    - switch.mama_switch_mqtt
     mode: single
     max_exceeded: silent

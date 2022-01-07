@@ -1,0 +1,25 @@
+# MQTT Statestream
+# https://www.home-assistant.io/integrations/mqtt_statestream/
+
+mqtt_statestream:
+  base_topic: home/states
+  publish_attributes: true
+  publish_timestamps: true
+  include:
+    domains:
+      - air_quality
+      - binary_sensor
+      - climate
+      - device_tracker
+      - group
+      - light
+      - person
+      - sensor
+      - switch
+      - vacuum
+
+
+
+
+
+

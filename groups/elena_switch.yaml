@@ -1,4 +1,4 @@
-switch_elena_yeelight:
+elena_switch_yeelight:
   name: Свет в Лениной комнате - mqtt
   entities:
     - switch.elena_yeelight_main

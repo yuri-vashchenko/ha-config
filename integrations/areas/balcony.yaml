@@ -2,36 +2,35 @@
 
 homeassistant:
   customize:
-
     # Влажность и температура
-    sensor.temperature_humidity_balcony_temperature:
+    sensor.balcony_thermometer_temperature:
       friendly_name: Балкон температура
-    sensor.temperature_humidity_balcony_humidity:
+    sensor.balcony_thermometer_humidity:
       friendly_name: Балкон влажность
-    sensor.temperature_humidity_balcony_battery:
+    sensor.balcony_thermometer_battery:
       friendly_name: Балкон климат
-    sensor.temperature_humidity_balcony_linkquality:
+    sensor.balcony_thermometer_linkquality:
       friendly_name: Балкон климат
 
     # Розетка сервера mainsrv
-    switch.plug_server_main_power_outage_memory:
+    switch.balcony_plug_server_main_main_power_outage_memory:
       friendly_name: Розетка mainsrv память отключения
 
     # Датчики
-    binary_sensor.window_balcony_left_contact:
+    binary_sensor.balcony_window_left_contact:
       friendly_name: Балкон левое окно
       device_class: window
-    #binary_sensor.window_balcony_middle_contact:
+    #binary_sensor.balcony_window_middle_contact:
     #  device_class: window
 
-    #binary_sensor.window_balcony_right_contact:
+    #binary_sensor.balcony_window_right_contact:
     #  device_class: window
 
   customize_glob:
     # Датчики
     "*158d000541284e*":
       friendly_name: Балкон левое окно
-    "*window_balcony_left*":
+    "*balcony_window_left*":
       friendly_name: Балкон левое окно
 
     "*158d00054481d7*":
@@ -43,5 +42,5 @@ homeassistant:
     # Розетка mainsrv
     "*158d0003a4a3f2*":
       friendly_name: Розетка mainsrv
-    "*plug_server_main*":
+    "*balcony_plug_server_main_main*":
       friendly_name: Розетка mainsrv

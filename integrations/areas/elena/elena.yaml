@@ -3,17 +3,17 @@
 homeassistant:
   customize:
     # Климат
-    sensor.mi_t_e72e001268f1:
-      friendly_name: Юра температура
-    sensor.mi_h_e72e001268f1:
-      friendly_name: Юра влажность
+    sensor.elena_thermometer_temperature:
+      friendly_name: Температура в Лениной комнате
+    sensor.elena_thermometer_humidity:
+      friendly_name: Влажность в Лениной комнате
 
     # Розетка кондиционера
-    switch.plug_ac_power_outage_memory:
+    switch.elena_plug_ac_power_outage_memory:
       friendly_name: Розетка кондиционера память отключения
 
     # Розетка кондиционера
-    switch.plug_tv_lena_power_outage_memory:
+    switch.elena_plug_tv_power_outage_memory:
       friendly_name: Розетка телевизора 65 память отключения
 
       # Телевизор
@@ -25,7 +25,7 @@ homeassistant:
     # Кнопки
     "*158d0003d13dca*":
       friendly_name: Лена кнопка
-    "*button_elena*":
+    "*elena_button_elena*":
       friendly_name: Лена кнопка
 
     "*158d00035846ec*":
@@ -36,20 +36,20 @@ homeassistant:
     # Розетка кондиционера
     "*158d00032d3a92*":
       friendly_name: Розетка кондиционера
-    "*plug_ac*":
+    "*elena_plug_ac*":
       friendly_name: Розетка кондиционера
 
     # Розетка телевизора
     "*158d0003c77e0c*":
       friendly_name: Розетка телевизора 65
-    "*plug_tv_elena*":
+    "*elena_plug_tv*":
       friendly_name: Розетка телевизора 65
 
     # Датчики
     "*158d000460dde9*":
       friendly_name: Дверь на балкон
     "*door_balcony*":
-      friendly_name: Дверь на балкон  
+      friendly_name: Дверь на балкон
       device_class: door
 
     "*158d000483f52f*":
@@ -60,30 +60,30 @@ homeassistant:
 
     "*158d000464d3fc*":
       friendly_name: Лена движение
-    "*motion_elena*":
+    "*elena_motion*":
       friendly_name: Лена движение
 
 binary_sensor:
   - platform: template
     sensors:
-      ac_power:
+      elena_ac_power:
         friendly_name: "AC power"
         value_template: >
-          {%- if states('sensor.plug_ac_power') not in ['unknown', 'unavailable'] -%}
-            {{ states('sensor.plug_ac_power') | float > 80.0 }}
+          {%- if states('sensor.elena_plug_ac_power') not in ['unknown', 'unavailable'] -%}
+            {{ states('sensor.elena_plug_ac_power') | float > 80.0 }}
           {%- else -%}
             false
           {%- endif -%}
 
 climate:
   - platform: smartir
-    name: main_room_ac
-    unique_id: main_room_ac
+    name: elena_ac
+    unique_id: elena_ac
     device_code: 1401
-    controller_data: remote.remote_broadlink_elena
+    controller_data: remote.elena_remote_broadlink
     temperature_sensor: sensor.elena_0xe72e001268f1_temperature
     humidity_sensor: sensor.elena_0xe72e001268f1_humidity
-    power_sensor: binary_sensor.ac_power
+    power_sensor: binary_sensor.elena_ac_power
 
 script:
   led_strip_toggle:
@@ -91,7 +91,7 @@ script:
     sequence:
       - service: remote.send_command
         data:
-          entity_id: remote.remote_broadlink_elena
+          entity_id: remote.elena_remote_broadlink
           device: led_strip
           command: power
 
@@ -99,7 +99,7 @@ script:
     sequence:
       - service: remote.learn_command
         data:
-          entity_id: remote.remote_broadlink_elena
+          entity_id: remote.elena_remote_broadlink
           device: led_strip
           command: power
 
@@ -110,13 +110,13 @@ script:
 scene:
   - name: Movies
     entities:
-      light.elena_yeelight_650_nightlight: "on"
+      light.elena_yeelight_nightlight: "on"
       media_player.tv:
         state: "on"
         source: "КиноПоиск: новинки в FullHD"
   - name: Sport
     entities:
-      light.elena_yeelight_650_nightlight: "on"
+      light.elena_yeelight_nightlight: "on"
       media_player.tv:
         state: "on"
         source: "Eurosport Player"
@@ -128,14 +128,14 @@ automation:
     initial_state: true
     trigger:
       - platform: state
-        entity_id: group.doors_elena
-        to: 'on'
+        entity_id: group.elena_doors
+        to: "on"
         for:
           seconds: "{{states('number.elena_ac_door_open_duration') | int}}"
         id: door_opened
       - platform: state
-        entity_id: group.doors_elena
-        to: 'off'
+        entity_id: group.elena_doors
+        to: "off"
         id: doors_closed
       - platform: homeassistant
         event: start
@@ -144,17 +144,17 @@ automation:
         event_type: automation_reloaded
         id: started
       - platform: numeric_state
-        entity_id: sensor.e72e001268f1_temperature
+        entity_id: sensor.elena_thermometer_temperature
         above: number.elena_ac_hot_threshold
         for: "00:01:00"
         id: hot
       - platform: numeric_state
-        entity_id: sensor.e72e001268f1_temperature
+        entity_id: sensor.elena_thermometer_temperature
         below: number.elena_ac_cold_threshold
         for: "00:01:00"
         id: cold
       - platform: numeric_state
-        entity_id: sensor.e72e001268f1_temperature
+        entity_id: sensor.elena_thermometer_temperature
         below: number.elena_ac_hot_threshold
         above: number.elena_ac_cold_threshold
         for: "00:02:00"
@@ -166,11 +166,11 @@ automation:
         state: "on"
     variables:
       has_in_temp: >
-        {{ states("sensor.e72e001268f1_temperature") not in
+        {{ states("sensor.elena_thermometer_temperature") not in
           ['unknown', 'unavailable'] }}
       in_temp: >
         {%- if has_in_temp -%}
-          {{ states("sensor.e72e001268f1_temperature") | float }}
+          {{ states("sensor.elena_thermometer_temperature") | float }}
         {%- else -%}
           25.0
         {%- endif -%}
@@ -180,18 +180,18 @@ automation:
         {{ has_in_temp and in_temp > (states("number.elena_ac_hot_threshold") | float) }}
       is_worm: "{{ not is_cold and not is_hot }}"
       has_out_temp: >
-        {{ states("sensor.temperature_humidity_street_temperature") not in
+        {{ states("sensor.street_thermometer_temperature") not in
           ['unknown', 'unavailable'] }}
       out_temp: >
         {%- if has_out_temp -%}
-          {{ states("sensor.temperature_humidity_street_temperature") | float }}
+          {{ states("sensor.street_thermometer_temperature") | float }}
         {%- else -%}
           25.0
         {%- endif -%}
       doors_state: >
-        {{ states("group.doors_elena") }}
+        {{ states("group.elena_doors") }}
       ac_state: >
-        {{ states("climate.main_room_ac") }}
+        {{ states("climate.elena_ac") }}
       need_off: >
         {{ (doors_state == 'on' or is_worm ) and ac_state != 'off' }}
       can_heat: >
@@ -227,12 +227,12 @@ automation:
                     is_worm: {{ is_worm }},
                     in_temp: {{ in_temp }},
                     out_temp: {{ out_temp }}
-                entity_id: climate.main_room_ac
+                entity_id: climate.elena_ac
                 domain: climate
             - alias: "turn AC off"
               service: climate.turn_off
               target:
-                entity_id: climate.main_room_ac
+                entity_id: climate.elena_ac
         - alias: elena_ac_heat
           conditions:
             # turn on heating on homeassistant start or automation reloaded if cold
@@ -259,12 +259,12 @@ automation:
                     is_worm: {{ is_worm }},
                     in_temp: {{ in_temp }},
                     out_temp: {{ out_temp }}
-                entity_id: climate.main_room_ac
+                entity_id: climate.elena_ac
                 domain: climate
             - alias: "Turn AC on (heat)"
               service: climate.set_temperature
               data:
-                entity_id: climate.main_room_ac
+                entity_id: climate.elena_ac
                 temperature: 30
                 hvac_mode: "heat"
         - alias: elena_ac_cool
@@ -293,12 +293,12 @@ automation:
                     is_worm: {{ is_worm }},
                     in_temp: {{ in_temp }},
                     out_temp: {{ out_temp }}
-                entity_id: climate.main_room_ac
+                entity_id: climate.elena_ac
                 domain: climate
             - alias: "Turn AC on (cool)"
               service: climate.set_temperature
               data:
-                entity_id: climate.main_room_ac
+                entity_id: climate.elena_ac
                 temperature: 16
                 hvac_mode: "cool"
 
@@ -308,11 +308,11 @@ automation:
     use_blueprint:
       path: yuri-vashchenko/button_light_control.yaml
       input:
-        trigger_entity: sensor.button_elena_action
-        mainlight_entity: light.yeelight_elena
-        nightlight_entity: light.yeelight_elena_nightlight
-        mode_entity: binary_sensor.yeelight_elena_nightlight
-        ambilight_entity: light.yeelight_elena_ambilight
+        trigger_entity: sensor.elena_button_elena_action
+        mainlight_entity: light.elena_yeelight
+        nightlight_entity: light.elena_yeelight_nightlight
+        mode_entity: binary_sensor.elena_yeelight_nightlight
+        ambilight_entity: light.elena_yeelight_ambilight
         enabling_entity: binary_sensor.light_control
         hold_action:
           service: script.led_strip_toggle
@@ -323,11 +323,11 @@ automation:
     use_blueprint:
       path: yuri-vashchenko/button_light_control.yaml
       input:
-        trigger_entity: sensor.button_yuri_action
-        mainlight_entity: light.yeelight_elena
-        nightlight_entity: light.yeelight_elena_nightlight
-        mode_entity: binary_sensor.yeelight_elena_nightlight
-        ambilight_entity: light.yeelight_elena_ambilight
+        trigger_entity: sensor.elena_button_yuri_action
+        mainlight_entity: light.elena_yeelight
+        nightlight_entity: light.elena_yeelight_nightlight
+        mode_entity: binary_sensor.elena_yeelight_nightlight
+        ambilight_entity: light.elena_yeelight_ambilight
         enabling_entity: binary_sensor.light_control
         hold_action:
           service: script.led_strip_toggle

@@ -1,7 +1,0 @@
-light_elena_yeelight:
-  name: Свет в Лениной комнате
-  entities:
-    - light.yeelight_elena
-    - light.yeelight_elena_ambilight
-    - light.yeelight_elena_nightlight
-  icon: mdi:lightbulb

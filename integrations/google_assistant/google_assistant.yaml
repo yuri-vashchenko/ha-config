@@ -8,43 +8,43 @@ google_assistant:
   report_state: true
   entity_config:
     # Lena's room
-    vacuum.berta:
+    vacuum.elena_vacuum:
       name: Berta
       expose: true
       aliases:
         - Bob
         - Robert
       room: Lena
-    light.yeelight_elena:
+    light.elena_yeelight:
       name: Sun
       expose: true
       aliases:
         - Star
         - Light
       room: Lena
-    light.yeelight_elena_nightlight:
+    light.elena_yeelight_nightlight:
       name: Moon
       expose: true
       aliases:
         - Night Light
       room: Lena
-    light.yeelight_elena_ambilight:
+    light.elena_yeelight_ambilight:
       name: Ambilight
       expose: true
       aliases:
         - Color Light
       room: Lena
-    climate.main_room_ac:
+    climate.elena_ac:
       name: AC
       expose: true
       aliases:
         - Air conditioner
       room: Lena
-    sensor.e72e001268f1_temperature:
+    sensor.elena_thermometer_temperature:
       name: Temperature
       expose: true
       room: Lena
-    sensor.e72e001268f1_humidity:
+    sensor.elena_thermometer_humidity:
       name: Humidity
       expose: true
       room: Lena
@@ -59,7 +59,7 @@ google_assistant:
       name: Romantic
       expose: true
       room: Lena
-    media_player.tv_lena:
+    media_player.elena_tv:
       name: TV
       expose: true
       aliases:
@@ -75,65 +75,65 @@ google_assistant:
       room: Lena
 
     # Kitchen
-    light.switch_kitchen_0x00158d00054408ee:
+    light.kitchen_switch_light:
       name: Light
       expose: true
       room: Kitchen
 
     # Mama
-    light.switch_mama_0x00158d0005440c33:
+    light.mama_switch_light:
       name: Light
       expose: true
       room: Mama
-    sensor.temperature_humidity_mama_temperature:
+    sensor.mama_thermometer_temperature:
       name: Temperature
       expose: true
       room: Mama
-    sensor.temperature_humidity_mama_humidity:
+    sensor.mama_thermometer_humidity:
       name: Humidity
       expose: true
       room: Mama
 
     # Michael
-    sensor.temperature_humidity_michael_temperature:
+    sensor.michael_thermometer_temperature:
       name: Temperature
       expose: true
       room: Michael
-    sensor.temperature_humidity_michael_humidity:
+    sensor.michael_thermometer_humidity:
       name: Humidity
       expose: true
       room: Michael
 
     # Michael
-    sensor.temperature_humidity_svetlana_temperature:
+    sensor.svetlana_thermometer_temperature:
       name: Temperature
       expose: true
       room: Svetlana
-    sensor.temperature_humidity_svetlana_humidity:
+    sensor.svetlana_thermometer_humidity:
       name: Humidity
       expose: true
       room: Svetlana
 
     # Balcony
-    sensor.temperature_humidity_balcony_temperature:
+    sensor.balcony_thermometer_temperature:
       name: Temperature
       expose: true
       room: Balcony
-    sensor.temperature_humidity_balcony_humidity:
+    sensor.balcony_thermometer_humidity:
       name: Humidity
       expose: true
       room: Balcony
 
     # Street
-    sensor.temperature_humidity_street_temperature:
+    sensor.street_thermometer_temperature:
       name: Temperature
       expose: true
       room: Street
-    sensor.temperature_humidity_street_humidity:
+    sensor.street_thermometer_humidity:
       name: Humidity
       expose: true
       room: Street
-    sensor.temperature_humidity_street_pressure:
+    sensor.street_thermometer_pressure:
       name: Pressure
       expose: true
       room: Street

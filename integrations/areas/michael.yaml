@@ -3,32 +3,32 @@
 homeassistant:
   customize:
     # Влажность и температура
-    sensor.temperature_humidity_michael_temperature:
+    sensor.michael_thermometer_temperature:
       friendly_name: Миша температура
-    sensor.temperature_humidity_michael_humidity:
+    sensor.michael_thermometer_humidity:
       friendly_name: Миша влажность
-    sensor.temperature_humidity_michael_pressure:
+    sensor.michael_thermometer_pressure:
       friendly_name: Миша давление
 
     # Розетка Миша
-    switch.plug_michael_power_outage_memory:
+    switch.michael_plug_power_outage_memory:
       friendly_name: Розетка Миша память отключения
 
   customize_glob:
     # Датчик движения
     "*158d000465a633*":
       friendly_name: Миша движение
-    "*motion_michael*":
+    "*michael_motion*":
       friendly_name: Миша движение
 
     # Розетка
     "*158d0003c77d8b*":
       friendly_name: Розетка Миша
-    "*plug_michael*":
+    "*michael_plug*":
       friendly_name: Розетка Миша
 
     # Влажность и температура
     "*158d0006b11191*":
       friendly_name: Миша климат
-    "*temperature_humidity_michael*":
+    "*michael_thermometer*":
       friendly_name: Миша климат

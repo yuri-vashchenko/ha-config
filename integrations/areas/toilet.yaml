@@ -5,8 +5,9 @@ homeassistant:
     "*158d0004776e1c*":
       friendly_name: Туалет утечка воды
 
-    "*water_leak_toilet*":
+    "*toilet_water_leak*":
       friendly_name: Туалет утечка воды
+
 binary_sensor:
   - platform: mqtt
     name: toilet_water_leak
@@ -28,7 +29,7 @@ script:
         ringtone_volume: "100"
         announcement_message: "Тревога! Обнаружена протечка воды на кухне"
         wait_entity: binary_sensor.toilet_water_leak
-        wait_entity_state: 'off'
+        wait_entity_state: "off"
         delay_between_repeats: "00:01:00"
         max_repeats: 0
         announcement_message_end: "Протечка воды на кухне устранена"
@@ -40,7 +41,7 @@ automation:
     use_blueprint:
       path: yuri-vashchenko/publish_mqtt_on_entity_state_change.yaml
       input:
-        trigger_entity: binary_sensor.water_leak_toilet_water_leak
+        trigger_entity: binary_sensor.toilet_water_leak_water_leak
         topic: "home/toilet/water_leak"
         retain: true
         enabling_entity: binary_sensor.main_control
@@ -50,7 +51,7 @@ automation:
     trigger:
       - platform: state
         entity_id: binary_sensor.toilet_water_leak
-        to: 'on'
+        to: "on"
     condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
     action:
       service: script.toilet_water_leak_triggered

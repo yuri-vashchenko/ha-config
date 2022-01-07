@@ -1,6 +1,0 @@
-motion_kitchen:
-  name: Движение в кухне
-  entities:
-    - binary_sensor.motion_kitchen_occupancy
-    - binary_sensor.motion_illumination_kitchen_occupancy
-  icon: mdi:motion-sensor

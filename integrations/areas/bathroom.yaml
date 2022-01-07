@@ -3,15 +3,15 @@
 homeassistant:
   customize:
     # Розетка сервера mainsrv
-    switch.plug_bathroom_washer_power_outage_memory:
+    switch.bathroom_plug_washer_machine_power_outage_memory:
       friendly_name: Розетка стиральной машины память отключения
 
   customize_glob:
     "*158d00047f8591*":
       friendly_name: Ванна утечка воды
-    "*water_leak_bathroom*":
+    "*bathroom_water_leak*":
       friendly_name: Ванна утечка воды
-    "*plug_bathroom_washer*":
+    "*bathroom_plug_washer_machine*":
       friendly_name: Розетка стиральной машины
 
 binary_sensor:
@@ -35,7 +35,7 @@ script:
         ringtone_volume: "100"
         announcement_message: "Тревога! Обнаружена протечка воды на кухне"
         wait_entity: binary_sensor.bathroom_water_leak
-        wait_entity_state: 'off'
+        wait_entity_state: "off"
         delay_between_repeats: "00:01:00"
         max_repeats: 0
         announcement_message_end: "Протечка воды на кухне устранена"
@@ -47,7 +47,7 @@ automation:
     use_blueprint:
       path: yuri-vashchenko/publish_mqtt_on_entity_state_change.yaml
       input:
-        trigger_entity: binary_sensor.water_leak_bathroom_water_leak
+        trigger_entity: binary_sensor.bathroom_water_leak_water_leak
         topic: "home/bathroom/water_leak"
         retain: true
         enabling_entity: binary_sensor.main_control
@@ -57,7 +57,7 @@ automation:
     trigger:
       - platform: state
         entity_id: binary_sensor.bathroom_water_leak
-        to: 'on'
+        to: "on"
     condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
     action:
       service: script.bathroom_water_leak_triggered
