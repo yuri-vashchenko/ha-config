@@ -1,7 +1,7 @@
 plug:
   name: Розетки
   entities:
-    - switch.michael_plug
+    - switch.michael_plug_michael_pc
     - switch.balcony_plug_server_main
     - switch.bathroom_plug_washer_machine
     - switch.mama_plug_tv
