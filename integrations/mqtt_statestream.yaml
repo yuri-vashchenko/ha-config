@@ -17,6 +17,28 @@ mqtt_statestream:
       - sensor
       - switch
       - vacuum
+  exclude:
+    domains:
+      - weather
+    entity_globs:
+      - sensor.gismeteo*
+      - sensor.system_state*
+      - sensor.last_event*
+    entities:
+      - sensor.house_esphome_version
+      - sensor.house_ip_address
+      - sensor.house_connected_ssid
+      - sensor.hacs
+      - sensor.time
+      - sensor.time_date
+      - sensor.date
+      - binary_sensor.evening
+      - binary_sensor.day
+      - binary_sensor.night
+      - binary_sensor.morning
+
+
+
 
 
 
