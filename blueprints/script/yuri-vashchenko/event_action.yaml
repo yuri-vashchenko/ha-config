@@ -213,8 +213,9 @@ sequence:
           retain: false
       - alias: "delay"
         wait_template: >
-          {{ (states(wait_entity) or '') != wait_entity_state }}
-        timeout: !input 'delay_between_repeats'
+          {{ (states(wait_entity) or '') == wait_entity_state }}
+        timeout:
+          seconds: !input 'delay_between_repeats'
 - alias: "publish notification/warning/alarm mqtt message OFF"
   service: mqtt.publish
   data:
