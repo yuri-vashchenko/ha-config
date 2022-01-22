@@ -32,7 +32,7 @@ script:
         announcement_message: "Внимание! Входная дверь открыта"
         wait_entity: binary_sensor.entrance_door_contact
         wait_entity_state: "off"
-        delay_between_repeats: "00:01:00"
+        delay_between_repeats: 60
         max_repeats: 0
         announcement_message_end: "Входная дверь закрыта"
 
