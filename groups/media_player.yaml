@@ -6,12 +6,12 @@ media_player:
     - media_player.mama_tv
     - media_player.elena_nest
     - media_player.yandex_station_ff98f029014bad091f5988de
-    - media_player.yandex_station_ff98f02959560d534ab998c1
+    - media_player.yandex_station_mk0000000000000856020000ea9f455c
   icon: mdi:play-box
 
 alice:
   name: Yandex stations
   entities:
     - media_player.yandex_station_ff98f029014bad091f5988de
-    - media_player.yandex_station_ff98f02959560d534ab998c1
+    - media_player.yandex_station_mk0000000000000856020000ea9f455c
   icon: mdi:play-box
