@@ -1,22 +1,20 @@
 # RGB LED in corridor
 
-sensor:
-  - platform: mqtt
-    name: corridor_rgb_led_state
-    state_topic: "home/corridor/rgb_led/state"
-
-select:
-  - platform: mqtt
-    command_topic: "home/corridor/rgb_led/state"
-    state_topic: "home/corridor/rgb_led/state"
-    name: corridor_rgb_led
-    retain: true
-    options:
-      - "off"
-      - "temperature"
-      - "notification"
-      - "warning"
-      - "alarm"
+mqtt:
+  sensor:
+    - name: corridor_rgb_led_state
+      state_topic: "home/corridor/rgb_led/state"
+  select:
+    - name: corridor_rgb_led
+      command_topic: "home/corridor/rgb_led/state"
+      state_topic: "home/corridor/rgb_led/state"
+      retain: true
+      options:
+        - "off"
+        - "temperature"
+        - "notification"
+        - "warning"
+        - "alarm"
 
 automation:
   - id: Control RGB LED on/off in corridor
