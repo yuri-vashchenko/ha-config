@@ -33,6 +33,9 @@ homeassistant:
     "*button_yuri*":
       friendly_name: Юра кнопка
 
+    "*158d000709b340*":
+      friendly_name: Юра куб
+
     # Розетка кондиционера
     "*158d00032d3a92*":
       friendly_name: Розетка кондиционера
@@ -70,7 +73,7 @@ binary_sensor:
         friendly_name: "AC power"
         value_template: >
           {%- if states('sensor.elena_plug_ac_power') not in ['unknown', 'unavailable'] -%}
-            {{ states('sensor.elena_plug_ac_power') | float > 80.0 }}
+            {{ states('sensor.elena_plug_ac_power') | float > 50.0 }}
           {%- else -%}
             false
           {%- endif -%}
@@ -79,10 +82,10 @@ climate:
   - platform: smartir
     name: elena_ac
     unique_id: elena_ac
-    device_code: 1401
+    device_code: 1400
     controller_data: remote.elena_remote_broadlink
-    temperature_sensor: sensor.elena_0xe72e001268f1_temperature
-    humidity_sensor: sensor.elena_0xe72e001268f1_humidity
+    temperature_sensor: sensor.elena_thermometer_temperature
+    humidity_sensor: sensor.elena_thermometer_humidity
     power_sensor: binary_sensor.elena_ac_power
 
 script:
@@ -154,11 +157,19 @@ automation:
         for: "00:01:00"
         id: cold
       - platform: numeric_state
-        entity_id: sensor.elena_thermometer_temperature
-        below: number.elena_ac_hot_threshold
-        above: number.elena_ac_cold_threshold
-        for: "00:02:00"
-        id: warm
+        entity_id: sensor.elena_thermometer_humidity
+        above: number.elena_ac_humid_threshold
+        for: "00:01:00"
+        id: humid
+      - platform: template
+        value_template: >
+          {% set temperature = states("sensor.elena_thermometer_temperature") %}
+          {% set humidity = states("sensor.elena_thermometer_humidity") %}
+          {% set min_temp = states("number.elena_ac_cold_threshold") %}
+          {% set max_temp = states("number.elena_ac_hot_threshold") %}
+          {% set max_humidity = states("number.elena_ac_humid_threshold") %}
+          {{ temperature > min_temp and temperature < max_temp and humidity < max_humidity }}
+        id: comfort
     condition:
       - alias: "climate control is on"
         condition: state
@@ -168,17 +179,29 @@ automation:
       has_in_temp: >
         {{ states("sensor.elena_thermometer_temperature") not in
           ['unknown', 'unavailable'] }}
+      has_in_humidity: >
+        {{ states("sensor.elena_thermometer_humidity") not in
+          ['unknown', 'unavailable'] }}
       in_temp: >
         {%- if has_in_temp -%}
           {{ states("sensor.elena_thermometer_temperature") | float }}
         {%- else -%}
           25.0
         {%- endif -%}
+      in_humidity: >
+        {%- if has_in_humidity -%}
+          {{ states("sensor.elena_thermometer_humidity") | float }}
+        {%- else -%}
+          50.0
+        {%- endif -%}
       is_cold: >
         {{ has_in_temp and in_temp < (states("number.elena_ac_cold_threshold") | float) }}
       is_hot: >
         {{ has_in_temp and in_temp > (states("number.elena_ac_hot_threshold") | float) }}
-      is_worm: "{{ not is_cold and not is_hot }}"
+      is_humid: >
+        {{ has_in_humidity and in_humidity > (states("number.elena_ac_humid_threshold") | float) }}
+      is_warm: "{{ not is_cold and not is_hot }}"
+      is_comfort: "{{ not is_cold and not is_hot and not is_humid }}"
       has_out_temp: >
         {{ states("sensor.street_thermometer_temperature") not in
           ['unknown', 'unavailable'] }}
@@ -193,13 +216,16 @@ automation:
       ac_state: >
         {{ states("climate.elena_ac") }}
       need_off: >
-        {{ (doors_state == 'on' or is_worm ) and ac_state != 'off' }}
+        {{ (doors_state == 'on' or is_comfort ) and ac_state != 'off' }}
       can_heat: >
         {{ has_out_temp and doors_state == 'off' and
-          out_temp < 10 and ac_state == 'off' }}
+          out_temp < 18 and ac_state == 'off' }}
       can_cool: >
         {{ has_out_temp and doors_state == 'off' and
           out_temp > 10 and ac_state == 'off' }}
+      can_dry: >
+        {{ has_in_humidity and is_humid and
+          doors_state == 'off' and ac_state == 'off' }}
     action:
       choose:
         - alias: elena_ac_turn_off
@@ -208,7 +234,7 @@ automation:
               id:
                 - started
                 - door_opened
-                - warm
+                - comfort
             - "{{ need_off }}"
           sequence:
             - alias: "log event"
@@ -221,10 +247,13 @@ automation:
                     need_off: {{ need_off }},
                     can_heat: {{ can_heat }},
                     can_cool: {{ can_cool }},
+                    can_dry: {{ can_dry }},
                     doors_state: {{ doors_state }},
+                    is_comfort: {{ is_comfort }},
                     is_cold: {{ is_cold }},
                     is_hot: {{ is_hot }},
-                    is_worm: {{ is_worm }},
+                    is_warm: {{ is_warm }},
+                    is_humid: {{ is_humid }},
                     in_temp: {{ in_temp }},
                     out_temp: {{ out_temp }}
                 entity_id: climate.elena_ac
@@ -253,10 +282,13 @@ automation:
                     need_off: {{ need_off }},
                     can_heat: {{ can_heat }},
                     can_cool: {{ can_cool }},
+                    can_dry: {{ can_dry }},
                     doors_state: {{ doors_state }},
+                    is_comfort: {{ is_comfort }},
                     is_cold: {{ is_cold }},
                     is_hot: {{ is_hot }},
-                    is_worm: {{ is_worm }},
+                    is_warm: {{ is_warm }},
+                    is_humid: {{ is_humid }},
                     in_temp: {{ in_temp }},
                     out_temp: {{ out_temp }}
                 entity_id: climate.elena_ac
@@ -287,10 +319,13 @@ automation:
                     need_off: {{ need_off }},
                     can_heat: {{ can_heat }},
                     can_cool: {{ can_cool }},
+                    can_dry: {{ can_dry }},
                     doors_state: {{ doors_state }},
+                    is_comfort: {{ is_comfort }},
                     is_cold: {{ is_cold }},
                     is_hot: {{ is_hot }},
-                    is_worm: {{ is_worm }},
+                    is_warm: {{ is_warm }},
+                    is_humid: {{ is_humid }},
                     in_temp: {{ in_temp }},
                     out_temp: {{ out_temp }}
                 entity_id: climate.elena_ac
@@ -301,6 +336,43 @@ automation:
                 entity_id: climate.elena_ac
                 temperature: 16
                 hvac_mode: "cool"
+        - alias: elena_ac_dry
+          conditions:
+            # turn on drying on homeassistant start or automation reloaded if cold
+            - condition: trigger
+              id:
+                - started
+                - doors_closed
+                - humid
+            - "{{ is_humid and can_dry }}"
+          sequence:
+            - alias: "log event"
+              service: logbook.log
+              data_template:
+                name: "Turn AC on (dry)"
+                message: >
+                  Turning AC ON (dry) on: trigger: {{ trigger.id }},
+                    ac_state: {{ ac_state }},
+                    need_off: {{ need_off }},
+                    can_heat: {{ can_heat }},
+                    can_cool: {{ can_cool }},
+                    can_dry: {{ can_dry }},
+                    doors_state: {{ doors_state }},
+                    is_comfort: {{ is_comfort }},
+                    is_cold: {{ is_cold }},
+                    is_hot: {{ is_hot }},
+                    is_warm: {{ is_warm }},
+                    is_humid: {{ is_humid }},
+                    in_temp: {{ in_temp }},
+                    out_temp: {{ out_temp }}
+                entity_id: climate.elena_ac
+                domain: climate
+            - alias: "Turn AC on (dry)"
+              service: climate.set_temperature
+              data:
+                entity_id: climate.elena_ac
+                temperature: 22
+                hvac_mode: "dry"
 
   - id: "elena_light_control_button_l"
     alias: "elena_light_control_button_l"
