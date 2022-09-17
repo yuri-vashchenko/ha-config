@@ -1,12 +1,12 @@
 # Health metrics
+mqtt:
+  sensor:
+    - name: system_state_192_168_0_5
+      state_topic: "instance/192.168.0.5/sensor/system/state"
+    - name: system_state_192_168_0_8
+      state_topic: "instance/192.168.0.8/sensor/system/state"
 
 sensor:
-  - platform: mqtt
-    name: system_state_192_168_0_5
-    state_topic: "instance/192.168.0.5/sensor/system/state"
-  - platform: mqtt
-    name: system_state_192_168_0_8
-    state_topic: "instance/192.168.0.8/sensor/system/state"
   - platform: template
     sensors:
       system_state:

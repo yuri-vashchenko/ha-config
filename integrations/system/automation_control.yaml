@@ -1,49 +1,46 @@
 # Multi-instance control. Defines what instance controls what automations
 
-select:
-  - platform: mqtt
-    name: light_controller
-    command_topic: "automation_controller/light"
-    state_topic: "automation_controller/light"
-    retain: true
-    icon: "mdi:lightbulb-on"
-    options:
-      - "none"
-      - "192.168.0.5"
-      - "192.168.0.8"
+mqtt:
+  select:
+    - name: light_controller
+      command_topic: "automation_controller/light"
+      state_topic: "automation_controller/light"
+      retain: true
+      icon: "mdi:lightbulb-on"
+      options:
+        - "none"
+        - "192.168.0.5"
+        - "192.168.0.8"
 
-  - platform: mqtt
-    name: main_controller
-    command_topic: "automation_controller/main"
-    state_topic: "automation_controller/main"
-    retain: true
-    icon: "mdi:gamepad-outline"
-    options:
-      - "none"
-      - "192.168.0.5"
-      - "192.168.0.8"
+    - name: main_controller
+      command_topic: "automation_controller/main"
+      state_topic: "automation_controller/main"
+      retain: true
+      icon: "mdi:gamepad-outline"
+      options:
+        - "none"
+        - "192.168.0.5"
+        - "192.168.0.8"
 
-  - platform: mqtt
-    name: sound_controller
-    command_topic: "automation_controller/sound"
-    state_topic: "automation_controller/sound"
-    retain: true
-    icon: "mdi:volume-high"
-    options:
-      - "none"
-      - "192.168.0.5"
-      - "192.168.0.8"
+    - name: sound_controller
+      command_topic: "automation_controller/sound"
+      state_topic: "automation_controller/sound"
+      retain: true
+      icon: "mdi:volume-high"
+      options:
+        - "none"
+        - "192.168.0.5"
+        - "192.168.0.8"
 
-  - platform: mqtt
-    name: climate_controller
-    command_topic: "automation_controller/climate"
-    state_topic: "automation_controller/climate"
-    retain: true
-    icon: "mdi:home-thermometer"
-    options:
-      - "none"
-      - "192.168.0.5"
-      - "192.168.0.8"
+    - name: climate_controller
+      command_topic: "automation_controller/climate"
+      state_topic: "automation_controller/climate"
+      retain: true
+      icon: "mdi:home-thermometer"
+      options:
+        - "none"
+        - "192.168.0.5"
+        - "192.168.0.8"
 
 binary_sensor:
   - platform: template

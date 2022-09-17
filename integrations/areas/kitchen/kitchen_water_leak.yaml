@@ -7,12 +7,12 @@ homeassistant:
     "*kitchen_water_leak*":
       friendly_name: Кухня утечка воды
 
-binary_sensor:
-  - platform: mqtt
-    name: kitchen_water_leak
-    state_topic: "home/kitchen/water_leak"
-    payload_on: "on"
-    payload_off: "off"
+mqtt:
+  binary_sensor:
+    - name: kitchen_water_leak
+      state_topic: "home/kitchen/water_leak"
+      payload_on: "on"
+      payload_off: "off"
 
 script:
   kitchen_water_leak_triggered:
@@ -29,8 +29,8 @@ script:
         announcement_message: "Тревога! Обнаружена протечка воды на кухне"
         wait_entity: binary_sensor.kitchen_water_leak
         wait_entity_state: "off"
-        delay_between_repeats: "00:01:00"
-        max_repeats: 0
+        delay_between_repeats: 60
+        max_repeats: 15
         announcement_message_end: "Протечка воды на кухне устранена"
 
 automation:

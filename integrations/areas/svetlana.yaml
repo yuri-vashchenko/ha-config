@@ -3,8 +3,8 @@
 homeassistant:
   customize:
     # Камера
-    binary_sensor.camera_reolink_front:
-      friendly_name: Камера reolink
+    # binary_sensor.camera_reolink_front:
+    #   friendly_name: Камера reolink
 
     # Влажность и температура
     sensor.svetlana_thermometer_temperature:
@@ -27,12 +27,12 @@ homeassistant:
     "*svetlana_thermometer*":
       friendly_name: Света климат
 
-sensor:
-  # mqtt sensors
-  - platform: mqtt
-    name: last_event_svetlana_motion_occupancy
-    device_class: timestamp
-    state_topic: "home/svetlana/svetlana_motion_occupancy/on"
+# mqtt sensors
+mqtt:
+  sensor:
+    - name: last_event_svetlana_motion_occupancy
+      device_class: timestamp
+      state_topic: "home/svetlana/svetlana_motion_occupancy/on"
 
 # automations
 automation:

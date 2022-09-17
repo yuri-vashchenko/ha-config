@@ -8,12 +8,12 @@ homeassistant:
     "*toilet_water_leak*":
       friendly_name: Туалет утечка воды
 
-binary_sensor:
-  - platform: mqtt
-    name: toilet_water_leak
-    state_topic: "home/toilet/water_leak"
-    payload_on: "on"
-    payload_off: "off"
+mqtt:
+  binary_sensor:
+    - name: toilet_water_leak
+      state_topic: "home/toilet/water_leak"
+      payload_on: "on"
+      payload_off: "off"
 
 script:
   toilet_water_leak_triggered:
@@ -30,8 +30,8 @@ script:
         announcement_message: "Тревога! Обнаружена протечка воды на кухне"
         wait_entity: binary_sensor.toilet_water_leak
         wait_entity_state: "off"
-        delay_between_repeats: "00:01:00"
-        max_repeats: 0
+        delay_between_repeats: 60
+        max_repeats: 15
         announcement_message_end: "Протечка воды на кухне устранена"
 
 automation:

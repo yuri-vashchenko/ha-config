@@ -2,15 +2,15 @@
 
 # Entrance door
 
-number:
+mqtt:
+  number:
   # Trigger warning if entrance door is opened for long
-  - platform: mqtt
-    name: "Как долго входная дверь открыта для предупреждения"
-    object_id: entrance_door_warning_open_duration
-    icon: "mdi:thermometer-low"
-    command_topic: "home/entrance/settings/entrance_door/warning_threshold"
-    state_topic: "home/entrance/settings/entrance_door/warning_threshold"
-    min: 10
-    max: 600
-    step: 1
-    retain: true
+    - name: "Как долго входная дверь открыта для предупреждения"
+      object_id: entrance_door_warning_open_duration
+      icon: "mdi:thermometer-low"
+      command_topic: "home/entrance/settings/entrance_door/warning_threshold"
+      state_topic: "home/entrance/settings/entrance_door/warning_threshold"
+      min: 10
+      max: 600
+      step: 1
+      retain: true

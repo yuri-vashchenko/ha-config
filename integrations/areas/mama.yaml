@@ -62,14 +62,14 @@ light:
     entity_id: switch.mama_switch_light
 
 # switches
-switch:
-  - platform: mqtt
-    name: mama_switch_mqtt
-    retain: true
-    command_topic: "home/mama/light"
-    state_topic: "home/mama/light"
-    payload_on: "on"
-    payload_off: "off"
+mqtt:
+  switch:
+    - name: mama_switch_mqtt
+      retain: true
+      command_topic: "home/mama/light"
+      state_topic: "home/mama/light"
+      payload_on: "on"
+      payload_off: "off"
 
 automation:
   - id: mama_sync_switches

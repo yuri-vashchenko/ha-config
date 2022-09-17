@@ -1,28 +1,26 @@
 # Yeelight ceiling light control
 
 # switches
-switch:
-  - platform: mqtt
-    name: elena_yeelight_main
-    retain: true
-    command_topic: "home/elena/yeelight/main"
-    state_topic: "home/elena/yeelight/main"
-    payload_on: "on"
-    payload_off: "off"
-  - platform: mqtt
-    name: elena_yeelight_nightlight
-    retain: true
-    command_topic: "home/elena/yeelight/nightlight"
-    state_topic: "home/elena/yeelight/nightlight"
-    payload_on: "on"
-    payload_off: "off"
-  - platform: mqtt
-    name: elena_yeelight_ambilight
-    retain: true
-    command_topic: "home/elena/yeelight/ambilight"
-    state_topic: "home/elena/yeelight/ambilight"
-    payload_on: "on"
-    payload_off: "off"
+mqtt:
+  switch:
+    - name: elena_yeelight_main
+      retain: true
+      command_topic: "home/elena/yeelight/main"
+      state_topic: "home/elena/yeelight/main"
+      payload_on: "on"
+      payload_off: "off"
+    - name: elena_yeelight_nightlight
+      retain: true
+      command_topic: "home/elena/yeelight/nightlight"
+      state_topic: "home/elena/yeelight/nightlight"
+      payload_on: "on"
+      payload_off: "off"
+    - name: elena_yeelight_ambilight
+      retain: true
+      command_topic: "home/elena/yeelight/ambilight"
+      state_topic: "home/elena/yeelight/ambilight"
+      payload_on: "on"
+      payload_off: "off"
 # automation:
 #   - id: elena_yeelight_sync_switches
 #     alias: "Elena synchronize mqtt and phisical light states"

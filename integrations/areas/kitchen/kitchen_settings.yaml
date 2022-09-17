@@ -2,23 +2,21 @@
 
 # Kitchen light
 
-number:
-  - platform: mqtt
-    name: Как долго (минут) не выключать свет
-    object_id: kitchen_hold_light_on_timeout
-    command_topic: "home/kitchen/settings/light/hold_on_timeout"
-    state_topic: "home/kitchen/settings/light/hold_on_timeout"
-    retain: true
-    icon: mdi:lightbulb-on
-    min: 1
-    max: 600
-
-  - platform: mqtt
-    name: Как долго (минут) не включать свет
-    object_id: kitchen_hold_light_off_timeout
-    command_topic: "home/kitchen/settings/light/hold_off_timeout"
-    state_topic: "home/kitchen/settings/light/hold_off_timeout"
-    retain: true
-    icon: mdi:lightbulb-on
-    min: 1
-    max: 600
+mqtt:
+  number:
+    - name: Как долго (минут) не выключать свет
+      object_id: kitchen_hold_light_on_timeout
+      command_topic: "home/kitchen/settings/light/hold_on_timeout"
+      state_topic: "home/kitchen/settings/light/hold_on_timeout"
+      retain: true
+      icon: mdi:lightbulb-on
+      min: 1
+      max: 600
+    - name: Как долго (минут) не включать свет
+      object_id: kitchen_hold_light_off_timeout
+      command_topic: "home/kitchen/settings/light/hold_off_timeout"
+      state_topic: "home/kitchen/settings/light/hold_off_timeout"
+      retain: true
+      icon: mdi:lightbulb-on
+      min: 1
+      max: 600
