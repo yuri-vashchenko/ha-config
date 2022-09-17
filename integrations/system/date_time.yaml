@@ -27,4 +27,12 @@ sensor:
       - 'time'
       - 'date'
       - 'time_date'
-
+  - platform: template
+    sensors:
+      greeting:
+        friendly_name: "Greeting"
+        value_template: >
+          {{iif(is_state("binary_sensor.morning", "on"), "Доброе утро",
+              iif(is_state("binary_sensor.day", "on"), "Добрый день",
+                iif(is_state("binary_sensor.evening", "on"), "Добрый вечер",
+                  "Доброй ночи")))}}
