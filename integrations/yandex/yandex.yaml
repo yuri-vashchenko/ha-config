@@ -5,6 +5,7 @@ yandex_smart_home:
       - media_player.mama_tv
       - light.kitchen_switch_light
       - light.mama_switch_light
+      - sensor.blood_sugar_mmol
       - sensor.balcony_thermometer_temperature
       - sensor.balcony_thermometer_humidity
       - sensor.svetlana_thermometer_temperature
@@ -13,8 +14,10 @@ yandex_smart_home:
       - sensor.michael_thermometer_humidity
       - sensor.mama_thermometer_temperature
       - sensor.mama_thermometer_humidity
-      - sensor.elena_0xe72e001268f1_temperature
-      - sensor.elena_0xe72e001268f1_humidity
+      - sensor.elena_thermometer_temperature
+      - sensor.elena_thermometer_humidity
+      # - sensor.elena_0xe72e001268f1_temperature
+      # - sensor.elena_0xe72e001268f1_humidity
       - sensor.street_thermometer_temperature
       - sensor.street_thermometer_humidity
       - sensor.street_thermometer_pressure
@@ -93,3 +96,7 @@ yandex_smart_home:
     switch.kitchen_hold_light_off:
       name: "Не включать свет"
       room: "Кухня"
+
+    sensor.blood_sugar_mmol:
+      name: "Сахар крови"
+      room: "Лена"
