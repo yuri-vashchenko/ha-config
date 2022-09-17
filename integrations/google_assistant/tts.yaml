@@ -3,6 +3,5 @@
 
 tts:
   - platform: google_translate
-    base_url: https://vashchenko.me
     service_name: google_say
     language: "ru"
