@@ -1,0 +1,7 @@
+# HACS browser mod component
+
+browser_mod:
+  prefix: 'browser_mod_'
+  devices:
+    e7bfbfc3_aff3c87c:
+      name: corridor_tablet
