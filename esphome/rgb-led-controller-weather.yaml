@@ -4,8 +4,8 @@ esphome:
   board: esp-wrover-kit
 
 wifi:
-  ssid: "Keenetic-5137"
-  password: "6BLpFzKi"
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
   manual_ip:
     static_ip: 192.168.0.240
     gateway: 192.168.0.1
@@ -14,7 +14,7 @@ wifi:
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: "rgb-led-controller-fallback"
-    password: "oyhBPITQDtnT"
+    password: !secret rgb_led_controller_weather_ap
 
 captive_portal:
 
@@ -46,10 +46,10 @@ logger:
 
 # Enable Home Assistant API
 api:
-  password: !secret rgb_led_controller_01_ota_password
+  password: !secret rgb_led_controller_weather_ota
 
 ota:
-  password: !secret rgb_led_controller_01_ota_password
+  password: !secret rgb_led_controller_weather_ota
 
 light:
   - platform: fastled_clockless
