@@ -1,0 +1,9 @@
+# extract picture attribute from weather entity
+
+sensor:
+  - platform: template
+    sensors:
+      yandex_weather_picture:
+        friendly_name: "Current weather picture from Yandex weather"
+        value_template: >
+          {{state_attr("weather.yandex_weather", "entity_picture")}}
