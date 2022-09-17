@@ -1,0 +1,41 @@
+# Action to execute on different events
+blueprint:
+  name: generate_event
+  description: A script that generates or cancels notification/warning/alarm
+  source_url: https://gist.github.com/yuri-vashchenko/
+  domain: script
+  homeassistant:
+    min_version: 2021.11.0
+  input:
+    event_severity:
+      name: Event severity
+      description: severity of event
+      default: "notification"
+      selector:
+        select:
+          options:
+            - notification
+            - warning
+            - alarm
+    value:
+      name: Value
+      description: Value can be on/off (true/false)
+      default: true
+      selector:
+        boolean:
+mode: queued
+max: 100
+variables:
+  _event_severity: !input 'event_severity'
+  event_severity: "{{ _event_severity or '' | lower | trim }}"
+  _value: !input 'value'
+  value: "{{ _value or true }}"
+  payload: >
+    {{ "true" if value == true else "false" }}
+sequence:
+- alias: "publish notification/warning/alarm mqtt message ON"
+  service: mqtt.publish
+  data_template:
+    topic: "home/system/{{ event_severity }}/on"
+    payload: "{{ payload }}"
+    retain: true
