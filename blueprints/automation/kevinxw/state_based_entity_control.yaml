@@ -378,7 +378,7 @@ action:
             data_template:
               name: "{{ state_attr(target_entity, 'friendly_name') or target_entity }}"
               message: "is executing service {{ target_entity_action_on }}"
-          - service_template: "{{ target_entity_action_on }}"
+          - service: "{{ target_entity_action_on }}"
             data_template:
               # This automation will be restarted immediately since the target_entity's state is now changed.
               entity_id: "{{ target_entity }}"
@@ -418,6 +418,6 @@ action:
               name: "{{ state_attr(target_entity_off, 'friendly_name') or target_entity_off }}"
               message: "is executing service {{ target_entity_action_off }}"
               entity_id: "{{ target_entity_off }}"
-          - service_template: "{{ target_entity_action_off }}"
+          - service: "{{ target_entity_action_off }}"
             data_template:
               entity_id: "{{ target_entity_off }}"
