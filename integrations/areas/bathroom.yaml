@@ -14,12 +14,12 @@ homeassistant:
     "*bathroom_plug_washer_machine*":
       friendly_name: Розетка стиральной машины
 
-binary_sensor:
-  - platform: mqtt
-    name: bathroom_water_leak
-    state_topic: "home/bathroom/water_leak"
-    payload_on: "on"
-    payload_off: "off"
+mqtt:
+  binary_sensor:
+    - name: bathroom_water_leak
+      state_topic: "home/bathroom/water_leak"
+      payload_on: "on"
+      payload_off: "off"
 
 script:
   bathroom_water_leak_triggered:
@@ -36,8 +36,8 @@ script:
         announcement_message: "Тревога! Обнаружена протечка воды на кухне"
         wait_entity: binary_sensor.bathroom_water_leak
         wait_entity_state: "off"
-        delay_between_repeats: "00:01:00"
-        max_repeats: 0
+        delay_between_repeats: 60
+        max_repeats: 15
         announcement_message_end: "Протечка воды на кухне устранена"
 
 automation:
