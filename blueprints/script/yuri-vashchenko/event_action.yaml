@@ -159,72 +159,72 @@ variables:
     {"message": "{{ announcement_message_end }}",
       "volume": "{{ announcement_volume }}"}
 sequence:
-- alias: "record event trigger date time"
+- alias: запись момента конкретного события
   service: mqtt.publish
   data_template:
     topic: >
       events/date_time/{{ event_severity }}/{{ event_type }}/{{ event_id }}
     payload_template: "{{ now() }}"
     retain: true
-- alias: "record event trigger (any)"
+- alias: запись момента события
   service: mqtt.publish
   data_template:
     topic: >
       events/date_time/{{ event_severity }}/{{ event_type }}
     payload_template: "{{ now() }}"
     retain: true
-- alias: "publish play ringtone mqtt message"
+- alias: публикация сообщения для проигрывания рингтона
   service: mqtt.publish
   data_template:
     topic: "home/system/notification/xiaomi/play_ringtone"
     payload_template: "{{play_ringtone_payload}}"
-- alias: "publish announcement mqtt message"
+- alias: публикация голосового оповещения
   service: mqtt.publish
   data_template:
     topic: "home/system/announcement/all"
     payload_template: "{{announcement_payload}}"
-- alias: "publish notification/warning/alarm mqtt message ON"
+- alias: публикация события
   service: mqtt.publish
   data_template:
     topic: "home/system/{{ event_severity }}/on"
     payload: "true"
-    retain: false
-- alias: "wait for event end"
+    retain: true
+- alias: ожидание завершения события
   repeat:
     while: >
-      {{ (states(wait_entity) or '') != wait_entity_state and
+      {{ not(is_state(wait_entity, wait_entity_state)) and
         (max_repeats == 0 or repeat.index <= max_repeats) }}
     sequence:
-      - alias: "publish play ringtone mqtt message"
+      - alias: публикация команды для воспроизведения рингтона повторения
         service: mqtt.publish
         data_template:
           topic: "home/system/notification/xiaomi/play_ringtone"
           payload_template: "{{play_ringtone_payload}}"
-      - alias: "publish announcement mqtt message"
+      - alias: публикация команды для повторного голосового сообщения
         service: mqtt.publish
         data_template:
           topic: "home/system/announcement/all"
           payload_template: "{{ announcement_payload_repeat }}"
-      - alias: "publish notification/warning/alarm mqtt message ON"
+      - alias: сохранение события
         service: mqtt.publish
         data_template:
           topic: "home/system/{{ event_severity }}/on"
           payload: "true"
-          retain: false
-      - alias: "delay"
+          retain: true
+      - alias: ожидание
         wait_template: >
-          {{ (states(wait_entity) or '') == wait_entity_state }}
+          {{ is_state(wait_entity, wait_entity_state) }}
         timeout:
           seconds: !input 'delay_between_repeats'
-- alias: "publish notification/warning/alarm mqtt message OFF"
+- alias: публикация окончания события
   service: mqtt.publish
   data:
     topic: "home/system/{{ event_severity }}/on"
     payload: "false"
-    retain: false
+    retain: true
 - condition: template
   value_template: "{{ announcement_message_end != '' }}"
-- alias: "publish announcement mqtt message"
+- alias: публикация голосового сообщения об окончании события
   service: mqtt.publish
   data_template:
     topic: "home/system/announcement/all"
