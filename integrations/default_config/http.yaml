@@ -4,13 +4,18 @@
 http:
 
   # Server port
-  server_port: !secret server_port
+  # server_port: !secret server_port
 
   # SSL certificate
-  ssl_certificate: /ssl/fullchain.pem
+  # ssl_certificate: /ssl/fullchain.pem
 
   # SSL key
-  ssl_key: /ssl/privkey.pem
+  # ssl_key: /ssl/privkey.pem
+
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 192.168.0.0/16
+    - 172.30.33.0/24
 
   # IP Banning
   ip_ban_enabled: true
