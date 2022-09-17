@@ -20,6 +20,9 @@ homeassistant:
       friendly_name: Розетка телевизора на кухне память отключения
 
     media_player.yandex_station_ff98f02959560d534ab998c1:
+      friendly_name: yandex_station_nev11
+
+    media_player.yandex_station_2:
       friendly_name: yandex_station_kitchen
 
   customize_glob:
@@ -51,6 +54,15 @@ sensor:
       kitchen_switch_load_power:
         friendly_name: "Кухонный удлинитель текущее потребление"
         value_template: "{{ state_attr('switch.kitchen_power_strip', 'load_power') }}"
+      kitchen_ble_presence:
+        friendly_name: "Someone in the kitchen"
+        value_template: >
+          {{is_state('sensor.michael_mi_smart_band_5', "kitchen") or
+            is_state('sensor.mama_mi_smart_band_4', "kitchen") or
+            is_state('sensor.papa_mi_smart_band_4', "kitchen") or
+            is_state('sensor.elena_mi_smart_band_6', "kitchen") or
+            is_state('sensor.yuri_mi_smart_band_6_nfc', "kitchen") or
+            is_state('sensor.svetlana_mi_smart_band_6', "kitchen")}}
 
   - platform: integration
     source: sensor.kitchen_switch_load_power
@@ -59,20 +71,19 @@ sensor:
     round: 2
 
 # switches
-switch:
-  # Prevents turning off the light
-  - platform: mqtt
-    name: kitchen_hold_light_on
-    retain: true
-    command_topic: "home/kitchen/light/hold_on"
-    state_topic: "home/kitchen/light/hold_on"
+mqtt:
+  switch:
+    # Prevents turning off the light
+    - name: kitchen_hold_light_on
+      retain: true
+      command_topic: "home/kitchen/light/hold_on"
+      state_topic: "home/kitchen/light/hold_on"
 
-  # Prevents turning on the light
-  - platform: mqtt
-    name: kitchen_hold_light_off
-    retain: true
-    command_topic: "home/kitchen/light/hold_off"
-    state_topic: "home/kitchen/light/hold_off"
+    # Prevents turning on the light
+    - name: kitchen_hold_light_off
+      retain: true
+      command_topic: "home/kitchen/light/hold_off"
+      state_topic: "home/kitchen/light/hold_off"
 
 binary_sensor:
   - platform: template
@@ -99,7 +110,8 @@ binary_sensor:
         friendly_name: Не выключать свет
         value_template: >
           {{ states('binary_sensor.light_control') == 'off' or
-            states('switch.kitchen_hold_light_on') == 'on' }}
+            states('switch.kitchen_hold_light_on') == 'on' or
+            states('kitchen_ble_presence') }}
 
 # lights
 light:
