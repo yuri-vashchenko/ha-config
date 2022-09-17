@@ -27,8 +27,6 @@ automation:
           - binary_sensor.elena_door_contact
           - binary_sensor.entrance_door_contact
           - binary_sensor.balcony_elena_door_contact
-          - binary_sensor.balcony_window_right_contact
-          - binary_sensor.balcony_window_middle_contact
     condition:
       - "{{ is_state('binary_sensor.main_control', 'on') }}"
     action:
