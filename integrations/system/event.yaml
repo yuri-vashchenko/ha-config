@@ -1,17 +1,69 @@
 # Notification/Warning/Alarm
-binary_sensor:
-  - platform: mqtt
-    name: is_notification
-    state_topic: "home/system/notification/on"
-    payload_on: "true"
-    payload_off: "false"
-  - platform: mqtt
-    name: is_warning
-    state_topic: "home/system/warning/on"
-    payload_on: "true"
-    payload_off: "false"
-  - platform: mqtt
-    name: is_alarm
-    state_topic: "home/system/alarm/on"
-    payload_on: "true"
-    payload_off: "false"
+mqtt:
+  binary_sensor:
+    - name: is_notification
+      state_topic: "home/system/notification/on"
+      payload_on: "true"
+      payload_off: "false"
+    - name: is_warning
+      state_topic: "home/system/warning/on"
+      payload_on: "true"
+      payload_off: "false"
+    - name: is_alarm
+      state_topic: "home/system/alarm/on"
+      payload_on: "true"
+      payload_off: "false"
+
+script:
+  generate_notification:
+    use_blueprint:
+      path: yuri-vashchenko/generate_event.yaml
+      input:
+        event_severity: "notification"
+        value: "true"
+  generate_warning:
+    use_blueprint:
+      path: yuri-vashchenko/generate_event.yaml
+      input:
+        event_severity: "warning"
+        value: "true"
+  generate_alarm:
+    use_blueprint:
+      path: yuri-vashchenko/generate_event.yaml
+      input:
+        event_severity: "alarm"
+        value: "true"
+  cancel_notification:
+    use_blueprint:
+      path: yuri-vashchenko/generate_event.yaml
+      input:
+        event_severity: "notification"
+        value: "false"
+  cancel_warning:
+    use_blueprint:
+      path: yuri-vashchenko/generate_event.yaml
+      input:
+        event_severity: "warning"
+        value: "false"
+  cancel_alarm:
+    use_blueprint:
+      path: yuri-vashchenko/generate_event.yaml
+      input:
+        event_severity: "alarm"
+        value: "false"
+  cancel_all:
+    sequence:
+      - alias: "Cancel notification"
+        service: script.turn_on
+        target:
+          entity_id: script.cancel_notification
+      - alias: "Cancel warning"
+        service: script.turn_on
+        target:
+          entity_id: script.cancel_warning
+      - alias: "Cancel alarm"
+        service: script.turn_on
+        target:
+          entity_id: script.cancel_alarm
+    mode: queued
+    max: 100
