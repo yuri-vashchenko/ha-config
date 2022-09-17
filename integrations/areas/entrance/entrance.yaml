@@ -17,6 +17,14 @@ homeassistant:
     "*158d00041d99a1*":
       friendly_name: Кнопка звонка
 
+binary_sensor:
+  - platform: command_line
+    name: entrance_cam_status
+    command: response=$(curl -LIk -m 3 rtsp://192.168.0.91 -o /dev/null -w "%{http_code}\n" -s); test "$response" -eq 200 && echo "OFF" || echo "ON"
+    scan_interval: 60
+    value_template: '{{ value }}'
+    device_class: 'problem'
+
 script:
   entrance_door_opened:
     alias: "Entrance doorbell opened for too long"
@@ -33,7 +41,7 @@ script:
         wait_entity: binary_sensor.entrance_door_contact
         wait_entity_state: "off"
         delay_between_repeats: 60
-        max_repeats: 0
+        max_repeats: 10
         announcement_message_end: "Входная дверь закрыта"
 
 automation:
@@ -65,3 +73,34 @@ automation:
     action:
       service: script.entrance_door_opened
     mode: restart
+
+  - id: entrance_cam_reset_if_unavailable
+    alias: Power cycle entrance cam if it does not return 200 status
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.entrance_cam_status
+        to: 'on'
+        for:
+          seconds: 300
+      - platform: homeassistant
+        event: start
+        id: restart
+      - platform: event
+        # Check immediately after the automation is changed.
+        event_type: automation_reloaded
+        id: restart
+    condition:
+      - condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+      - condition: state
+        entity_id: binary_sensor.entrance_cam_status
+        state: "on"
+    action:
+      - service: switch.turn_off
+        entity_id: switch.entrance_plug_camera
+      - delay: 10
+      - service: switch.turn_on
+        entity_id: switch.entrance_plug_camera
+    mode: single
+    max_exceeded: silent
