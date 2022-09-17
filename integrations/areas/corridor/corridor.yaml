@@ -36,22 +36,28 @@ script:
           payload: '{"wake": true}'
           retain: false
 
-# sensors
-sensor:
-  # mqtt sensors
-  - platform: mqtt
-    name: corridor_events_motion_bathroom
-    device_class: timestamp
-    state_topic: "home/corridor/events/motion/corridor_motion_bathroom_occupancy/on"
-  - platform: mqtt
-    name: corridor_events_motion_entrance
-    device_class: timestamp
-    state_topic: "home/corridor/events/motion/corridor_motion_entrance_occupancy/on"
+binary_sensor:
+  - platform: template
+    sensors:
+      wake_corridor_wall_panel:
+        friendly_name: "Условие для включения панели в коридоре"
+        value_template: >
+          {{ is_state('binary_sensor.corridor_motion_entrance_occupancy', 'on') or
+            not is_state('sensor.entrance_button_doorbell_action', 'None') }}
 
-  - platform: mqtt
-    name: last_event_svetlana_motion_occupancy
-    device_class: timestamp
-    state_topic: "home/svetlana/svetlana_motion_occupancy/on"
+# sensors
+mqtt:
+  sensor:
+  # mqtt sensors
+    - name: corridor_events_motion_bathroom
+      device_class: timestamp
+      state_topic: "home/corridor/events/motion/corridor_motion_bathroom_occupancy/on"
+    - name: corridor_events_motion_entrance
+      device_class: timestamp
+      state_topic: "home/corridor/events/motion/corridor_motion_entrance_occupancy/on"
+    - name: last_event_svetlana_motion_occupancy
+      device_class: timestamp
+      state_topic: "home/svetlana/svetlana_motion_occupancy/on"
 
 automation:
   - id: corridor_turn_on_tablet_on_motion
@@ -59,7 +65,7 @@ automation:
     description: "turn on tablet screen on motion"
     trigger:
       platform: state
-      entity_id: binary_sensor.corridor_motion_entrance_occupancy
+      entity_id: binary_sensor.wake_corridor_wall_panel
       to: "on"
     condition:
       - condition: state
