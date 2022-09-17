@@ -1,0 +1,38 @@
+sensor:
+  - platform: template
+    sensors:
+      blood_sugar_mmol:
+        friendly_name: Сахар крови
+        value_template: >-
+          {{(states('sensor.blood_sugar') | int / 18) | round(1, 'floor')}}
+
+automation:
+  - id: wakeup_at_night
+    alias: Разбудить ночью при гипогликемии
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.blood_sugar_mmol
+        below: 4
+    condition:
+      - alias: "sound controller"
+        condition: state
+        entity_id: binary_sensor.sound_control
+        state: "on"
+      - alias: "it is night"
+        condition: state
+        entity_id: binary_sensor.night
+        state: "on"
+    action:
+      - alias: call_elena_nest_say
+        service: script.turn_on
+        target:
+          entity_id: script.elena_nest_say
+        data_template:
+          variables:
+            message: "Внимание! Гипогликемия! Срочно съешь что-нибудь"
+      - wait_for_trigger:
+        - platform: numeric_state
+          entity_id: sensor.blood_sugar_mmol
+          above: 4
+    mode: single
+    max_exceeded: silent
