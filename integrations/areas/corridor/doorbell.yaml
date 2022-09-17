@@ -14,8 +14,9 @@ script:
         announcement_message: "Кто-то пришёл. Откройте дверь!"
         wait_entity: binary_sensor.entrance_door_contact
         wait_entity_state: "on"
-        delay_between_repeats: "00:00:10"
+        delay_between_repeats: 10
         max_repeats: 10
+    mode: restart
 
   doorbell_action_double:
     alias: "doorbell_action_double"
@@ -30,8 +31,9 @@ script:
         announcement_message: "Кто-то свой пришёл. Откройте дверь!"
         wait_entity: binary_sensor.entrance_door_contact
         wait_entity_state: "on"
-        delay_between_repeats: "00:00:10"
+        delay_between_repeats: 10
         max_repeats: 10
+    mode: restart
 
   doorbell_action_triple:
     alias: "doorbell_action_triple"
@@ -46,8 +48,9 @@ script:
         announcement_message: "Юра пришёл. Откройте дверь!"
         wait_entity: binary_sensor.entrance_door_contact
         wait_entity_state: "on"
-        delay_between_repeats: "00:00:10"
+        delay_between_repeats: 10
         max_repeats: 10
+    mode: restart
 
   doorbell_action_quadruple:
     alias: "doorbell_action_quadruple"
@@ -63,8 +66,9 @@ script:
         announcement_message: "Лена пришла. Откройте дверь!"
         wait_entity: binary_sensor.entrance_door_contact
         wait_entity_state: "on"
-        delay_between_repeats: "00:00:10"
+        delay_between_repeats: 10
         max_repeats: 10
+    mode: restart
 
   doorbell_action_hold:
     alias: "doorbell_action_hold"
@@ -79,28 +83,60 @@ script:
         announcement_message: "Кто-то пришёл. Откройте дверь!"
         wait_entity: binary_sensor.entrance_door_contact
         wait_entity_state: "on"
-        delay_between_repeats: "00:00:10"
+        delay_between_repeats: 10
         max_repeats: 10
+    mode: restart
 
-sensor:
-  - platform: mqtt
-    name: corridor_doorbell_state
-    state_topic: "home/entrance/button/doorbell/state"
+  display_camera_stream:
+    alias: "display camera stream on tablet"
+    sequence:
+      - alias: "Wake tablet"
+        service: script.turn_on
+        target:
+          entity_id: script.wake_corridor_wall_panel
+      - alias: "Display popup"
+        service: browser_mod.popup
+        data:
+          title: Глазок
+          large: true
+          deviceID: corridor_tablet
+          auto_close: true
+          card:
+            type: picture-glance
+            title: Коридор
+            entities:
+              - entity: switch.entrance_cam_motion_alarm
+            camera_image: camera.entrance_cam
+            camera_view: "live"
+      - alias: "Wait for door open"
+        wait_for_trigger:
+          platform: state
+          entity_id: binary_sensor.entrance_door_contact
+          to: "on"
+          
+      - alias: "Close popup"
+        service: browser_mod.close_popup
+        data:
+          deviceID: corridor_tablet
+    mode: restart
 
-select:
-  - platform: mqtt
-    command_topic: "home/entrance/button/doorbell/state"
-    state_topic: "home/entrance/button/doorbell/state"
-    name: corridor_doorbell
-    options:
-      - "off"
-      - "single"
-      - "double"
-      - "triple"
-      - "quadruple"
-      - "hold"
-      - "release"
-      - "many"
+mqtt:
+  sensor:
+    - name: corridor_doorbell_state
+      state_topic: "home/entrance/button/doorbell/state"
+  select:
+    - name: corridor_doorbell
+      command_topic: "home/entrance/button/doorbell/state"
+      state_topic: "home/entrance/button/doorbell/state"
+      options:
+        - "off"
+        - "single"
+        - "double"
+        - "triple"
+        - "quadruple"
+        - "hold"
+        - "release"
+        - "many"
 
 automation:
   - id: corridor_doorbell_control
@@ -128,6 +164,7 @@ automation:
           topic: "home/entrance/button/doorbell/state"
           payload_template: "{{ trigger.to_state.state or 'off' }}"
     mode: queued
+    max: 100
 
   - id: corridor_doorbell_mqtt_control
     alias: corridor_doorbell_mqtt_control
@@ -179,29 +216,44 @@ automation:
             condition: trigger
             id: "single"
           sequence:
-            service: script.doorbell_action_single
+            - service: script.turn_on
+              target:
+                entity_id: script.display_camera_stream
+            - service: script.doorbell_action_single
         - alias: "double"
           conditions:
             condition: trigger
             id: "double"
           sequence:
-            service: script.doorbell_action_double
+            - service: script.turn_on
+              target:
+                entity_id: script.display_camera_stream
+            - service: script.doorbell_action_double
         - alias: "triple"
           conditions:
             condition: trigger
             id: "triple"
           sequence:
-            service: script.doorbell_action_triple
+            - service: script.turn_on
+              target:
+                entity_id: script.display_camera_stream
+            - service: script.doorbell_action_triple
         - alias: "quadruple"
           conditions:
             condition: trigger
             id: "quadruple"
           sequence:
-            service: script.doorbell_action_quadruple
+            - service: script.turn_on
+              target:
+                entity_id: script.display_camera_stream
+            - service: script.doorbell_action_quadruple
         - alias: "hold"
           conditions:
             condition: trigger
             id: "hold"
           sequence:
-            service: script.doorbell_action_hold
-    mode: queued
+            - service: script.turn_on
+              target:
+                entity_id: script.display_camera_stream
+            - service: script.doorbell_action_hold
+    mode: restart
