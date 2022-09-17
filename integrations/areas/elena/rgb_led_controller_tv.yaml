@@ -1,0 +1,60 @@
+binary_sensor:
+  - platform: template
+    sensors:
+      elena_tv_power:
+        friendly_name: "Elena TV power"
+        value_template: >
+          {%- if states('media_player.elena_tv') not in ['unknown', 'unavailable']-%}
+            {{ is_state('media_player.elena_tv', 'on') }}
+          {%- else -%}
+            false
+          {%- endif -%}
+
+automation:
+  - id: auto_turn_tv_ambilight_on_motion_when_dark
+    alias: tv_ambilight
+    description: ""
+    use_blueprint:
+      path: kevinxw/state_based_entity_control.yaml
+      input:
+        trigger_entity: binary_sensor.elena_motion_occupancy
+        target_entity: light.elena_tv_ambilight
+        blocker_entity: binary_sensor.light_control
+        blocker_entity_state: "off"
+        timeout_blocker_entity: binary_sensor.elena_tv_power
+        timeout_blocker_entity_state: "on"
+        sun_elevation_below: 7
+        trigger_timeout: 60
+
+  - id: elena_tv_ambilight_on_when_tv_on
+    alias: Turn on Elena TV ambilight when TV goes on
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.elena_tv_power
+        to: "on"
+        id: tv_on
+      - platform: state
+        entity_id: binary_sensor.elena_tv_power
+        to: "off"
+        id: tv_off
+    condition: "{{ is_state('binary_sensor.light_control', 'on')}}"
+    action:
+      - alias: "Turn ambilight on when TV goes on, turn it off when TV goes off"
+        choose:
+        - conditions:
+            condition: trigger
+            id: tv_on
+          sequence:
+            - alias: "Turn TV ambilight ON"
+              service: light.turn_on
+              target:
+                entity_id: light.elena_tv_ambilight
+        - conditions:
+            condition: trigger
+            id: tv_off
+          sequence:
+            - alias: "Turn TV ambilight OFF"
+              service: light.turn_off
+              target:
+                entity_id: light.elena_tv_ambilight
