@@ -15,6 +15,12 @@ mqtt:
       payload_on: "on"
       payload_off: "off"
 
+template:
+  - binary_sensor:
+    - name: toilet_presence
+      state: "{{ not is_state('sensor.toilet_presence_presence_event', 'leave')}}"
+      device_class: motion
+
 script:
   toilet_water_leak_triggered:
     alias: "toilet water leak detector triggered"
@@ -55,3 +61,15 @@ automation:
     condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
     action:
       service: script.toilet_water_leak_triggered
+
+  - id: toilet_light_on_presece
+    alias: Toilet_light_on_presece
+    initial_state: true
+    use_blueprint:
+      path: kevinxw/state_based_entity_control.yaml
+      input:
+        trigger_entity: binary_sensor.toilet_presence
+        target_entity: light.toilet_light
+        blocker_entity: binary_sensor.light_control
+        blocker_entity_state: "off"
+        trigger_timeout: 1
