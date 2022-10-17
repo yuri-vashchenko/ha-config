@@ -15,10 +15,6 @@ sensor:
           {% set sensor_name = 'sensor.system_state_' + ip %}
           {{ states(sensor_name) }}
 
-  # uptime
-  - platform: uptime
-    name: uptime
-
   # system monitor
   - platform: systemmonitor
     resources:
