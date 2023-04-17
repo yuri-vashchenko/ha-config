@@ -21,6 +21,9 @@ homeassistant:
   # Currency
   currency: !secret currency
 
+  # Country
+  country: !secret country
+
   # The URL that Home Assistant is available on from the internet
   external_url: !secret external_url
 

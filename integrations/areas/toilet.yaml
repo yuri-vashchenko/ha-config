@@ -9,51 +9,84 @@ homeassistant:
       friendly_name: Туалет утечка воды
 
 mqtt:
+  number:
+    - name: toilet_light_brightness_min
+      command_topic: home/toilet/settings/light/brightness_min
+      min: 1
+      max: 100
+      step: 1
+      retain: true
+      unit_of_measurement: "%"
+
+    - name: toilet_light_brightness_max
+      command_topic: home/toilet/settings/light/brightness_max
+      min: 1
+      max: 100
+      step: 1
+      retain: true
+      unit_of_measurement: "%"
+
+    - name: toilet_light_brightness_step
+      command_topic: home/toilet/settings/light/brightness_step
+      min: -100
+      max: 100
+      step: 1
+      retain: true
+      unit_of_measurement: "%"
+
+    - name: toilet_light_brightness_step_timeout
+      command_topic: home/toilet/settings/light/brightness_step_timeout
+      min: 1
+      max: 60
+      step: 1
+      retain: true
+      unit_of_measurement: seconds
+
   binary_sensor:
     - name: toilet_water_leak
-      state_topic: "home/toilet/water_leak"
+      state_topic: home/toilet/water_leak
       payload_on: "on"
       payload_off: "off"
 
 template:
   - binary_sensor:
-    - name: toilet_presence
-      state: "{{ not is_state('sensor.toilet_presence_presence_event', 'leave')}}"
-      device_class: motion
+      - name: toilet_presence
+        state: "{{ not states('sensor.toilet_presence_presence_event') in ('away', 'leave')}}"
+        device_class: motion
 
 script:
   toilet_water_leak_triggered:
-    alias: "toilet water leak detector triggered"
-    description: "toilet water leak detector triggered"
+    alias: toilet water leak detector triggered
+    description: toilet water leak detector triggered
     use_blueprint:
-      path: "yuri-vashchenko/event_action.yaml"
+      path: yuri-vashchenko/event_action.yaml
       input:
-        event_severity: "alarm"
-        event_type: "toilet"
-        event_id: "water_leak"
-        ringtone_id: "2"
-        ringtone_volume: "100"
-        announcement_message: "Тревога! Обнаружена протечка воды на кухне"
+        event_severity: alarm
+        event_type: toilet
+        event_id: water_leak
+        ringtone_id: 2
+        ringtone_volume: 100
+        announcement_message: Тревога! Обнаружена протечка воды на кухне
         wait_entity: binary_sensor.toilet_water_leak
         wait_entity_state: "off"
         delay_between_repeats: 60
         max_repeats: 15
-        announcement_message_end: "Протечка воды на кухне устранена"
+        announcement_message_end: Протечка воды на кухне устранена
 
 automation:
   - id: toilet_water_leak_detector_publish_mqtt
     alias: toilet_water_leak_detector_publish_mqtt
-    description: "publish MQTT message when toilet water leak detector state changes"
+    description: publish MQTT message when toilet water leak detector state changes
     use_blueprint:
       path: yuri-vashchenko/publish_mqtt_on_entity_state_change.yaml
       input:
         trigger_entity: binary_sensor.toilet_water_leak_water_leak
-        topic: "home/toilet/water_leak"
+        topic: home/toilet/water_leak
         retain: true
         enabling_entity: binary_sensor.main_control
   - id: toilet_water_leak_detector_alarm
     alias: toilet_water_leak_detector_alarm
-    description: "Trigger alarm on MQTT message when toilet water leak triggers"
+    description: Trigger alarm on MQTT message when toilet water leak triggers
     trigger:
       - platform: state
         entity_id: binary_sensor.toilet_water_leak
@@ -62,14 +95,58 @@ automation:
     action:
       service: script.toilet_water_leak_triggered
 
-  - id: toilet_light_on_presece
-    alias: Toilet_light_on_presece
-    initial_state: true
-    use_blueprint:
-      path: kevinxw/state_based_entity_control.yaml
-      input:
-        trigger_entity: binary_sensor.toilet_presence
-        target_entity: light.toilet_light
-        blocker_entity: binary_sensor.light_control
-        blocker_entity_state: "off"
-        trigger_timeout: 1
+  # - id: toilet_light_on_presence
+  #   alias: Toilet_light_on_presence
+  #   initial_state: true
+  #   use_blueprint:
+  #     path: kevinxw/state_based_entity_control.yaml
+  #     input:
+  #       trigger_entity: binary_sensor.toilet_presence
+  #       target_entity: light.toilet_light
+  #       blocker_entity: binary_sensor.light_control
+  #       blocker_entity_state: "off"
+  #       trigger_timeout: 1
+
+  - id: dim_light_in_toilet
+    alias: Dim light in toilet on long stay
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.toilet_presence
+    condition: "{{ is_state('binary_sensor.light_control', 'on') }}"
+    action:
+      - alias: "Fork on presence state"
+        choose:
+        - conditions: "{{ trigger.to_state.state == 'on'}}"
+          sequence:
+            - alias: Set maximum brightness
+              service: light.turn_on
+              target:
+                entity_id: light.toilet_light
+              data:
+                brightness_pct: "{{ states('number.toilet_light_brightness_max') }}"
+            - repeat:
+                while: >
+                  {{ state_attr('light.toilet_light', 'brightness') / 2.55 >
+                    states('number.toilet_light_brightness_min') | int }}
+                sequence:
+                  - alias: Dim light
+                    service: light.turn_on
+                    target:
+                      entity_id: light.toilet_light
+                    data:
+                      transition: "{{ states('number.toilet_light_brightness_step_timeout') }}"
+                      brightness_step_pct: "{{ states('number.toilet_light_brightness_step') }}"
+                  - wait_for_trigger:
+                      - alias: Wait until light is off
+                        platform: state
+                        entity_id: binary_sensor.toilet_presence
+                        to: "off"
+                    timeout:
+                      seconds: "{{ states('number.toilet_light_brightness_step_timeout') }}"
+        - conditions: "{{ trigger.to_state.state == 'off'}}"
+          sequence:
+            - alias: Turn off the light
+              service: light.turn_off
+              target:
+                entity_id: light.toilet_light
+    mode: restart

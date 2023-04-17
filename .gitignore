@@ -9,3 +9,4 @@ tts
 known_devices.yaml
 .shopping_list.json
 ip_bans.yaml
+watchman_report.txt

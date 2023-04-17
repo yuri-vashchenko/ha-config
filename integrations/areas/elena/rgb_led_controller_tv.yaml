@@ -17,13 +17,14 @@ automation:
     use_blueprint:
       path: kevinxw/state_based_entity_control.yaml
       input:
-        trigger_entity: binary_sensor.elena_motion_occupancy
+        trigger_entity: binary_sensor.elena_motion
         target_entity: light.elena_tv_ambilight
         blocker_entity: binary_sensor.light_control
         blocker_entity_state: "off"
         timeout_blocker_entity: binary_sensor.elena_tv_power
         timeout_blocker_entity_state: "on"
-        sun_elevation_below: 7
+        illuminance_sensor: sensor.elena_motion_illuminance_illuminance_lux
+        illuminance_below: 14
         trigger_timeout: 60
 
   - id: elena_tv_ambilight_on_when_tv_on

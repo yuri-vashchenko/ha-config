@@ -46,7 +46,8 @@ logger:
 
 # Enable Home Assistant API
 api:
-  password: !secret rgb_led_controller_weather_ota
+  encryption:
+    key: !secret rgb_led_controller_weather_api_encription_key
 
 ota:
   password: !secret rgb_led_controller_weather_ota

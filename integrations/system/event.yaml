@@ -13,6 +13,10 @@ mqtt:
       state_topic: "home/system/alarm/on"
       payload_on: "true"
       payload_off: "false"
+  button:
+    - unique_id: cancel_all
+      name: "Cancel all"
+      command_topic: "home/system/cancel_all"
 
 script:
   generate_notification:
@@ -67,3 +71,19 @@ script:
           entity_id: script.cancel_alarm
     mode: queued
     max: 100
+
+automation:
+  - id: cancel_all_on_button_press
+    alias: cancell all on button press
+    trigger:
+      platform: mqtt
+      topic: home/system/cancel_all
+      payload: PRESS
+    condition:
+      - alias: "control mode"
+        condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+    action:
+      alias: "Cancell all alarms, notifications and warnings"
+      service: script.cancel_all

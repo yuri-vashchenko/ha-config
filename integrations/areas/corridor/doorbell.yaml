@@ -97,23 +97,22 @@ script:
       - alias: "Display popup"
         service: browser_mod.popup
         data:
+          dismissable: true
+          autoclose: false
           title: Глазок
-          large: true
-          deviceID: corridor_tablet
-          auto_close: true
-          card:
+          size: wide
+          timeout: 60000
+          content:
             type: picture-glance
-            title: Коридор
-            entities:
-              - entity: switch.entrance_cam_motion_alarm
+            camera_view: live
+            entities: []
             camera_image: camera.entrance_cam
-            camera_view: "live"
+            style: "ha-card { height: 50px; }"
       - alias: "Wait for door open"
         wait_for_trigger:
           platform: state
           entity_id: binary_sensor.entrance_door_contact
           to: "on"
-          
       - alias: "Close popup"
         service: browser_mod.close_popup
         data:

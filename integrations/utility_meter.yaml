@@ -1,25 +1,110 @@
 # Utility meter
 # https://www.home-assistant.io/integrations/utility_meter
 
+homeassistant:
+  customize:
+    sensor.current_energy_cost:
+      friendly_name: Текущая стоимость
+    sensor.daily_energy_total_cost_single_tariff:
+      friendly_name: Всего за день по одноставочному тарифу
+    sensor.monthly_energy_total_cost_single_tariff:
+      friendly_name: Всего за месяц по одноставочному тарифу
+    sensor.daily_energy_total_cost_double_tariff:
+      friendly_name: Всего за день по двуставочному тарифу
+    sensor.monthly_energy_total_cost_double_tariff:
+      friendly_name: Всего за месяц по двуставочному тарифу
+
+mqtt:
+  number:
+    - object_id: energy_single_tariff
+      name: Одноставочный тариф
+      command_topic: home/system/settings/energy/tariffs/single
+      entity_category: config
+      min: 0.0
+      max: 20.0
+      step: 0.01
+      retain: true
+      icon: mdi:cash-100
+    - object_id: energy_day_tariff
+      name: Дневной тариф
+      command_topic: home/system/settings/energy/tariffs/day
+      entity_category: config
+      min: 0.0
+      max: 20.0
+      step: 0.01
+      icon: mdi:cash-100
+      retain: true
+    - object_id: energy_night_tariff
+      name: Ночной тариф
+      command_topic: home/system/settings/energy/tariffs/night
+      entity_category: config
+      min: 0.0
+      max: 20.0
+      step: 0.01
+      icon: mdi:cash-100
+      retain: true
+
+template:
+  - sensor:
+      - name: current_energy_cost
+        device_class: monetary
+        icon: mdi:cash-100
+        unit_of_measurement: "RUB/kWh"
+        state: >
+          {{ states("number.energy_single_tariff") | float }}
+        # {% if is_state("utility_meter.daily_energy", "day") -%}
+        #   {{ states("number.energy_day_tariff") | float }}
+        # {% elif is_state("utility_meter.daily_energy", "night") -%}
+        #   {{ states("number.energy_night_tariff") | float }}
+        # {%- endif %}
+      - name: daily_energy_total_cost_single_tariff
+        device_class: monetary
+        icon: mdi:cash-100
+        unit_of_measurement: "RUB"
+        state: |
+          {% set d_day = states("sensor.daily_energy_day") | float %}
+          {% set d_night = states("sensor.daily_energy_night") | float %}
+          {{ ((d_day + d_night) * (states("number.energy_single_tariff") | float)) | round(2) }}
+      - name: monthly_energy_total_cost_single_tariff
+        device_class: monetary
+        icon: mdi:cash-100
+        unit_of_measurement: "RUB"
+        state: |
+          {% set m_day = states("sensor.monthly_energy_day") | float %}
+          {% set m_night = states("sensor.monthly_energy_night") | float %}
+          {{ ((m_day + m_night) * states("number.energy_single_tariff") | float) | round(2) }}
+      - name: daily_energy_total_cost_double_tariff
+        device_class: monetary
+        icon: mdi:cash-100
+        unit_of_measurement: "RUB"
+        state: |
+          {% set d_day = states("sensor.daily_energy_day") | float %}
+          {% set d_night = states("sensor.daily_energy_night") | float %}
+          {{ ((d_day * states("number.energy_day_tariff") | float) + (d_night * states("number.energy_night_tariff") | float)) | round(2) }}
+      - name: monthly_energy_total_cost_double_tariff
+        device_class: monetary
+        icon: mdi:cash-100
+        unit_of_measurement: "RUB"
+        state: |
+          {% set m_day = states("sensor.monthly_energy_day") | float %}
+          {% set m_night = states("sensor.monthly_energy_night") | float %}
+          {{ (m_day * (states("number.energy_day_tariff") | float) + (m_night * states("number.energy_night_tariff") | float) ) | round(2) }}
+
 utility_meter:
   daily_energy:
     source: sensor.house_total_energy
     name: Daily Energy
     cycle: daily
     tariffs:
-      - h1_day
-      - h1_night
-      - h2_day
-      - h2_night
+      - day
+      - night
   monthly_energy:
     source: sensor.house_total_energy
     name: Monthly Energy
     cycle: monthly
     tariffs:
-      - h1_day
-      - h1_night
-      - h2_day
-      - h2_night
+      - day
+      - night
 
 automation:
   - alias: Set utility meter tariff
@@ -32,113 +117,29 @@ automation:
         at: "23:00:00"
     action:
       choose:
-        - alias: energy_tariff_set_h1_night
-          conditions: "{{ now().month < 7 and (now().hour < 7 or now().hour >= 23 ) }}"
+        - alias: energy_tariff_set_night
+          conditions: "{{ now().hour < 7 or now().hour >= 23 }}"
           sequence:
             - service: select.select_option
               target:
                 entity_id: select.daily_energy
               data:
-                option: h1_night
+                option: night
             - service: select.select_option
               target:
                 entity_id: select.monthly_energy
               data:
-                option: h1_night
-        - alias: energy_tariff_set_h1_day
-          conditions: "{{ now().month < 7 and (now().hour >= 7 and now().hour < 23 ) }}"
+                option: night
+        - alias: energy_tariff_set_day
+          conditions: "{{ now().hour >= 7 and now().hour < 23 }}"
           sequence:
             - service: select.select_option
               target:
                 entity_id: select.daily_energy
               data:
-                option: h1_day
+                option: day
             - service: select.select_option
               target:
                 entity_id: select.monthly_energy
               data:
-                option: h1_day
-        - alias: energy_tariff_set_h2_night
-          conditions: "{{ now().month >= 7 and (now().hour < 7 or now().hour >= 23 ) }}"
-          sequence:
-            - service: select.select_option
-              target:
-                entity_id: select.daily_energy
-              data:
-                option: h2_night
-            - service: select.select_option
-              target:
-                entity_id: select.monthly_energy
-              data:
-                option: h2_night
-        - alias: energy_tariff_set_h2_day
-          conditions: "{{ now().month >= 7 and (now().hour >= 7 and now().hour < 23 ) }}"
-          sequence:
-            - service: select.select_option
-              target:
-                entity_id: select.daily_energy
-              data:
-                option: h2_day
-            - service: select.select_option
-              target:
-                entity_id: select.monthly_energy
-              data:
-                option: h2_day
-
-# Rub per KW/H
-# I полугодие / II полугодие
-# Day 3,66 / 3,80
-# Night 1,37 / 1,44
-
-sensor:
-  - platform: template
-    sensors:
-      current_energy_cost:
-        friendly_name: "cost of kWh for current tariff"
-        unit_of_measurement: "RUB/kWh"
-        value_template: |
-          {% if is_state("utility_meter.daily_energy", "h1_day") -%}
-            3.66
-          {% elif is_state("utility_meter.daily_energy", "h2_day") -%}
-            3.80
-          {% elif is_state("utility_meter.daily_energy", "h1_night") -%}
-            1.37
-          {% elif is_state("utility_meter.daily_energy", "h2_night") -%}
-            1.44
-          {%- endif %}
-      daily_energy_total_cost_single_tariff:
-        friendly_name: "одноставочный тариф"
-        unit_of_measurement: "RUB"
-        value_template: |
-          {% set d_h1_day = states("sensor.daily_energy_h1_day") | float %}
-          {% set d_h1_night = states("sensor.daily_energy_h1_night") | float %}
-          {% set d_h2_day = states("sensor.daily_energy_h2_day") | float %}
-          {% set d_h2_night = states("sensor.daily_energy_h2_night") | float %}
-          {{ ((d_h1_day + d_h1_night) * 3.18 + (d_h2_day + d_h2_night) * 3.30) | round(2) }}
-      monthly_energy_total_cost_single_tariff:
-        friendly_name: "одноставочный тариф"
-        unit_of_measurement: "RUB"
-        value_template: |
-          {% set m_h1_day = states("sensor.monthly_energy_h1_day") | float %}
-          {% set m_h1_night = states("sensor.monthly_energy_h1_night") | float %}
-          {% set m_h2_day = states("sensor.monthly_energy_h2_day") | float %}
-          {% set m_h2_night = states("sensor.monthly_energy_h2_night") | float %}
-          {{ ((m_h1_day + m_h1_night) * 3.18 + (m_h2_day + m_h2_night) * 3.30) | round(2) }}
-      daily_energy_total_cost_double_tariff:
-        friendly_name: "cost of daily consumed power if single tariff would apply"
-        unit_of_measurement: "RUB"
-        value_template: |
-          {% set d_h1_day = states("sensor.daily_energy_h1_day") | float %}
-          {% set d_h1_night = states("sensor.daily_energy_h1_night") | float %}
-          {% set d_h2_day = states("sensor.daily_energy_h2_day") | float %}
-          {% set d_h2_night = states("sensor.daily_energy_h2_night") | float %}
-          {{ (d_h1_day * 3.66 + d_h1_night * 1.37 + d_h2_day * 3.80 + d_h2_night * 1.44) | round(2) }}
-      monthly_energy_total_cost_double_tariff:
-        friendly_name: "одноставочный тариф"
-        unit_of_measurement: "RUB"
-        value_template: |
-          {% set m_h1_day = states("sensor.monthly_energy_h1_day") | float %}
-          {% set m_h1_night = states("sensor.monthly_energy_h1_night") | float %}
-          {% set m_h2_day = states("sensor.monthly_energy_h2_day") | float %}
-          {% set m_h2_night = states("sensor.monthly_energy_h2_night") | float %}
-          {{ (m_h1_day * 3.66 + m_h1_night * 1.37 + m_h2_day * 3.80 + m_h2_night * 1.44) | round(2) }}
+                option: day

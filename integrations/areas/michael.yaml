@@ -32,3 +32,19 @@ homeassistant:
       friendly_name: Миша климат
     "*michael_thermometer*":
       friendly_name: Миша климат
+
+automation:
+  - id: michael_turn_off_plug_when_note_asus_becomes_unavailable
+    alias: "Выключить розетку когда ноутбук становится недоступен"
+    description: "Отключает розетку при недоступности ноутбука для экономии электроэнергии"
+    trigger:
+      - platform: state
+        entity_id: device_tracker.a0_ce_c8_ed_8d_45
+        from: home
+    condition: "{{ is_state('binary_sensor.main_control', 'on') }}"
+    action:
+      - alias: turn off the plug
+        service: switch.turn_off
+        target:
+          entity_id: switch.michael_plug_yuri
+    mode: restart

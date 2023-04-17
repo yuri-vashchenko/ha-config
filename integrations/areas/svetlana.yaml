@@ -43,5 +43,5 @@ automation:
       input:
         topic: "home/svetlana"
         trigger_entity: binary_sensor.svetlana_motion_occupancy
-        enabling_entity: switch.control_mode
+        enabling_entity: binary_sensor.main_control
         enabling_entity_state: "on"

@@ -24,6 +24,7 @@ yandex_smart_home:
       - script.update_shopping_list
       - switch.kitchen_hold_light_on
       - switch.kitchen_hold_light_off
+      - button.cancel_all
   entity_config:
     media_player.kitchen_tv:
       type: devices.types.media_device.tv
@@ -100,3 +101,6 @@ yandex_smart_home:
     sensor.blood_sugar_mmol:
       name: "Сахар крови"
       room: "Лена"
+
+    button.cancel_all:
+      name: "Отключить тревогу"

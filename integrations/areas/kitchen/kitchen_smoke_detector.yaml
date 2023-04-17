@@ -31,7 +31,7 @@ script:
         wait_entity: binary_sensor.kitchen_smoke_detector
         wait_entity_state: "off"
         delay_between_repeats: 30
-        max_repeats: 120
+        max_repeats: 10
         announcement_message_end: "Тревога на дым отключена"
 
 automation:
@@ -45,6 +45,7 @@ automation:
         topic: "home/kitchen/smoke_detector"
         retain: true
         enabling_entity: binary_sensor.main_control
+
   - id: kitchen_smoke_detector_alarm
     alias: kitchen_smoke_detector_alarm
     description: "Trigger alarm on MQTT message when kitchen smoke detector triggers"
@@ -55,3 +56,16 @@ automation:
     condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
     action:
       service: script.kitchen_smoke_detector_triggered
+
+  - id: stop_alarm_on_cancel_all_button_press
+    alias: Stops script execution when "Cancel all button pressed"
+    trigger:
+      - platform: state
+        entity_id: button.cancel_all
+        to: "PRESSED"
+    condition: "{{ is_state('binary_sensor.main_control', 'on') }}"
+    action:
+      - alias: "Stop kitchen_smoke_detector_triggered script"
+        service: script.turn_off
+        target:
+          entity_id: script.kitchen_smoke_detector_triggered
