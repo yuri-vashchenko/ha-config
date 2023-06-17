@@ -4,17 +4,17 @@ binary_sensor:
     name: night
     after: '23:00'
     before: '07:00'
-    
+
   - platform: tod
     name: morning
     after: '07:00'
     before: '09:00'
-    
+
   - platform: tod
     name: day
     after: '09:00'
     before: '19:00'
-    
+
   - platform: tod
     name: evening
     after: '19:00'

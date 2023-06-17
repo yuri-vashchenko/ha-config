@@ -6,7 +6,7 @@ script:
       person:
       target:
       greeting: >
-        {{states("sensor.greeting")}}, {{person}}! Как я рада тебя видеть!
+        {{ states("sensor.greeting")}}, {{person}}! Как я рада тебя видеть!
     sequence:
       - service: mqtt.publish
         data_template:
@@ -50,7 +50,7 @@ automation:
         from:
         to: "kitchen"
         id: "yuri"
-    condition: 
+    condition:
       - alias: "sound controller"
         condition: state
         entity_id: binary_sensor.sound_control
@@ -58,45 +58,45 @@ automation:
     action:
       - alias: "choose who enters"
         choose:
-        - conditions:
-            condition: trigger
-            id: "elena"
-          sequence:
-            - service: script.greet
-              data:
-                person: "Елена"
-        - conditions:
-            condition: trigger
-            id: "mama"
-          sequence:
-            - service: script.greet
-              data:
-                person: "Галина"
-        - conditions:
-            condition: trigger
-            id: "papa"
-          sequence:
-            - service: script.greet
-              data:
-                person: "Алексей"
-        - conditions:
-            condition: trigger
-            id: "svetlana"
-          sequence:
-            - service: script.greet
-              data:
-                person: "Светлана"
-        - conditions:
-            condition: trigger
-            id: "michael"
-          sequence:
-            - service: script.greet
-              data:
-                person: "Михаил"
-        - conditions:
-            condition: trigger
-            id: "yuri"
-          sequence:
-            - service: script.greet
-              data:
-                person: "Юрий"
+          - conditions:
+              condition: trigger
+              id: "elena"
+            sequence:
+              - service: script.greet
+                data:
+                  person: "Елена"
+          - conditions:
+              condition: trigger
+              id: "mama"
+            sequence:
+              - service: script.greet
+                data:
+                  person: "Галина"
+          - conditions:
+              condition: trigger
+              id: "papa"
+            sequence:
+              - service: script.greet
+                data:
+                  person: "Алексей"
+          - conditions:
+              condition: trigger
+              id: "svetlana"
+            sequence:
+              - service: script.greet
+                data:
+                  person: "Светлана"
+          - conditions:
+              condition: trigger
+              id: "michael"
+            sequence:
+              - service: script.greet
+                data:
+                  person: "Михаил"
+          - conditions:
+              condition: trigger
+              id: "yuri"
+            sequence:
+              - service: script.greet
+                data:
+                  person: "Юрий"

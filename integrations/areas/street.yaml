@@ -1,5 +1,12 @@
 # Улица
 
+# Reolink camera
+# camera:
+#   - platform: generic
+#     name: street_camera_reolink
+#     still_image_url: !secret "street_camera_reolink_still_url"
+#     stream_source: !secret "street_camera_reolink_stream_url"
+
 homeassistant:
   customize:
     # Влажность и температура
@@ -13,10 +20,3 @@ homeassistant:
       friendly_name: Улица климат
     sensor.street_thermometer_linkquality:
       friendly_name: Улица климат
-
-# Reolink camera
-# camera:
-#   - platform: generic
-#     name: street_camera_reolink
-#     still_image_url: !secret "street_camera_reolink_still_url"
-#     stream_source: !secret "street_camera_reolink_stream_url"

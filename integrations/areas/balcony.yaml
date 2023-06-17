@@ -20,11 +20,11 @@ homeassistant:
     binary_sensor.balcony_window_left_contact:
       friendly_name: Балкон левое окно
       device_class: window
-    #binary_sensor.balcony_window_middle_contact:
-    #  device_class: window
+      # binary_sensor.balcony_window_middle_contact:
+      #   device_class: window
 
-    #binary_sensor.balcony_window_right_contact:
-    #  device_class: window
+      # binary_sensor.balcony_window_right_contact:
+      #   device_class: window
 
   customize_glob:
     # Датчики

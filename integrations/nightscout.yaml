@@ -31,9 +31,9 @@ automation:
           variables:
             message: "Внимание! Гипогликемия! Срочно съешь что-нибудь"
       - wait_for_trigger:
-        - platform: numeric_state
-          entity_id: sensor.blood_sugar_mmol
-          above: 4
+          - platform: numeric_state
+            entity_id: sensor.blood_sugar_mmol
+            above: 4
     mode: single
     max_exceeded: silent
   - id: hi_bg
@@ -56,8 +56,8 @@ automation:
           variables:
             message: "Внимание! Очень высокий сахар! Возможно сенсор не работает"
       - wait_for_trigger:
-        - platform: numeric_state
-          entity_id: sensor.blood_sugar_mmol
-          below: 15
+          - platform: numeric_state
+            entity_id: sensor.blood_sugar_mmol
+            below: 15
     mode: single
     max_exceeded: silent

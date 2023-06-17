@@ -77,9 +77,9 @@ mqtt:
 #           sequence:
 #             - alias: "set mqtt switch to physical light state"
 #               repeat:
-#                 count: "{{light_list|count}}"
+#                 count: "{{light_list|count }}"
 #                 sequence:
-#                   service: switch.turn_{{states(light_list[index - 1])}}
+#                   service: switch.turn_{{ states(light_list[index - 1])}}
 #                   target:
 #                     entity_id: "{{entity_map[states(light_list[index - 1])]}}"
 #         - conditions:

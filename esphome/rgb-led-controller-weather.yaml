@@ -21,7 +21,7 @@ captive_portal:
 globals:
   - id: temperature_value
     type: float
-    restore_value: yes
+    restore_value: true
     initial_value: '0.0'
 
 mqtt:
@@ -38,7 +38,7 @@ mqtt:
           {
             id(temperature_value) = x["temperature"];
           }
-          
+
           ESP_LOGD("on_json_message", "Global value is: %0.2f", id(temperature_value));
 
 # Enable logging
@@ -73,10 +73,10 @@ light:
 
             // -40 + 40 -> n + 40 (0..80) -> / 80 * it.size()
             int led_id = (int)(1.0 * (float)(id(temperature_value) + 40) * (float)it.size() / 80.0);
-            
+
             // clear old values
             // it.all().fade_to_black(10);
-            
+
             for (int i = 0; i < led_id; i++)
             {
               int r = 0;
@@ -93,46 +93,46 @@ light:
                 b = 255 * 2 * (it.size() - i) / it.size() / 3;
               it[i] = Color(r, g, b);
             }
-            
+
             it.range(led_id, it.size()) = Color(0, 0, 0);
             it[it.size() / 2] = Color(255, 255, 255);
             return;
       - addressable_color_wipe:
-            name: notification
-            colors:
-              - red: 0%
-                green: 100%
-                blue: 0%
-                num_leds: 20
-              - red: 0%
-                green: 10%
-                blue: 0%
-                num_leds: 5
-            add_led_interval: 100ms
-            reverse: false
+          name: notification
+          colors:
+            - red: 0%
+              green: 100%
+              blue: 0%
+              num_leds: 20
+            - red: 0%
+              green: 10%
+              blue: 0%
+              num_leds: 5
+          add_led_interval: 100ms
+          reverse: false
       - addressable_color_wipe:
-            name: warning
-            colors:
-              - red: 80%
-                green: 80%
-                blue: 0%
-                num_leds: 10
-              - red: 10%
-                green: 10%
-                blue: 0%
-                num_leds: 3
-            add_led_interval: 60ms
-            reverse: false
+          name: warning
+          colors:
+            - red: 80%
+              green: 80%
+              blue: 0%
+              num_leds: 10
+            - red: 10%
+              green: 10%
+              blue: 0%
+              num_leds: 3
+          add_led_interval: 60ms
+          reverse: false
       - addressable_color_wipe:
-            name: alarm
-            colors:
-              - red: 100%
-                green: 0%
-                blue: 0%
-                num_leds: 5
-              - red: 20%
-                green: 0%
-                blue: 0%
-                num_leds: 2
-            add_led_interval: 30ms
-            reverse: false
+          name: alarm
+          colors:
+            - red: 100%
+              green: 0%
+              blue: 0%
+              num_leds: 5
+            - red: 20%
+              green: 0%
+              blue: 0%
+              num_leds: 2
+          add_led_interval: 30ms
+          reverse: false

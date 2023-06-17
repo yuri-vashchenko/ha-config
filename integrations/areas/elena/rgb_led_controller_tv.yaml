@@ -24,7 +24,7 @@ automation:
         timeout_blocker_entity: binary_sensor.elena_tv_power
         timeout_blocker_entity_state: "on"
         illuminance_sensor: sensor.elena_motion_illuminance_illuminance_lux
-        illuminance_below: 14
+        illuminance_below: 30
         trigger_timeout: 60
 
   - id: elena_tv_ambilight_on_when_tv_on
@@ -43,19 +43,20 @@ automation:
     action:
       - alias: "Turn ambilight on when TV goes on, turn it off when TV goes off"
         choose:
-        - conditions:
-            condition: trigger
-            id: tv_on
-          sequence:
-            - alias: "Turn TV ambilight ON"
-              service: light.turn_on
-              target:
-                entity_id: light.elena_tv_ambilight
-        - conditions:
-            condition: trigger
-            id: tv_off
-          sequence:
-            - alias: "Turn TV ambilight OFF"
-              service: light.turn_off
-              target:
-                entity_id: light.elena_tv_ambilight
+          - conditions:
+              condition: trigger
+              id: tv_on
+            sequence:
+              - alias: "Turn TV ambilight ON"
+                service: light.turn_on
+                target:
+                  entity_id: light.elena_tv_ambilight
+          - conditions:
+              condition: trigger
+              id: tv_off
+            sequence:
+              - alias: "Turn TV ambilight OFF"
+                service: light.turn_off
+                target:
+                  entity_id: light.elena_tv_ambilight
+    mode: restart

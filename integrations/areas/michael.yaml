@@ -24,8 +24,8 @@ homeassistant:
     # Розетка
     "*158d0003c77d8b*":
       friendly_name: Розетка Миша
-    "*michael_plug*":
-      friendly_name: Розетка Миша
+    "*michael_plug_yuri_*":
+      friendly_name: Розетка Юра
 
     # Влажность и температура
     "*158d0006b11191*":

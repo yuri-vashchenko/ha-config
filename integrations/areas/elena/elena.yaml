@@ -72,54 +72,54 @@ homeassistant:
 
 template:
   - binary_sensor:
-    - name: elena_ac_power
-      state: >
-        {%- if states('sensor.elena_plug_ac_power') not in ['unknown', 'unavailable'] -%}
-          {{ states('sensor.elena_plug_ac_power') | float > 50.0 }}
-        {%- else -%}
-          false
-        {%- endif -%}
-      device_class: plug
-    - name: elena_thermometer_01_available
-      state: >
-        {{ true if
-          is_number(states("sensor.elena_thermometer_01_temperature")) and
-          is_number(states("sensor.elena_thermometer_01_humidity")) else false }}
-      device_class: connectivity
-    - name: elena_thermometer_02_available
-      state: >
-        {{ true if
-          is_number(states("sensor.elena_thermometer_02_temperature")) and
-          is_number(states("sensor.elena_thermometer_02_humidity")) else false }}
-      device_class: connectivity
+      - name: elena_ac_power
+        state: >
+          {%- if states('sensor.elena_plug_ac_power') not in ['unknown', 'unavailable'] -%}
+            {{ states('sensor.elena_plug_ac_power') | float > 50.0 }}
+          {%- else -%}
+            false
+          {%- endif -%}
+        device_class: plug
+      - name: elena_thermometer_01_available
+        state: >
+          {{ true if
+            is_number(states("sensor.elena_thermometer_01_temperature")) and
+            is_number(states("sensor.elena_thermometer_01_humidity")) else false }}
+        device_class: connectivity
+      - name: elena_thermometer_02_available
+        state: >
+          {{ true if
+            is_number(states("sensor.elena_thermometer_02_temperature")) and
+            is_number(states("sensor.elena_thermometer_02_humidity")) else false }}
+        device_class: connectivity
 
   - sensor:
-    - name: elena_thermometer_temperature
-      state: >
-        {{ (states("sensor.elena_thermometer_01_temperature") | float +
-            states("sensor.elena_thermometer_02_temperature") | float) / 2.0
-            if is_state("binary_sensor.elena_thermometer_01_available", "on") and
-                is_state("binary_sensor.elena_thermometer_02_available", "on")
-            else
-            states("sensor.elena_thermometer_01_temperature") | float
-            if is_state("binary_sensor.elena_thermometer_01_available", "on")
-            else
-            states("sensor.elena_thermometer_02_temperature") }}
-      state_class: measurement
-      unit_of_measurement: °C
-    - name: elena_thermometer_humidity
-      state: >
-        {{ (states("sensor.elena_thermometer_01_humidity") | float +
-            states("sensor.elena_thermometer_02_humidity") | float) / 2.0
-            if is_state("binary_sensor.elena_thermometer_01_available", "on") and
-                is_state("binary_sensor.elena_thermometer_02_available", "on")
-            else
-            states("sensor.elena_thermometer_01_humidity") | float
-            if is_state("binary_sensor.elena_thermometer_01_available", "on")
-            else
-            states("sensor.elena_thermometer_02_humidity") }}
-      state_class: measurement
-      unit_of_measurement: "%"
+      - name: elena_thermometer_temperature
+        state: >
+          {{ (states("sensor.elena_thermometer_01_temperature") | float +
+              states("sensor.elena_thermometer_02_temperature") | float) / 2.0
+              if is_state("binary_sensor.elena_thermometer_01_available", "on") and
+                  is_state("binary_sensor.elena_thermometer_02_available", "on")
+              else
+              states("sensor.elena_thermometer_01_temperature") | float
+              if is_state("binary_sensor.elena_thermometer_01_available", "on")
+              else
+              states("sensor.elena_thermometer_02_temperature") }}
+        state_class: measurement
+        unit_of_measurement: °C
+      - name: elena_thermometer_humidity
+        state: >
+          {{ (states("sensor.elena_thermometer_01_humidity") | float +
+              states("sensor.elena_thermometer_02_humidity") | float) / 2.0
+              if is_state("binary_sensor.elena_thermometer_01_available", "on") and
+                  is_state("binary_sensor.elena_thermometer_02_available", "on")
+              else
+              states("sensor.elena_thermometer_01_humidity") | float
+              if is_state("binary_sensor.elena_thermometer_01_available", "on")
+              else
+              states("sensor.elena_thermometer_02_humidity") }}
+        state_class: measurement
+        unit_of_measurement: "%"
 
 climate:
   - platform: smartir
@@ -177,7 +177,7 @@ automation:
         entity_id: group.elena_doors
         to: "on"
         for:
-          seconds: "{{states('number.elena_ac_door_open_duration') | int}}"
+          seconds: "{{ states('number.elena_ac_door_open_duration') | int}}"
         id: door_opened
       - platform: state
         entity_id: group.elena_doors

@@ -48,7 +48,7 @@ binary_sensor:
 # sensors
 mqtt:
   sensor:
-  # mqtt sensors
+    # mqtt sensors
     - name: corridor_events_motion_bathroom
       device_class: timestamp
       state_topic: "home/corridor/events/motion/corridor_motion_bathroom_occupancy/on"

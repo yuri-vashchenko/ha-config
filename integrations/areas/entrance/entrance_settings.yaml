@@ -4,7 +4,7 @@
 
 mqtt:
   number:
-  # Trigger warning if entrance door is opened for long
+    # Trigger warning if entrance door is opened for long
     - name: "Как долго входная дверь открыта для предупреждения"
       object_id: entrance_door_warning_open_duration
       icon: "mdi:thermometer-low"

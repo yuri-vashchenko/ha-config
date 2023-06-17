@@ -9,12 +9,12 @@ recorder:
       - binary_sensor
       - switch
       - light
-    #entities: 
+      # entities:
   exclude:    # Eliminate anything that you never graph or refer back to
     domains:
       - automation
       - updater
-      - weather # Ignore weather
+      - weather  # Ignore weather
     entities:
       - sun.sun
       - sensor.season

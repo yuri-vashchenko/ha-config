@@ -1,0 +1,7 @@
+# Yandex transport
+# https://www.home-assistant.io/integrations/yandex_transport
+
+sensor:
+  - platform: yandex_transport
+    name: next_bus
+    stop_id: stop__9980130

@@ -17,13 +17,13 @@ homeassistant:
     "*158d00041d99a1*":
       friendly_name: Кнопка звонка
 
-binary_sensor:
-  - platform: command_line
-    name: entrance_cam_status
-    command: response=$(curl -LIk -m 3 rtsp://192.168.0.91 -o /dev/null -w "%{http_code}\n" -s); test "$response" -eq 200 && echo "OFF" || echo "ON"
-    scan_interval: 60
-    value_template: '{{ value }}'
-    device_class: 'problem'
+command_line:
+  - binary_sensor:
+      name: entrance_cam_status
+      command: response=$(curl -LIk -m 3 rtsp://192.168.0.91 -o /dev/null -w "%{http_code}\n" -s); test "$response" -eq 200 && echo "OFF" || echo "ON"
+      scan_interval: 60
+      value_template: "{{ value }}"
+      device_class: "problem"
 
 script:
   entrance_door_opened:
@@ -65,7 +65,7 @@ automation:
         entity_id: binary_sensor.entrance_door_contact
         to: "on"
         for:
-          seconds: "{{states('number.entrance_door_warning_open_duration') | int}}"
+          seconds: "{{ states('number.entrance_door_warning_open_duration') | int}}"
     condition:
       - condition: state
         entity_id: binary_sensor.main_control
@@ -79,7 +79,7 @@ automation:
     trigger:
       - platform: state
         entity_id: binary_sensor.entrance_cam_status
-        to: 'on'
+        to: "on"
         for:
           seconds: 300
       - platform: homeassistant

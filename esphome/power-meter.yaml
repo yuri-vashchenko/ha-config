@@ -1,7 +1,6 @@
----
 # Home Assistant Glow
 #
-# Read your electricity meter by means of the pulse LED on your 
+# Read your electricity meter by means of the pulse LED on your
 # meter, useful if you do not have a serial port (P1).
 #
 substitutions:

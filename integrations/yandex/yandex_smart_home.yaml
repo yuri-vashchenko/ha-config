@@ -28,7 +28,7 @@ yandex_smart_home:
   entity_config:
     media_player.kitchen_tv:
       type: devices.types.media_device.tv
-      #relative_volume_only: false
+      # relative_volume_only: false
       name: "Телевизор"
       room: "Кухня"
     light.kitchen_switch_light:
