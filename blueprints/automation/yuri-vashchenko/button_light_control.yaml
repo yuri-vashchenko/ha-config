@@ -110,64 +110,64 @@ variables:
   enabling_entity: !input 'enabling_entity'
   enabling_entity_state: !input 'enabling_entity_state'
 trigger:
-- platform: state
-  entity_id: !input 'trigger_entity'
-  to:
-  - single
-  - double
-  - hold
+  - platform: state
+    entity_id: !input 'trigger_entity'
+    to:
+      - single
+      - double
+      - hold
 condition: >
   {{ enabling_entity == none or is_state(enabling_entity, enabling_entity_state) }}
 action:
-- choose:
-  - conditions: >
-      {{ trigger.to_state.state == 'single' }}
-    sequence:
-      - alias: "log single click event"
-        service: logbook.log
-        data_template:
-          name: "Button single click"
-          message: >
-            Processing button {{ trigger.entity_id }} single click.
-            toggle_entity: {{ toggle_entity }},
-            toggle_service: {{ toggle_service }},
-            ambilight_service: {{ ambilight_service }}
-          entity_id: "{{ toggle_entity }}"
-          domain: light
-      - alias: "toggle ambilight"
-        service: "{{ ambilight_service }}"
-        target:
-          entity_id: "{{ ambilight_entity }}"
-      - alias: "toogle light"
-        service: "{{ toggle_service }}"
-        target:
-          entity_id: "{{ toggle_entity }}"
-  - conditions: >
-      {{ trigger.to_state.state == 'double' }}
-    sequence:
-      - alias: "log double click event"
-        service: logbook.log
-        data_template:
-          name: "Button double click"
-          message: >
-            Processing button {{ trigger.entity_id }} double click.
-            mainlight_entity: {{ mainlight_entity }},
-            ambilight_service: {{ ambilight_entity }}
-          entity_id: "{{ toggle_entity }}"
-          domain: light
-      - alias: "set mode main/nightlight"
-        service: yeelight.set_mode
-        target:
-          entity_id: '{{ mainlight_entity }}'
-        data_template:
-          mode: '{{ light_mode }}'
-      - alias: "turn on ambilight"
-        service: light.turn_on
-        target:
-          entity_id: "{{ ambilight_entity }}"
-  - conditions:
-    - "{{ hold_action != '' }}"
-    - "{{ trigger.to_state.state == 'hold' }}"
-    sequence: !input 'hold_action'
-  default: []
+  - choose:
+      - conditions: >
+          {{ trigger.to_state.state == 'single' }}
+        sequence:
+          - alias: "log single click event"
+            service: logbook.log
+            data_template:
+              name: "Button single click"
+              message: >
+                Processing button {{ trigger.entity_id }} single click.
+                toggle_entity: {{ toggle_entity }},
+                toggle_service: {{ toggle_service }},
+                ambilight_service: {{ ambilight_service }}
+              entity_id: "{{ toggle_entity }}"
+              domain: light
+          - alias: "toggle ambilight"
+            service: "{{ ambilight_service }}"
+            target:
+              entity_id: "{{ ambilight_entity }}"
+          - alias: "toogle light"
+            service: "{{ toggle_service }}"
+            target:
+              entity_id: "{{ toggle_entity }}"
+      - conditions: >
+          {{ trigger.to_state.state == 'double' }}
+        sequence:
+          - alias: "log double click event"
+            service: logbook.log
+            data_template:
+              name: "Button double click"
+              message: >
+                Processing button {{ trigger.entity_id }} double click.
+                mainlight_entity: {{ mainlight_entity }},
+                ambilight_service: {{ ambilight_entity }}
+              entity_id: "{{ toggle_entity }}"
+              domain: light
+          - alias: "set mode main/nightlight"
+            service: yeelight.set_mode
+            target:
+              entity_id: '{{ mainlight_entity }}'
+            data_template:
+              mode: '{{ light_mode }}'
+          - alias: "turn on ambilight"
+            service: light.turn_on
+            target:
+              entity_id: "{{ ambilight_entity }}"
+      - conditions:
+          - "{{ hold_action != '' }}"
+          - "{{ trigger.to_state.state == 'hold' }}"
+        sequence: !input 'hold_action'
+    default: []
 mode: restart

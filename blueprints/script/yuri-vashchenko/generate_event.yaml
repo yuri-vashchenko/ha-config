@@ -33,9 +33,9 @@ variables:
   payload: >
     {{ "true" if value == true else "false" }}
 sequence:
-- alias: "publish notification/warning/alarm mqtt message ON"
-  service: mqtt.publish
-  data_template:
-    topic: "home/system/{{ event_severity }}/on"
-    payload: "{{ payload }}"
-    retain: true
+  - alias: "publish notification/warning/alarm mqtt message ON"
+    service: mqtt.publish
+    data_template:
+      topic: "home/system/{{ event_severity }}/on"
+      payload: "{{ payload }}"
+      retain: true

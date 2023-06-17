@@ -35,11 +35,11 @@ variables:
   volume: >
     {{ (input_volume | float) / 100.0 }}
 sequence:
-- service: media_player.play_media
-  alias: произнести сообщение через яндекс
-  entity_id: !input 'speaker_target'
-  data:
-    media_content_id: !input 'announcement_message'
-    media_content_type: text
-    extra:
-      volume_level: "{{ volume }}"
+  - service: media_player.play_media
+    alias: произнести сообщение через яндекс
+    entity_id: !input 'speaker_target'
+    data:
+      media_content_id: !input 'announcement_message'
+      media_content_type: text
+      extra:
+        volume_level: "{{ volume }}"

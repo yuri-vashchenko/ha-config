@@ -548,255 +548,255 @@ trigger:
     attribute: action
     to: 'drop'
     id: 'drop'
-  # - platform: template
-  #   value_template: >
-  #     {{ is_state_attr(cube_entity, 'action', 'rotate') and
-  #       state_attr(cube_entity, 'angle') | int < 0 }}
-  #   id: 'rotate_left'
-  # - platform: template
-  #   value_template: >
-  #     {{ is_state_attr(cube_entity, 'action', 'rotate') and
-  #       state_attr(cube_entity, 'angle') | int > 0 }}
-  #   id: 'rotate_right'
+    # - platform: template
+    #   value_template: >
+    #     {{ is_state_attr(cube_entity, 'action', 'rotate') and
+    #       state_attr(cube_entity, 'angle') | int < 0 }}
+    #   id: 'rotate_left'
+    # - platform: template
+    #   value_template: >
+    #     {{ is_state_attr(cube_entity, 'action', 'rotate') and
+    #       state_attr(cube_entity, 'angle') | int > 0 }}
+    #   id: 'rotate_right'
 action:
-- choose:
-  - alias: "wakeup"
-    conditions:
-      condition: trigger
-      id: 'wakeup'
-    sequence: !input 'cube_wake'
-  - alias: "flip90"
-    conditions:
-      condition: trigger
-      id: 'flip90'
-    sequence:
-    - service: input_number.set_value
-      target:
-        entity_id: '{{ active_face_entity }}'
-      data:
-        value: '{{ activated_face | int }}'
-    - choose:
-      - conditions: '{{ flip_any }}'
+  - choose:
+      - alias: "wakeup"
+        conditions:
+          condition: trigger
+          id: 'wakeup'
+        sequence: !input 'cube_wake'
+      - alias: "flip90"
+        conditions:
+          condition: trigger
+          id: 'flip90'
         sequence:
-        - choose:
-          - conditions: '{{ activated_face | int == 0 }}'
-            sequence: !input 'cube_flip_1'
-          - conditions: '{{ activated_face | int == 1 }}'
-            sequence: !input 'cube_flip_2'
-          - conditions: '{{ activated_face | int == 2 }}'
-            sequence: !input 'cube_flip_3'
-          - conditions: '{{ activated_face | int == 3 }}'
-            sequence: !input 'cube_flip_4'
-          - conditions: '{{ activated_face | int == 4 }}'
-            sequence: !input 'cube_flip_5'
-          - conditions: '{{ activated_face | int == 5 }}'
-            sequence: !input 'cube_flip_6'
-      - conditions:
-        - '{{ flip_90 }}'
-        sequence: !input 'cube_flip_90'
-      - conditions:
-        - '{{ activated_face | int == 0 }}'
+          - service: input_number.set_value
+            target:
+              entity_id: '{{ active_face_entity }}'
+            data:
+              value: '{{ activated_face | int }}'
+          - choose:
+              - conditions: '{{ flip_any }}'
+                sequence:
+                  - choose:
+                      - conditions: '{{ activated_face | int == 0 }}'
+                        sequence: !input 'cube_flip_1'
+                      - conditions: '{{ activated_face | int == 1 }}'
+                        sequence: !input 'cube_flip_2'
+                      - conditions: '{{ activated_face | int == 2 }}'
+                        sequence: !input 'cube_flip_3'
+                      - conditions: '{{ activated_face | int == 3 }}'
+                        sequence: !input 'cube_flip_4'
+                      - conditions: '{{ activated_face | int == 4 }}'
+                        sequence: !input 'cube_flip_5'
+                      - conditions: '{{ activated_face | int == 5 }}'
+                        sequence: !input 'cube_flip_6'
+              - conditions:
+                  - '{{ flip_90 }}'
+                sequence: !input 'cube_flip_90'
+              - conditions:
+                  - '{{ activated_face | int == 0 }}'
+                sequence:
+                  - choose:
+                      - conditions: '{{ from_face | int == 1 }}'
+                        sequence: !input 'two_to_one'
+                      - conditions: '{{ from_face | int == 2 }}'
+                        sequence: !input 'three_to_one'
+                      - conditions: '{{ from_face | int == 4 }}'
+                        sequence: !input 'five_to_one'
+                      - conditions: '{{ from_face | int == 5 }}'
+                        sequence: !input 'six_to_one'
+              - conditions:
+                  - '{{ activated_face | int == 1 }}'
+                sequence:
+                  - choose:
+                      - conditions: '{{ from_face | int == 0 }}'
+                        sequence: !input 'one_to_two'
+                      - conditions: '{{ from_face | int == 2 }}'
+                        sequence: !input 'three_to_two'
+                      - conditions: '{{ from_face | int == 3 }}'
+                        sequence: !input 'four_to_two'
+                      - conditions: '{{ from_face | int == 5 }}'
+                        sequence: !input 'six_to_two'
+              - conditions:
+                  - '{{ activated_face | int == 2 }}'
+                sequence:
+                  - choose:
+                      - conditions: '{{ from_face | int == 0 }}'
+                        sequence: !input 'one_to_three'
+                      - conditions: '{{ from_face | int == 1 }}'
+                        sequence: !input 'two_to_three'
+                      - conditions: '{{ from_face | int == 3 }}'
+                        sequence: !input 'four_to_three'
+                      - conditions: '{{ from_face | int == 4 }}'
+                        sequence: !input 'five_to_three'
+              - conditions:
+                  - '{{ activated_face | int == 3 }}'
+                sequence:
+                  - choose:
+                      - conditions: '{{ from_face | int == 1 }}'
+                        sequence: !input 'two_to_four'
+                      - conditions: '{{ from_face | int == 2 }}'
+                        sequence: !input 'three_to_four'
+                      - conditions: '{{ from_face | int == 4 }}'
+                        sequence: !input 'five_to_four'
+                      - conditions: '{{ from_face | int == 5 }}'
+                        sequence: !input 'six_to_four'
+              - conditions:
+                  - '{{ activated_face | int == 4 }}'
+                sequence:
+                  - choose:
+                      - conditions: '{{ from_face | int == 0 }}'
+                        sequence: !input 'one_to_five'
+                      - conditions: '{{ from_face | int == 2 }}'
+                        sequence: !input 'three_to_five'
+                      - conditions: '{{ from_face | int == 3 }}'
+                        sequence: !input 'four_to_five'
+                      - conditions: '{{ from_face | int == 5 }}'
+                        sequence: !input 'six_to_five'
+              - conditions:
+                  - '{{ activated_face | int == 5 }}'
+                sequence:
+                  - choose:
+                      - conditions: '{{ from_face | int == 0 }}'
+                        sequence: !input 'one_to_six'
+                      - conditions: '{{ from_face | int == 1 }}'
+                        sequence: !input 'two_to_six'
+                      - conditions: '{{ from_face | int == 3 }}'
+                        sequence: !input 'four_to_six'
+                      - conditions: '{{ from_face | int == 4 }}'
+                        sequence: !input 'five_to_six'
+      - alias: "flip180"
+        conditions:
+          condition: trigger
+          id: 'flip180'
         sequence:
-        - choose:
-          - conditions: '{{ from_face | int == 1 }}'
-            sequence: !input 'two_to_one'
-          - conditions: '{{ from_face | int == 2 }}'
-            sequence: !input 'three_to_one'
-          - conditions: '{{ from_face | int == 4 }}'
-            sequence: !input 'five_to_one'
-          - conditions: '{{ from_face | int == 5 }}'
-            sequence: !input 'six_to_one'
-      - conditions:
-        - '{{ activated_face | int == 1 }}'
+          - service: input_number.set_value
+            target:
+              entity_id: '{{ active_face_entity }}'
+            data:
+              value: '{{ activated_face | int }}'
+          - choose:
+              - conditions: '{{ flip_180 }}'
+                sequence: !input 'cube_flip_180'
+              - conditions: '{{ activated_face | int == 0 }}'
+                sequence: !input 'four_to_one'
+              - conditions: '{{ activated_face | int == 1 }}'
+                sequence: !input 'five_to_two'
+              - conditions: '{{ activated_face | int == 2 }}'
+                sequence: !input 'six_to_three'
+              - conditions: '{{ activated_face | int == 3 }}'
+                sequence: !input 'one_to_four'
+              - conditions: '{{ activated_face | int == 4 }}'
+                sequence: !input 'two_to_five'
+              - conditions: '{{ activated_face | int == 5 }}'
+                sequence: !input 'three_to_six'
+      - alias: "tap"
+        conditions:
+          condition: trigger
+          id: 'tap'
         sequence:
-        - choose:
-          - conditions: '{{ from_face | int == 0 }}'
-            sequence: !input 'one_to_two'
-          - conditions: '{{ from_face | int == 2 }}'
-            sequence: !input 'three_to_two'
-          - conditions: '{{ from_face | int == 3 }}'
-            sequence: !input 'four_to_two'
-          - conditions: '{{ from_face | int == 5 }}'
-            sequence: !input 'six_to_two'
-      - conditions:
-        - '{{ activated_face | int == 2 }}'
+          - service: input_number.set_value
+            target:
+              entity_id: '{{ active_face_entity }}'
+            data:
+              value: '{{ activated_face | int }}'
+          - choose:
+              - conditions: '{{ tap_any_side }}'
+                sequence: !input 'cube_tap_any'
+              - conditions: '{{ activated_face | int == 0 }}'
+                sequence: !input 'one_to_one'
+              - conditions: '{{ activated_face | int == 1 }}'
+                sequence: !input 'two_to_two'
+              - conditions: '{{ activated_face | int == 2 }}'
+                sequence: !input 'three_to_three'
+              - conditions: '{{ activated_face | int == 3 }}'
+                sequence: !input 'four_to_four'
+              - conditions: '{{ activated_face | int == 4 }}'
+                sequence: !input 'five_to_five'
+              - conditions: '{{ activated_face | int == 5 }}'
+                sequence: !input 'six_to_six'
+      - alias: "slide"
+        conditions:
+          condition: trigger
+          id: 'slide'
         sequence:
-        - choose:
-          - conditions: '{{ from_face | int == 0 }}'
-            sequence: !input 'one_to_three'
-          - conditions: '{{ from_face | int == 1 }}'
-            sequence: !input 'two_to_three'
-          - conditions: '{{ from_face | int == 3 }}'
-            sequence: !input 'four_to_three'
-          - conditions: '{{ from_face | int == 4 }}'
-            sequence: !input 'five_to_three'
+          - service: input_number.set_value
+            target:
+              entity_id: '{{ active_face_entity }}'
+            data:
+              value: '{{ activated_face | int }}'
+          - choose:
+              - conditions: '{{ slide_any_side }}'
+                sequence: !input 'cube_slide_any'
+            default:
+              # - conditions:
+              #   - '{{ value == slide + activated_face - 1 }}'
+              #   sequence:
+              - choose:
+                  - conditions: '{{ activated_face | int == 0 }}'
+                    sequence: !input 'slide_on_one'
+                  - conditions: '{{ activated_face | int == 1 }}'
+                    sequence: !input 'slide_on_two'
+                  - conditions: '{{ activated_face | int == 2 }}'
+                    sequence: !input 'slide_on_three'
+                  - conditions: '{{ activated_face | int == 3 }}'
+                    sequence: !input 'slide_on_four'
+                  - conditions: '{{ activated_face | int == 4 }}'
+                    sequence: !input 'slide_on_five'
+                  - conditions: '{{ activated_face | int == 5 }}'
+                    sequence: !input 'slide_on_six'
       - conditions:
-        - '{{ activated_face | int == 3 }}'
-        sequence:
-        - choose:
-          - conditions: '{{ from_face | int == 1 }}'
-            sequence: !input 'two_to_four'
-          - conditions: '{{ from_face | int == 2 }}'
-            sequence: !input 'three_to_four'
-          - conditions: '{{ from_face | int == 4 }}'
-            sequence: !input 'five_to_four'
-          - conditions: '{{ from_face | int == 5 }}'
-            sequence: !input 'six_to_four'
+          - '{{ command ==  "rotate" and angle | int < 0 and rotate_any_side }}'
+        sequence: !input 'rotate_left'
       - conditions:
-        - '{{ activated_face | int == 4 }}'
-        sequence:
-        - choose:
-          - conditions: '{{ from_face | int == 0 }}'
-            sequence: !input 'one_to_five'
-          - conditions: '{{ from_face | int == 2 }}'
-            sequence: !input 'three_to_five'
-          - conditions: '{{ from_face | int == 3 }}'
-            sequence: !input 'four_to_five'
-          - conditions: '{{ from_face | int == 5 }}'
-            sequence: !input 'six_to_five'
+          - '{{ command == "rotate" and angle | int < 0 and active_face | int == 0 }}'
+        sequence: !input 'rotate_left_side_1'
       - conditions:
-        - '{{ activated_face | int == 5 }}'
-        sequence:
-        - choose:
-          - conditions: '{{ from_face | int == 0 }}'
-            sequence: !input 'one_to_six'
-          - conditions: '{{ from_face | int == 1 }}'
-            sequence: !input 'two_to_six'
-          - conditions: '{{ from_face | int == 3 }}'
-            sequence: !input 'four_to_six'
-          - conditions: '{{ from_face | int == 4 }}'
-            sequence: !input 'five_to_six'
-  - alias: "flip180"
-    conditions:
-      condition: trigger
-      id: 'flip180'
-    sequence:
-    - service: input_number.set_value
-      target:
-        entity_id: '{{ active_face_entity }}'
-      data:
-        value: '{{ activated_face | int }}'
-    - choose:
-      - conditions: '{{ flip_180 }}'
-        sequence: !input 'cube_flip_180'
-      - conditions: '{{ activated_face | int == 0 }}'
-        sequence: !input 'four_to_one'
-      - conditions: '{{ activated_face | int == 1 }}'
-        sequence: !input 'five_to_two'
-      - conditions: '{{ activated_face | int == 2 }}'
-        sequence: !input 'six_to_three'
-      - conditions: '{{ activated_face | int == 3 }}'
-        sequence: !input 'one_to_four'
-      - conditions: '{{ activated_face | int == 4 }}'
-        sequence: !input 'two_to_five'
-      - conditions: '{{ activated_face | int == 5 }}'
-        sequence: !input 'three_to_six'
-  - alias: "tap"
-    conditions:
-      condition: trigger
-      id: 'tap'
-    sequence:
-    - service: input_number.set_value
-      target:
-        entity_id: '{{ active_face_entity }}'
-      data:
-        value: '{{ activated_face | int }}'
-    - choose:
-      - conditions: '{{ tap_any_side }}'
-        sequence: !input 'cube_tap_any'
-      - conditions: '{{ activated_face | int == 0 }}'
-        sequence: !input 'one_to_one'
-      - conditions: '{{ activated_face | int == 1 }}'
-        sequence: !input 'two_to_two'
-      - conditions: '{{ activated_face | int == 2 }}'
-        sequence: !input 'three_to_three'
-      - conditions: '{{ activated_face | int == 3 }}'
-        sequence: !input 'four_to_four'
-      - conditions: '{{ activated_face | int == 4 }}'
-        sequence: !input 'five_to_five'
-      - conditions: '{{ activated_face | int == 5 }}'
-        sequence: !input 'six_to_six'
-  - alias: "slide"
-    conditions:
-      condition: trigger
-      id: 'slide'
-    sequence:
-    - service: input_number.set_value
-      target:
-        entity_id: '{{ active_face_entity }}'
-      data:
-        value: '{{ activated_face | int }}'
-    - choose:
-      - conditions: '{{ slide_any_side }}'
-        sequence: !input 'cube_slide_any'
-      default:
-      #- conditions:
-      #  - '{{ value == slide + activated_face - 1 }}'
-      #  sequence:
-        - choose:
-          - conditions: '{{ activated_face | int == 0 }}'
-            sequence: !input 'slide_on_one'
-          - conditions: '{{ activated_face | int == 1 }}'
-            sequence: !input 'slide_on_two'
-          - conditions: '{{ activated_face | int == 2 }}'
-            sequence: !input 'slide_on_three'
-          - conditions: '{{ activated_face | int == 3 }}'
-            sequence: !input 'slide_on_four'
-          - conditions: '{{ activated_face | int == 4 }}'
-            sequence: !input 'slide_on_five'
-          - conditions: '{{ activated_face | int == 5 }}'
-            sequence: !input 'slide_on_six'
-  - conditions:
-    - '{{ command ==  "rotate" and angle | int < 0 and rotate_any_side }}'
-    sequence: !input 'rotate_left'
-  - conditions:
-    - '{{ command == "rotate" and angle | int < 0 and active_face | int == 0 }}'
-    sequence: !input 'rotate_left_side_1'
-  - conditions:
-    - '{{ command == "rotate" and angle | int < 0 and active_face | int == 1 }}'
-    sequence: !input 'rotate_left_side_2'
-  - conditions:
-    - '{{ command == "rotate" and angle | int < 0 and active_face | int == 2 }}'
-    sequence: !input 'rotate_left_side_3'
-  - conditions:
-    - '{{ command == "rotate" and angle | int < 0 and active_face | int == 3 }}'
-    sequence: !input 'rotate_left_side_4'
-  - conditions:
-    - '{{ command == "rotate" and angle | int < 0 and active_face | int == 4 }}'
-    sequence: !input 'rotate_left_side_5'
-  - conditions:
-    - '{{ command == "rotate" and angle | int < 0 and active_face | int == 5 }}'
-    sequence: !input 'rotate_left_side_6'
-  - conditions:
-    - '{{ command == "rotate" and angle | int > 0 and rotate_any_side }}'
-    sequence: !input 'rotate_right'
-  - conditions:
-    - '{{ command == "rotate" and angle | int > 0 and active_face | int == 0 }}'
-    sequence: !input 'rotate_right_side_1'
-  - conditions:
-    - '{{ command == "rotate" and angle | int > 0 and active_face | int == 1 }}'
-    sequence: !input 'rotate_right_side_2'
-  - conditions:
-    - '{{ command == "rotate" and angle | int > 0 and active_face | int == 2 }}'
-    sequence: !input 'rotate_right_side_3'
-  - conditions:
-    - '{{ command == "rotate" and angle | int > 0 and active_face | int == 3 }}'
-    sequence: !input 'rotate_right_side_4'
-  - conditions:
-    - '{{ command == "rotate" and angle | int > 0 and active_face | int == 4 }}'
-    sequence: !input 'rotate_right_side_5'
-  - conditions:
-    - '{{ command == "rotate" and angle | int > 0 and active_face | int == 5 }}'
-    sequence: !input 'rotate_right_side_6'
-  - alias: "shake"
-    conditions:
-      condition: trigger
-      id: 'shake'
-    sequence: !input 'cube_shake'
-  - alias: "drop"
-    conditions:
-      condition: trigger
-      id: 'drop'
-    sequence: !input 'cube_drop'
+          - '{{ command == "rotate" and angle | int < 0 and active_face | int == 1 }}'
+        sequence: !input 'rotate_left_side_2'
+      - conditions:
+          - '{{ command == "rotate" and angle | int < 0 and active_face | int == 2 }}'
+        sequence: !input 'rotate_left_side_3'
+      - conditions:
+          - '{{ command == "rotate" and angle | int < 0 and active_face | int == 3 }}'
+        sequence: !input 'rotate_left_side_4'
+      - conditions:
+          - '{{ command == "rotate" and angle | int < 0 and active_face | int == 4 }}'
+        sequence: !input 'rotate_left_side_5'
+      - conditions:
+          - '{{ command == "rotate" and angle | int < 0 and active_face | int == 5 }}'
+        sequence: !input 'rotate_left_side_6'
+      - conditions:
+          - '{{ command == "rotate" and angle | int > 0 and rotate_any_side }}'
+        sequence: !input 'rotate_right'
+      - conditions:
+          - '{{ command == "rotate" and angle | int > 0 and active_face | int == 0 }}'
+        sequence: !input 'rotate_right_side_1'
+      - conditions:
+          - '{{ command == "rotate" and angle | int > 0 and active_face | int == 1 }}'
+        sequence: !input 'rotate_right_side_2'
+      - conditions:
+          - '{{ command == "rotate" and angle | int > 0 and active_face | int == 2 }}'
+        sequence: !input 'rotate_right_side_3'
+      - conditions:
+          - '{{ command == "rotate" and angle | int > 0 and active_face | int == 3 }}'
+        sequence: !input 'rotate_right_side_4'
+      - conditions:
+          - '{{ command == "rotate" and angle | int > 0 and active_face | int == 4 }}'
+        sequence: !input 'rotate_right_side_5'
+      - conditions:
+          - '{{ command == "rotate" and angle | int > 0 and active_face | int == 5 }}'
+        sequence: !input 'rotate_right_side_6'
+      - alias: "shake"
+        conditions:
+          condition: trigger
+          id: 'shake'
+        sequence: !input 'cube_shake'
+      - alias: "drop"
+        conditions:
+          condition: trigger
+          id: 'drop'
+        sequence: !input 'cube_drop'
 mode: restart
 max_exceeded: silent
