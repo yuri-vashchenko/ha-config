@@ -1,0 +1,3 @@
+title: Home Assistant
+views:
+  - !include lovelace/home/001_telemetry.yaml

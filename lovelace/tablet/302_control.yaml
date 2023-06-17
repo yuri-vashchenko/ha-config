@@ -1,0 +1,22 @@
+title: Control
+path: control
+badges: []
+cards:
+  - type: entities
+    entities:
+      - entity: binary_sensor.light_control
+      - entity: binary_sensor.main_control
+      - entity: binary_sensor.sound_control
+      - entity: binary_sensor.climate_control
+      - entity: select.sound_controller
+      - entity: select.main_controller
+      - entity: select.light_controller
+      - entity: select.climate_controller
+  - show_name: true
+    show_icon: true
+    type: button
+    tap_action:
+      action: toggle
+    entity: button.cancel_all
+    name: Отменить всё
+    icon: mdi:alert-octagon

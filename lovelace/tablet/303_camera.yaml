@@ -1,0 +1,18 @@
+title: Камеры
+path: test-cameras
+icon: mdi:cctv
+type: panel
+badges: []
+cards:
+  - type: grid
+    cards:
+      - type: picture-glance
+        entities: []
+        camera_image: camera.front_main
+        camera_view: live
+      - type: picture-glance
+        entities: []
+        camera_image: camera.entrance_cam
+        camera_view: live
+    columns: 2
+    square: false

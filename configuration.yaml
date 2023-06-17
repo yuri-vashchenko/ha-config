@@ -10,7 +10,7 @@ homeassistant:
 
   # Altitude above sea level in meters. Impacts weather/sunrise data.
   elevation: !secret elevation
-  
+
   # Units
   unit_system: metric
   temperature_unit: C
@@ -41,3 +41,14 @@ homeassistant:
 
   # Load packages
   packages: !include_dir_named integrations
+
+panel_custom:
+  - name: server_state
+    sidebar_title: 'Система'
+    sidebar_icon: mdi:server
+    js_url: /api/hassio/app/entrypoint.js
+    url_path: 'hassio/system'
+    embed_iframe: true
+    require_admin: true
+    config:
+      ingress: core_configurator
