@@ -16,15 +16,15 @@ sensor:
     timeout: 10
     away_timeout: 120  # number of seconds after which the enitity will get status not_home
   - platform: mqtt_room
-    device_id: "3c70ef1d5088"
-    name: 'ESPresense device Elena Xiaomi Smart Band 7 Pro'
-    state_topic: 'espresense/devices/3c70ef1d5088'
+    device_id: "mifit:e07426fac5e8"
+    name: 'ESPresense device Elena Mi Smart Band 6'
+    state_topic: 'espresense/devices/mifit:e07426fac5e8'
     timeout: 10
     away_timeout: 120  # number of seconds after which the enitity will get status not_home
   - platform: mqtt_room
-    device_id: "mifit:f2542ae6f8bd"
-    name: 'ESPresense device Elena Mi Smart Band 6'
-    state_topic: 'espresense/devices/mifit:f2542ae6f8bd'
+    device_id: "3c70ef1d5088"
+    name: 'ESPresense device Elena Xiaomi Smart Band 7 Pro'
+    state_topic: 'espresense/devices/3c70ef1d5088'
     timeout: 10
     away_timeout: 120  # number of seconds after which the enitity will get status not_home
   - platform: mqtt_room
@@ -51,5 +51,11 @@ sensor:
 #   name: 'Michael Mi Smart Band 5'
 #   state_topic: 'espresense/rooms'
 #   timeout: 60
+#   away_timeout: 120  # number of seconds after which the enitity will get status not_home
+# - platform: mqtt_room
+#   device_id: "mifit:f2542ae6f8bd"
+#   name: 'ESPresense device Elena Mi Smart Band 6'
+#   state_topic: 'espresense/devices/mifit:f2542ae6f8bd'
+#   timeout: 10
 #   away_timeout: 120  # number of seconds after which the enitity will get status not_home
 
