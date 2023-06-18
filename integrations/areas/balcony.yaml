@@ -20,11 +20,12 @@ homeassistant:
     binary_sensor.balcony_window_left_contact:
       friendly_name: Балкон левое окно
       device_class: window
-      # binary_sensor.balcony_window_middle_contact:
-      #   device_class: window
-
-      # binary_sensor.balcony_window_right_contact:
-      #   device_class: window
+    binary_sensor.balcony_window_middle_contact:
+      friendly_name: Балкон среднее окно
+      device_class: window
+    binary_sensor.balcony_window_right_contact:
+      friendly_name: Балкон правое окно
+      device_class: window
 
   customize_glob:
     # Датчики
@@ -35,8 +36,12 @@ homeassistant:
 
     "*158d00054481d7*":
       friendly_name: Балкон среднее окно
+    "*balcony_window_middle*":
+      friendly_name: Балкон среднее окно
 
     "*158d000482ffe3*":
+      friendly_name: Балкон правое окно
+    "*balcony_window_right*":
       friendly_name: Балкон правое окно
 
     # Розетка mainsrv
