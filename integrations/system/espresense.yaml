@@ -4,9 +4,9 @@
 sensor:
   # One entry for each beacon you want to track
   - platform: mqtt_room
-    device_id: "iBeacon:9535716c-dff3-4d59-b2f3-acecd2f7cec3-100-1"
+    device_id: "iBeacon:faf76736-9eaf-4252-8668-6809e66966ba-100-1"
     name: 'ESPresense device Yuri Phone BLE'
-    state_topic: 'espresense/devices/iBeacon:9535716c-dff3-4d59-b2f3-acecd2f7cec3-100-1'
+    state_topic: 'espresense/devices/iBeacon:faf76736-9eaf-4252-8668-6809e66966ba-100-1'
     timeout: 10
     away_timeout: 120  # number of seconds after which the enitity will get status not_home
   - platform: mqtt_room
