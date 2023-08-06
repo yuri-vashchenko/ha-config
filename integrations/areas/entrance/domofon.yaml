@@ -1,0 +1,179 @@
+# Domofon
+
+script:
+  domofon_turn_sound_off_at_night:
+    alias: Turn domofon sound on or off according of night mode
+    sequence:
+      - alias: "Chose action depending on night mode"
+        choose:
+          - conditions:
+              - alias: "Night"
+                condition: state
+                entity_id: binary_sensor.night
+                state: "on"
+            sequence:
+              - alias: "Turn domofon sound off"
+                service: switch.turn_off
+                target:
+                  entity_id: switch.domofon_sound
+          - conditions:
+              - alias: "Day"
+                condition: state
+                entity_id: binary_sensor.night
+                state: "off"
+            sequence:
+              - alias: "Turn domofon sound on"
+                service: switch.turn_on
+                target:
+                  entity_id: switch.domofon_sound
+
+automation:
+  - id: domofon_turn_off_sound_at_night
+    alias: Turn off domofon sound at night
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.night
+        from: "off"
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.night
+        from: "on"
+        to: "off"
+      - platform: event
+        event_type:
+          - automation_reloaded
+          - homeassistant_started
+    condition:
+      - alias: "Control mode"
+        condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+    action:
+      - alias: "turn domofon sound on or off"
+        service: script.turn_on
+        target:
+          entity_id: script.domofon_turn_sound_off_at_night
+
+# automation:
+#   - alias: Domofon incoming call notification
+#     initial_state: true
+#     trigger:
+#       # Обнаружен звонок
+#       - platform: state
+#         entity_id: binary_sensor.domofon_incoming_call
+#         to: 'on'
+#     action:
+#       - choose:
+#           # Включён режим авто-открыть или авто-открыть-один-раз
+#           - conditions:
+#               - condition: or
+#                 conditions:
+#                   - condition: state
+#                     entity_id: switch.domofon_automatically_open
+#                     state: 'on'
+#                   - condition: state
+#                     entity_id: switch.domofon_automatically_open_once
+#                     state: 'on'
+#             sequence:
+#               # Отправить уведомление
+#               - service: notify.telegram
+#                 data:
+#                   message: "Звонок в домофон (откроется автоматически)"
+#           # Включён режим авто-отклонить
+#           - conditions:
+#               - condition: state
+#                 entity_id: switch.domofon_automatically_reject
+#                 state: 'on'
+#             sequence:
+#               # Отправить уведомление
+#               - service: notify.telegram
+#                 data:
+#                   message: "Звонок в домофон (отклонится автоматически)"
+#         default:
+#           # Отправить уведомление с кнопками Открыть/Отклонить
+#           - service: notify.telegram
+#             data:
+#               message: "Звонок в домофон"
+#               data:
+#                 inline_keyboard:
+#                   - "{{ 'Открыть:/domofon_open, Отклонить:/domofon_reject' }}"
+
+#   - alias: Telegram /domofon_open callback
+#     initial_state: true
+#     trigger:
+#       # Из телеграмма пришла команда Открыть
+#       - platform: event
+#         event_type: telegram_callback
+#         event_data:
+#           data: '/domofon_open'
+#     action:
+#       - choose:
+#           # Идет звонок
+#           - conditions:
+#               - condition: state
+#                 entity_id: binary_sensor.domofon_incoming_call
+#                 state: 'on'
+#             sequence:
+#               # Отправить подтверждение о намерении открыть
+#               - service: telegram_bot.answer_callback_query
+#                 data_template:
+#                   callback_query_id: "{{ trigger.event.data.id }}"
+#                   message: "Открываю..."
+#               # Открыть
+#               - service: button.press
+#                 entity_id: button.domofon_accept_call
+#         default:
+#           # Отправить ответ, что нету звонка
+#           - service: telegram_bot.answer_callback_query
+#             data_template:
+#               callback_query_id: "{{ trigger.event.data.id }}"
+#               message: "Нет входящего звонка"
+
+#   - alias: Telegram /domofon_reject callback
+#     initial_state: true
+#     trigger:
+#       # Из телеграмма пришла команда Отклонить
+#       - platform: event
+#         event_type: telegram_callback
+#         event_data:
+#           data: '/domofon_reject'
+#     action:
+#       - choose:
+#           # Идет звонок
+#           - conditions:
+#               - condition: state
+#                 entity_id: binary_sensor.domofon_incoming_call
+#                 state: 'on'
+#             sequence:
+#               # Отправить подтверждение о намерении отклонить
+#               - service: telegram_bot.answer_callback_query
+#                 data_template:
+#                   callback_query_id: "{{ trigger.event.data.id }}"
+#                   message: "Отклоняю..."
+#               # Отклонить
+#               - service: button.press
+#                 entity_id: button.domofon_reject_call
+#         default:
+#           # Отправить ответ, что нету звонка
+#           - service: telegram_bot.answer_callback_query
+#             data_template:
+#               callback_query_id: "{{ trigger.event.data.id }}"
+#               message: "Нет входящего звонка"
+
+#   - alias: Domofon opened by button notification
+#     initial_state: true
+#     trigger:
+#       # Нажата кнопка на плате
+#       - platform: state
+#         entity_id: binary_sensor.domofon_button
+#         to: 'on'
+#     condition:
+#       # Идет звонок
+#       - condition: state
+#         entity_id: binary_sensor.domofon_incoming_call
+#         state: 'on'
+#     action:
+#       # Отправить уведомление
+#       - service: notify.telegram
+#         data:
+#           message: "Домофон открыт кнопкой"
