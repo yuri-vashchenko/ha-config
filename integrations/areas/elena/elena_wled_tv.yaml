@@ -1,0 +1,371 @@
+homeassistant:
+  customize:
+    automation.elena_tv_wled_alarm:
+      friendly_name: Спальня WLED - Тревога
+      icon: mdi:flash-alert
+    automation.elena_tv_wled_warning:
+      friendly_name: Спальня WLED - Предупреждение
+      icon: mdi:alert-circle
+    automation.elena_tv_wled_notification:
+      friendly_name: Спальня WLED - Информация
+      icon: mdi:calendar-check
+    automation.elena_tv_wled_tv_power:
+      friendly_name: Спальня WLED - Включен телевизор
+      icon: mdi:calendar-check
+    automation.elena_tv_wled_motion:
+      friendly_name: Спальня WLED - Движение
+      icon: mdi:calendar-check
+
+template:
+  - binary_sensor:
+      - name: elena_tv_power
+        state: >
+          {%- if states('media_player.elena_tv') not in ['unknown', 'unavailable']-%}
+            {{ is_state('media_player.elena_tv', 'on') }}
+          {%- else -%}
+            false
+          {%- endif -%}
+        device_class: power
+      - name: elena_motion_and_illuminance_available
+        state: >
+          {{ true if
+            has_value('binary_sensor.elena_motion') and
+            has_value('sensor.elena_motion_illuminance_illuminance_lux') else false }}
+        device_class: connectivity
+      - name: elena_motion_low_light
+        state: >
+          {{
+            states('binary_sensor.elena_motion')
+            if
+              is_state('binary_sensor.elena_motion_and_illuminance_available', 'on') and
+              states('sensor.elena_motion_illuminance_illuminance_lux') | int < 20
+            else
+              false
+              if
+                is_state('binary_sensor.elena_motion_and_illuminance_available', 'on')
+              else
+                states('binary_sensor.elena_motion')
+                if
+                  has_value('binary_sensor.elena_motion')
+                else
+                  false
+          }}
+        device_class: motion
+
+script:
+  elena_tv_wled_alarm:
+    alias: wled_alarm
+    sequence:
+      - alias: "Turn on the light and select effect"
+        service: light.turn_on
+        target:
+          entity_id: light.elena_tv_wled
+        data:
+          effect: Scanner
+          brightness_pct: 100
+      - service: select.select_option
+        data:
+          option: Red Shift
+        target:
+          entity_id: select.elena_tv_wled_color_palette
+      - service: number.set_value
+        target:
+          entity_id: number.elena_tv_wled_wled_speed
+        data:
+          value: 85
+      - service: number.set_value
+        target:
+          entity_id: number.elena_tv_wled_intensity
+        data:
+          value: 0
+
+  elena_tv_wled_warning:
+    alias: wled_warning
+    sequence:
+      - alias: "Turn on the light and select effect"
+        service: light.turn_on
+        target:
+          entity_id: light.elena_tv_wled
+        data:
+          effect: Phased
+          brightness_pct: 100
+      - service: select.select_option
+        data:
+          option: Yellowout
+        target:
+          entity_id: select.elena_tv_wled_color_palette
+      - service: number.set_value
+        target:
+          entity_id: number.elena_tv_wled_wled_speed
+        data:
+          value: 85
+      - service: number.set_value
+        target:
+          entity_id: number.elena_tv_wled_intensity
+        data:
+          value: 85
+
+  elena_tv_wled_notification:
+    alias: wled_notification
+    sequence:
+      - alias: "Turn on the light and select effect"
+        service: light.turn_on
+        target:
+          entity_id: light.elena_tv_wled
+        data:
+          effect: Aurora
+          brightness_pct: 100
+      - service: select.select_option
+        data:
+          option: Aurora
+        target:
+          entity_id: select.elena_tv_wled_color_palette
+      - service: number.set_value
+        target:
+          entity_id: number.elena_tv_wled_wled_speed
+        data:
+          value: 140
+      - service: number.set_value
+        target:
+          entity_id: number.elena_tv_wled_intensity
+        data:
+          value: 212
+
+  elena_tv_wled_tv:
+    alias: wled_tv
+    sequence:
+      - alias: "Turn on the light and select effect"
+        service: light.turn_on
+        target:
+          entity_id: light.elena_tv_wled
+        data:
+          effect: Solid
+          brightness_pct: 50
+      - service: select.select_option
+        data:
+          option: "* Color 1"
+        target:
+          entity_id: select.elena_tv_wled_color_palette
+      - service: number.set_value
+        target:
+          entity_id: number.elena_tv_wled_wled_speed
+        data:
+          value: 85
+      - service: number.set_value
+        target:
+          entity_id: number.elena_tv_wled_intensity
+        data:
+          value: 0
+
+  elena_tv_wled_motion:
+    alias: wled_motion
+    sequence:
+      - alias: "Turn on the light and select effect"
+        service: light.turn_on
+        target:
+          entity_id: light.elena_tv_wled
+        data:
+          effect: Solid
+          brightness_pct: 10
+      - service: select.select_option
+        data:
+          option: "* Color 1"
+        target:
+          entity_id: select.elena_tv_wled_color_palette
+      - service: number.set_value
+        target:
+          entity_id: number.elena_tv_wled_wled_speed
+        data:
+          value: 85
+      - service: number.set_value
+        target:
+          entity_id: number.elena_tv_wled_intensity
+        data:
+          value: 0
+      - service: switch.turn_on
+        target:
+          entity_id: switch.elena_tv_wled_nightlight
+
+automation:
+  - id: Elena TV WLED Alarm
+    alias: elena_tv_wled_alarm
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.is_alarm
+        from: "off"
+        to: "on"
+    condition:
+      condition: state
+      entity_id: binary_sensor.light_control
+      state: "on"
+    action:
+      - alias: "Run alarm script"
+        service: script.turn_on
+        target:
+          entity_id: script.elena_tv_wled_alarm
+    mode: restart
+
+  - id: Elena TV WLED Warning
+    alias: elena_tv_wled_warning
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.is_warning
+        from: "off"
+        to: "on"
+    condition:
+      condition: state
+      entity_id: binary_sensor.light_control
+      state: "on"
+    action:
+      - alias: "Run warning script"
+        service: script.turn_on
+        target:
+          entity_id: script.elena_tv_wled_warning
+    mode: restart
+
+  - id: Elena TV WLED Notification
+    alias: elena_tv_wled_notification
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.is_notification
+        from: "off"
+        to: "on"
+    condition:
+      condition: state
+      entity_id: binary_sensor.light_control
+      state: "on"
+    action:
+      - alias: "Run notification script"
+        service: script.turn_on
+        target:
+          entity_id: script.elena_tv_wled_notification
+    mode: restart
+
+  - id: Elena TV WLED TV power
+    alias: elena_tv_wled_tv_power
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.is_notification
+        from: "off"
+        to: "on"
+    condition:
+      condition: state
+      entity_id: binary_sensor.light_control
+      state: "on"
+    action:
+      - alias: "Run 'tv on' script"
+        service: script.turn_on
+        target:
+          entity_id: script.elena_tv_wled_tv
+    mode: restart
+
+  - id: Elena TV WLED motion
+    alias: elena_tv_wled_motion
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.elena_motion_low_light
+        from: "off"
+        to: "on"
+    condition:
+      condition: state
+      entity_id: binary_sensor.light_control
+      state: "on"
+    action:
+      - alias: "Run motion script"
+        service: script.turn_on
+        target:
+          entity_id: script.elena_tv_wled_motion
+    mode: restart
+
+  - id: Elena TV WLED no motion
+    alias: elena_tv_wled_no_motion
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.elena_motion_low_light
+        id: "motion"
+        from: "on"
+        to: "off"
+    condition:
+      - condition: and
+        conditions:
+          - condition: state
+            entity_id: binary_sensor.light_control
+            state: "on"
+          - condition: state
+            entity_id: binary_sensor.is_alarm
+            state: "off"
+          - condition: state
+            entity_id: binary_sensor.is_warning
+            state: "off"
+          - condition: state
+            entity_id: binary_sensor.is_notification
+            state: "off"
+          - condition: state
+            entity_id: binary_sensor.tv_power
+            state: "on"
+    action:
+      - alias: "No alarm, warning or notification but TV is on"
+        service: script.turn_on
+        target:
+          entity_id: script.elena_tv_wled_tv
+    mode: restart
+
+  - id: Elena TV WLED Off
+    alias: elena_tv_wled_off
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.is_alarm
+        id: "alarm"
+        from: "on"
+        to: "off"
+      - platform: state
+        entity_id: binary_sensor.is_warning
+        id: "warning"
+        from: "on"
+        to: "off"
+      - platform: state
+        entity_id: binary_sensor.is_notification
+        id: "notification"
+        from: "on"
+        to: "off"
+      - platform: state
+        entity_id: binary_sensor.elena_motion_low_light
+        id: "motion"
+        from: "on"
+        to: "off"
+      - platform: state
+        entity_id: binary_sensor.elena_tv_power
+        id: "tv"
+        from: "on"
+        to: "off"
+    condition:
+      - condition: and
+        conditions:
+          - condition: state
+            entity_id: binary_sensor.light_control
+            state: "on"
+          - condition: state
+            entity_id: binary_sensor.is_alarm
+            state: "off"
+          - condition: state
+            entity_id: binary_sensor.is_warning
+            state: "off"
+          - condition: state
+            entity_id: binary_sensor.is_notification
+            state: "off"
+          - condition: state
+            entity_id: binary_sensor.tv_power
+            state: "off"
+          - condition: state
+            entity_id: binary_sensor.elena_motion_low_light
+            state: "off"
+    action:
+      - alias: "Turn off the nightlight"
+        service: switch.turn_off
+        target:
+          entity_id: switch.elena_tv_wled_nightlight
+      - alias: "Turn off the light"
+        service: light.turn_off
+        target:
+          entity_id: light.elena_tv_wled
+    mode: restart
