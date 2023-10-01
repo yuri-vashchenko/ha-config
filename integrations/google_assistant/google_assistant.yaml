@@ -34,6 +34,12 @@ google_assistant:
       aliases:
         - Color Light
       room: Lena
+    light.elena_tv_wled:
+      name: LED
+      expose: true
+      aliases:
+        - TV LED
+      room: Lena
     climate.elena_ac:
       name: AC
       expose: true

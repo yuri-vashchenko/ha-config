@@ -245,7 +245,7 @@ automation:
     alias: elena_tv_wled_tv_power
     trigger:
       - platform: state
-        entity_id: binary_sensor.is_notification
+        entity_id: binary_sensor.elena_tv_power
         from: "off"
         to: "on"
     condition:

@@ -6,4 +6,11 @@ sensor:
       yandex_weather_picture:
         friendly_name: "Current weather picture from Yandex weather"
         value_template: >
-          {{state_attr("weather.yandex_weather", "entity_picture")}}
+          {{ state_attr("weather.yandex_weather", "entity_picture") }}
+
+      yandex_weather_current_temperature:
+        friendly_name: "Current temperature from Yandex weather"
+        value_template: >
+          {{ state_attr("weather.yandex_weather", "temperature") }}
+        device_class: temperature
+        unit_of_measurement: "°C"
