@@ -6,8 +6,8 @@ zone:
     icon: mdi:home
 
   - name: Первый бит
-    latitude: !secret latitude_1bit
-    longitude: !secret longitude_1bit
+    latitude: !secret latitude_work_s
+    longitude: !secret longitude_work_s
     radius: 250
     icon: mdi:school
 
