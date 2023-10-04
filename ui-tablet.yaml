@@ -1,5 +1,6 @@
 title: Tablet view
 views:
-  - !include lovelace/tablet/301_home.yaml
-  - !include lovelace/tablet/302_control.yaml
-  - !include lovelace/tablet/303_camera.yaml
+  - !include lovelace/tablet/300_home.yaml
+  # - !include lovelace/tablet/310_espresense.yaml
+  - !include lovelace/tablet/330_control.yaml
+  - !include lovelace/tablet/340_camera.yaml

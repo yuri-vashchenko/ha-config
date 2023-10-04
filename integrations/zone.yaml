@@ -5,9 +5,9 @@ zone:
     radius: 100
     icon: mdi:home
 
-  - name: Технический Лицей
-    latitude: !secret latitude_licee
-    longitude: !secret longitude_licee
+  - name: Первый бит
+    latitude: !secret latitude_1bit
+    longitude: !secret longitude_1bit
     radius: 250
     icon: mdi:school
 
