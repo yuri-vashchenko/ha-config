@@ -24,21 +24,21 @@ cards:
                   - sensor.street_thermometer_temperature
                 color_thresholds:
                   - value: 0
-                    color: '#CCE5FF'
+                    color: "#CCE5FF"
                   - value: 10
-                    color: '#66B2FF'
+                    color: "#66B2FF"
                   - value: 18
-                    color: '#0080FF'
+                    color: "#0080FF"
                   - value: 20
-                    color: '#87c087'
+                    color: "#87c087"
                   - value: 21
-                    color: '#389638'
+                    color: "#389638"
                   - value: 24
-                    color: '#FF9932'
+                    color: "#FF9932"
                   - value: 25
-                    color: '#FF8000'
+                    color: "#FF8000"
                   - value: 26
-                    color: '#ff0000'
+                    color: "#ff0000"
               - type: weather-forecast
                 entity: weather.yandex_weather
                 show_forecast: false
@@ -91,17 +91,6 @@ cards:
         hide_date: true
         hourly_forecast: false
         use_browser_time: true
-      - type: custom:weather-chart-card
-        title: Погода сегодня
-        temperature: sensor.gismeteo_temperature_feels_like
-        entity: weather.gismeteo_hourly
-        show_attributes: false
-      - type: custom:weather-chart-card
-        title: Прогноз на неделю
-        temp: sensor.gismeteo_temperature_feels_like
-        entity: weather.gismeteo_daily
-        show_main: false
-        show_attributes: false
       - type: custom:compass-card
         indicator_sensors:
           - sensor: sensor.gismeteo_hourly_wind_bearing
@@ -110,18 +99,6 @@ cards:
         header:
           title:
             value: Ветер
-      - type: entities
-        entities:
-          - entity: sensor.daily_energy_total_cost_double_tariff
-            type: custom:multiple-entity-row
-            name: Стоимость сегодня
-            entities:
-              - sensor.daily_energy_total_cost_single_tariff
-          - entity: sensor.monthly_energy_total_cost_double_tariff
-            type: custom:multiple-entity-row
-            name: Стоимость за месяц
-            entities:
-              - sensor.monthly_energy_total_cost_single_tariff
       - type: entity-filter
         entities:
           - person.elena_vashchenko
@@ -136,30 +113,6 @@ cards:
         card:
           type: glance
           title: Пользователи дома
-      - type: custom:mini-graph-card
-        height: 75
-        font_size: 200
-        hour24: true
-        decimals: 1
-        entities:
-          - sensor.gismeteo_hourly_water_temperature
-        color_thresholds:
-          - value: 0
-            color: '#CCE5FF'
-          - value: 10
-            color: '#66B2FF'
-          - value: 18
-            color: '#0080FF'
-          - value: 20
-            color: '#87c087'
-          - value: 21
-            color: '#389638'
-          - value: 24
-            color: '#FF9932'
-          - value: 25
-            color: '#FF8000'
-          - value: 26
-            color: '#ff0000'
       - type: entity
         entity: sensor.next_bus
         state_color: true
