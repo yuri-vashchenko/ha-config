@@ -1,9 +1,12 @@
-sensor:
-  - platform: template
-    sensors:
-      blood_sugar_mmol:
-        friendly_name: Сахар крови
-        value_template: >-
+homeassistant:
+  customize:
+    sensor.blood_sugar_mmol:
+      friendly_name: Сахар крови
+
+template:
+  - sensor:
+      - name: blood_sugar_mmol
+        state: >-
           {{(states('sensor.blood_sugar') | int / 18) | round(1, 'floor')}}
 
 automation:

@@ -1,16 +1,20 @@
 # extract picture attribute from weather entity
 
-sensor:
-  - platform: template
-    sensors:
-      yandex_weather_picture:
-        friendly_name: "Current weather picture from Yandex weather"
-        value_template: >
-          {{ state_attr("weather.yandex_weather", "entity_picture") }}
+homeassistant:
+  customize:
+    sensor.yandex_weather_picture:
+      friendly_name: Current weather picture from Yandex weather
+    sensor.yandex_weather_current_temperature:
+      friendly_name: "Current temperature from Yandex weather"
 
-      yandex_weather_current_temperature:
-        friendly_name: "Current temperature from Yandex weather"
-        value_template: >
+template:
+  - sensor:
+      - name: yandex_weather_picture
+        state: >
+            {{ state_attr("weather.yandex_weather", "entity_picture") }}
+
+      - name: yandex_weather_current_temperature
+        state: >
           {{ state_attr("weather.yandex_weather", "temperature") }}
         device_class: temperature
         unit_of_measurement: "°C"
