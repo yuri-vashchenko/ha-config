@@ -103,7 +103,7 @@ cards:
             temperature_sensor: sensor.street_thermometer_temperature
             weather_icon_type: fill
             animated_icon: true
-            forecast_days: 10
+            forecast_rows: 12
             locale: ru
             time_format: 24
             date_pattern: P
@@ -120,7 +120,7 @@ cards:
             temperature_sensor: sensor.street_thermometer_temperature
             weather_icon_type: fill
             animated_icon: true
-            forecast_days: 7
+            forecast_rows: 7
             locale: ru
             time_format: 24
             date_pattern: P
