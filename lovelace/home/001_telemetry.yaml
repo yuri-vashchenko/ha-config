@@ -150,24 +150,24 @@ cards:
                   - entity: sensor.total_addons_updates
                     name: Доступно обновлений
 
-          - type: custom:auto-entities
+          - type: conditional
+            conditions:
+              - condition: numeric_state
+                entity: sensor.total_addons_updates
+                above: 0
             card:
-              type: entities
-              show_header_toggle: false
-            filter:
-              include:
-                - domain: update
-                  state: "on"
-                  options:
-                    type: custom:multiple-entity-row
-                    show_state: false
-                    secondary_info: last-changed
-                    entities:
-                      - attribute: installed_version
-                        name: Установлено
-                      - attribute: latest_version
-                        name: Последняя
-
+              type: custom:auto-entities
+              card:
+                type: entities
+                show_header_toggle: false
+              filter:
+                include:
+                  - domain: update
+                    state: "on"
+                    options:
+                      type: custom:mushroom-update-card
+                      icon_type: entity-picture
+                      show_buttons_control: true
           - type: markdown
             style: |
               ha-card {
