@@ -25,17 +25,17 @@ automation:
     trigger:
       - id: yuri_bubble_mini
         platform: state
-        entity_id: sensor.espresense_device_yuri_bubble_mini
+        entity_id: sensor.room_yuri_bubble_mini
       - id: yuri_phone_ble
         platform: state
-        entity_id: sensor.espresense_device_yuri_phone_ble
+        entity_id: sensor.room_yuri_phone_ble
       - id: not_home
         platform: state
-        entity_id: sensor.espresense_device_yuri_bubble_mini
+        entity_id: sensor.room_yuri_bubble_mini
         to: not_home
       - id: not_home
         platform: state
-        entity_id: sensor.espresense_device_yuri_phone_ble
+        entity_id: sensor.room_yuri_phone_ble
         to: not_home
     condition:
       - alias: Main control
@@ -56,7 +56,7 @@ automation:
                     condition: not
                     conditions:
                       - condition: state
-                        entity_id: sensor.espresense_device_yuri_bubble_mini
+                        entity_id: sensor.room_yuri_bubble_mini
                         state: "not_home"
             sequence:
               - alias: "Set Yuri room"
@@ -64,13 +64,13 @@ automation:
                 target:
                   entity_id: input_text.yuri_room
                 data:
-                  value: "{{ states('sensor.espresense_device_yuri_bubble_mini') }}"
+                  value: "{{ states('sensor.room_yuri_bubble_mini') }}"
               - alias: "Set Yuri room distance"
                 service: input_number.set_value
                 target:
                   entity_id: input_number.yuri_room_distance
                 data:
-                  value: "{{ state_attr('sensor.espresense_device_yuri_bubble_mini', 'distance') }}"
+                  value: "{{ state_attr('sensor.room_yuri_bubble_mini', 'distance') }}"
               - alias: "Set Yuri at home"
                 service: input_boolean.turn_on
                 target:
@@ -86,7 +86,7 @@ automation:
                     condition: not
                     conditions:
                       - condition: state
-                        entity_id: sensor.espresense_device_yuri_phone_ble
+                        entity_id: sensor.room_yuri_phone_ble
                         state: "not_home"
             sequence:
               - alias: "Set Yuri room"
@@ -94,13 +94,13 @@ automation:
                 target:
                   entity_id: input_text.yuri_room
                 data:
-                  value: "{{ states('sensor.espresense_device_yuri_phone_ble') }}"
+                  value: "{{ states('sensor.room_yuri_phone_ble') }}"
               - alias: "Set Yuri room distance"
                 service: input_number.set_value
                 target:
                   entity_id: input_number.yuri_room_distance
                 data:
-                  value: "{{ state_attr('sensor.espresense_device_yuri_phone_ble', 'distance') }}"
+                  value: "{{ state_attr('sensor.room_yuri_phone_ble', 'distance') }}"
               - alias: "Set Yuri at home"
                 service: input_boolean.turn_on
                 target:
@@ -114,11 +114,11 @@ automation:
                     id: not_home
                   - alias: "Yuri bubble mini"
                     condition: state
-                    entity_id: sensor.espresense_device_yuri_bubble_mini
+                    entity_id: sensor.room_yuri_bubble_mini
                     state: "not_home"
                   - alias: "Yuri Phone BLE"
                     condition: state
-                    entity_id: sensor.espresense_device_yuri_phone_ble
+                    entity_id: sensor.room_yuri_phone_ble
                     state: "not_home"
             sequence:
               - alias: "Set Yuri room"

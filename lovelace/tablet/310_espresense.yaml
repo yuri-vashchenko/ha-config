@@ -2,21 +2,39 @@ title: ESPresense
 path: espresese
 badges: []
 cards:
-  - type: entities
-    entities:
-      - entity: binary_sensor.light_control
-      - entity: binary_sensor.main_control
-      - entity: binary_sensor.sound_control
-      - entity: binary_sensor.climate_control
-      - entity: select.sound_controller
-      - entity: select.main_controller
-      - entity: select.light_controller
-      - entity: select.climate_controller
-  - show_name: true
-    show_icon: true
-    type: button
-    tap_action:
-      action: toggle
-    entity: button.cancel_all
-    name: Отменить всё
-    icon: mdi:alert-octagon
+  - type: conditional
+    conditions:
+      - condition: state
+        entity: person.yuri_vashchenko
+        state: home
+    card:
+      type: custom:mushroom-chips-card
+      chips:
+        - type: entity
+          entity: person.yuri_vashchenko
+          use_entity_picture: true
+        - type: entity
+          entity: input_text.yuri_room
+          icon: mdi:map-marker
+        - type: entity
+          entity: input_number.yuri_room_distance
+          icon: mdi:map-marker-distance
+
+  - type: conditional
+    conditions:
+      - condition: state
+        entity: person.elena_vashchenko
+        state: home
+    card:
+      type: custom:mushroom-chips-card
+      chips:
+        - type: entity
+          entity: person.elena_vashchenko
+          use_entity_picture: true
+        - type: entity
+          entity: sensor.room_elena_mi_smart_band_6
+          icon: mdi:map-marker
+        - type: template
+          content: '{{state_attr(entity, ''distance'')}}m'
+          entity: sensor.room_elena_mi_smart_band_6
+          icon: mdi:map-marker-distance
