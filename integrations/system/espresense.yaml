@@ -4,32 +4,32 @@
 sensor:
   # One entry for each beacon you want to track
   - platform: mqtt_room
-    device_id: "iBeacon:faf76736-9eaf-4252-8668-6809e66966ba-100-1"
-    name: 'ESPresense device Yuri Phone BLE'
-    state_topic: 'espresense/devices/iBeacon:faf76736-9eaf-4252-8668-6809e66966ba-100-1'
+    device_id: "yuri_phone_ble"
+    name: 'room Yuri Phone BLE'
+    state_topic: 'espresense/devices/yuri_phone_ble'
     timeout: 10
     away_timeout: 120  # number of seconds after which the enitity will get status not_home
   - platform: mqtt_room
     device_id: "name:bubble-mini"
-    name: 'ESPresense device Yuri Bubble mini'
+    name: 'room Yuri Bubble mini'
     state_topic: 'espresense/devices/name:bubble-mini'
     timeout: 10
     away_timeout: 120  # number of seconds after which the enitity will get status not_home
   - platform: mqtt_room
     device_id: "mifit:e07426fac5e8"
-    name: 'ESPresense device Elena Mi Smart Band 6'
+    name: 'room Elena Mi Smart Band 6'
     state_topic: 'espresense/devices/mifit:e07426fac5e8'
     timeout: 10
     away_timeout: 120  # number of seconds after which the enitity will get status not_home
   - platform: mqtt_room
     device_id: "3c70ef1d5088"
-    name: 'ESPresense device Elena Xiaomi Smart Band 7 Pro'
+    name: 'room Elena Xiaomi Smart Band 7 Pro'
     state_topic: 'espresense/devices/3c70ef1d5088'
     timeout: 10
     away_timeout: 120  # number of seconds after which the enitity will get status not_home
   - platform: mqtt_room
     device_id: "mifit:d3ccfa54baeb"
-    name: 'ESPresense device Mama Mi Smart Band 4'
+    name: 'room Mama Mi Smart Band 4'
     state_topic: 'espresense/devices/mifit:d3ccfa54baeb'
     timeout: 10
 
