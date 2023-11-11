@@ -1,0 +1,3 @@
+title: Tablet view
+views:
+  - !include lovelace/graphs/210_energy.yaml
