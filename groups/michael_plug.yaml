@@ -1,0 +1,6 @@
+michael_plug:
+  name: Розетки в Мишиной комнате
+  entities:
+    - switch.michael_plug_michael_pc
+    - switch.michael_plug_yuri
+  icon: mdi:power-socket-eu

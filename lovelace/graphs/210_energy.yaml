@@ -16,24 +16,18 @@ cards:
           remaining:
             name: Other
           children:
-            - sensor.entrance_total_energy
-            - sensor.corridor_total_energy
+            - sensor.entrance_plug_camera_energy
             - sensor.kitchen_total_energy
             - sensor.elena_total_energy
             - sensor.michael_total_energy
-            - sensor.mama_total_energy
-            - sensor.balcony_total_energy
-            - sensor.bathroom_total_energy
+            - sensor.mama_plug_tv_energy
+            - sensor.balcony_plug_mainsrv_energy
+            - sensor.bathroom_plug_washer_machine_energy
       - entities:
-        - entity_id: sensor.entrance_total_energy
+        - entity_id: sensor.entrance_plug_camera_energy
           color: var(--warning-color)
           children:
-            - sensor.0xa4c138ac9f77e00d_energy
             - sensor.entrance_plug_camera_energy
-      - entities:
-        - entity_id: sensor.corridor_total_energy
-          color: var(--warning-color)
-          children:
       - entities:
         - entity_id: sensor.kitchen_total_energy
           color: var(--warning-color)
@@ -54,23 +48,22 @@ cards:
             - sensor.michael_plug_michael_pc_energy
             - sensor.michael_plug_yuri_energy
       - entities:
-        - entity_id: sensor.mama_total_energy
+        - entity_id: sensor.mama_plug_tv_energy
           color: var(--warning-color)
           children:
             - sensor.mama_plug_tv_energy
       - entities:
-        - entity_id: sensor.balcony_total_energy
+        - entity_id: sensor.balcony_plug_mainsrv_energy
           color: var(--warning-color)
           children:
             - sensor.balcony_plug_mainsrv_energy
       - entities:
-        - entity_id: sensor.bathroom_total_energy
+        - entity_id: sensor.bathroom_plug_washer_machine_energy
           color: var(--warning-color)
           children:
             - sensor.bathroom_plug_washer_machine_energy
             - total_house_other
       - entities:
-        - sensor.0xa4c138ac9f77e00d_energy
         - sensor.balcony_plug_mainsrv_energy
         - sensor.bathroom_plug_washer_machine_energy
         - sensor.elena_plug_ac_energy

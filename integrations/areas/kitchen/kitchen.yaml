@@ -48,22 +48,48 @@ homeassistant:
       friendly_name: Кухонный выключатель
 
 # Kitchen power strip - convert power to energy to be able to monitor daily consumption
-sensor:
-  - platform: template
-    sensors:
-      kitchen_switch_load_power:
-        friendly_name: "Кухонный удлинитель текущее потребление"
-        value_template: "{{ state_attr('switch.kitchen_power_strip', 'load_power') }}"
-      kitchen_ble_presence:
-        friendly_name: "Someone in the kitchen"
-        value_template: >
+template:
+  - sensor:
+      - name: kitchen_switch_load_power
+        state: "{{ state_attr('switch.kitchen_power_strip', 'load_power') }}"
+      - name: kitchen_ble_presence
+        state: >
           {{is_state('sensor.michael_mi_smart_band_5', "kitchen") or
             is_state('sensor.mama_mi_smart_band_4', "kitchen") or
             is_state('sensor.papa_mi_smart_band_4', "kitchen") or
             is_state('sensor.elena_mi_smart_band_6', "kitchen") or
             is_state('sensor.yuri_mi_smart_band_6_nfc', "kitchen") or
             is_state('sensor.svetlana_mi_smart_band_6', "kitchen")}}
+      - name: kitchen_total_power
+        state: >
+          {% set ns = namespace(states=[]) -%}
+          {% for plug in expand('group.kitchen_plug') | selectattr('domain','eq','switch') | map(attribute='entity_id') -%}
+            {% set energy_sensor_name = plug | replace("switch", "sensor") + "_power" -%}
+            {% if is_number(states(energy_sensor_name)) -%}
+            {% set plug_energy = states(energy_sensor_name) | float -%}
+            {% set ns.states = ns.states + [plug_energy] -%}
+            {% endif -%}
+          {% endfor -%}
+          {{ ns.states | sum | round(2) }}
+        state_class: measurement
+        unit_of_measurement: "W"
+        device_class: power
+      - name: kitchen_total_energy
+        state: >
+          {% set ns = namespace(states=[]) -%}
+          {% for plug in expand('group.kitchen_plug') | selectattr('domain','eq','switch') | map(attribute='entity_id') -%}
+            {% set energy_sensor_name = plug | replace("switch", "sensor") + "_energy" -%}
+            {% if is_number(states(energy_sensor_name)) -%}
+            {% set plug_energy = states(energy_sensor_name) | float -%}
+            {% set ns.states = ns.states + [plug_energy] -%}
+            {% endif -%}
+          {% endfor -%}
+          {{ ns.states | sum | round(2) }}
+        state_class: total_increasing
+        unit_of_measurement: "kWh"
+        device_class: energy
 
+sensor:
   - platform: integration
     source: sensor.kitchen_switch_load_power
     name: kitchen_switch_energy

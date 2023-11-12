@@ -33,6 +33,39 @@ homeassistant:
     "*michael_thermometer*":
       friendly_name: Миша климат
 
+template:
+  - sensor:
+      - name: michael_total_power
+        state: >
+          {% set ns = namespace(states=[]) -%}
+          {% for plug in expand('group.michael_plug') | selectattr('domain','eq','switch') | map(attribute='entity_id') -%}
+            {% set energy_sensor_name = plug | replace("switch", "sensor") + "_power" -%}
+            {% if is_number(states(energy_sensor_name)) -%}
+            {% set plug_energy = states(energy_sensor_name) | float -%}
+            {% set ns.states = ns.states + [plug_energy] -%}
+            {% endif -%}
+          {% endfor -%}
+          {{ ns.states | sum | round(2) }}
+        state_class: measurement
+        unit_of_measurement: "W"
+        device_class: power
+
+      - name: michael_total_energy
+        state: >
+          {% set ns = namespace(states=[]) -%}
+          {% for plug in expand('group.michael_plug') | selectattr('domain','eq','switch') | map(attribute='entity_id') -%}
+            {% set energy_sensor_name = plug | replace("switch", "sensor") + "_energy" -%}
+            {% if is_number(states(energy_sensor_name)) -%}
+            {% set plug_energy = states(energy_sensor_name) | float -%}
+            {% set ns.states = ns.states + [plug_energy] -%}
+            {% endif -%}
+          {% endfor -%}
+          {{ ns.states | sum | round(2) }}
+        state_class: total_increasing
+        unit_of_measurement: "kWh"
+        device_class: energy
+
+
 automation:
   - id: michael_turn_off_plug_when_note_asus_becomes_unavailable
     alias: "Выключить розетку когда ноутбук становится недоступен"
