@@ -142,18 +142,18 @@ cards:
               }
             show_header_toggle: false
             entities:
-              - entity: sensor.total_addons
+              - entity: sensor.total_components
                 type: custom:multiple-entity-row
-                name: Аддоны
+                name: Дополнения и интеграции
                 state_header: Всего
                 entities:
-                  - entity: sensor.total_addons_updates
+                  - entity: sensor.total_components_updates
                     name: Доступно обновлений
 
           - type: conditional
             conditions:
               - condition: numeric_state
-                entity: sensor.total_addons_updates
+                entity: sensor.total_components_updates
                 above: 0
             card:
               type: custom:auto-entities

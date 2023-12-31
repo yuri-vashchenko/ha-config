@@ -16,9 +16,9 @@ homeassistant:
       friendly_name: Отключенных скриптов
     sensor.total_scripts_unavailable:
       friendly_name: Недоступных скриптов
-    sensor.total_addons:
-      friendly_name: Дополнений в системе
-    sensor.total_addons_updates:
+    sensor.total_components:
+      friendly_name: Компонентов в системе
+    sensor.total_components_updates:
       friendly_name: Доступно обновлений
     sensor.total_lights:
       friendly_name: Светильников в системе
@@ -96,11 +96,11 @@ template:
 
       ################# Обновления #################
 
-      - name: total_addons
+      - name: total_components
         state: "{{ states.update | list | count }}"
         icon: mdi:monitor-dashboard
 
-      - name: total_addons_updates
+      - name: total_components_updates
         state: "{{ states.update | selectattr('state', 'equalto', 'on') | list | count }}"
         icon: mdi:monitor-arrow-down-variant
 
