@@ -7,6 +7,8 @@ media_player:
     - media_player.elena_nest
     - media_player.yandex_station_ff98f029014bad091f5988de
     - media_player.yandex_station_mk0000000000000856020000ea9f455c
+    - media_player.yandex_station_u00yg86004sfjk
+
   icon: mdi:play-box
 
 alice:
@@ -14,4 +16,5 @@ alice:
   entities:
     - media_player.yandex_station_ff98f029014bad091f5988de
     - media_player.yandex_station_mk0000000000000856020000ea9f455c
+    - media_player.yandex_station_u00yg86004sfjk
   icon: mdi:play-box

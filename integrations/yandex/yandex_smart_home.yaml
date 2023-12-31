@@ -1,48 +1,117 @@
 yandex_smart_home:
   filter:
+    include_domains:
+      - light
     include_entities:
+      - button.cancel_all
+      - climate.elena_ac
+      - media_player.elena_tv
       - media_player.kitchen_tv
       - media_player.mama_tv
-      - light.kitchen_switch_light
-      - light.mama_switch_light
-      - sensor.blood_sugar_mmol
+      - script.update_shopping_list
       - sensor.balcony_thermometer_temperature
       - sensor.balcony_thermometer_humidity
-      - sensor.svetlana_thermometer_temperature
-      - sensor.svetlana_thermometer_humidity
-      - sensor.michael_thermometer_temperature
-      - sensor.michael_thermometer_humidity
-      - sensor.mama_thermometer_temperature
-      - sensor.mama_thermometer_humidity
+      - sensor.blood_sugar_mmol
       - sensor.elena_thermometer_temperature
       - sensor.elena_thermometer_humidity
-      # - sensor.elena_0xe72e001268f1_temperature
-      # - sensor.elena_0xe72e001268f1_humidity
+      - sensor.mama_thermometer_temperature
+      - sensor.mama_thermometer_humidity
+      - sensor.michael_thermometer_temperature
+      - sensor.michael_thermometer_humidity
       - sensor.street_thermometer_temperature
       - sensor.street_thermometer_humidity
       - sensor.street_thermometer_pressure
-      - script.update_shopping_list
+      - sensor.svetlana_thermometer_temperature
+      - sensor.svetlana_thermometer_humidity
       - switch.kitchen_hold_light_on
       - switch.kitchen_hold_light_off
-      - button.cancel_all
   entity_config:
+    climate.elena_ac:
+      name: Кондиционер
+      room: Лена
+      type: devices.types.thermostat.ac
+
+    button.cancel_all:
+      name: Отключить тревогу
+
+    light.elena_tv_wled:
+      name: Подсветка телевизора
+      room: Лена
+    light.elena_yeelight:
+      name: Солнце
+      room: Лена
+    light.elena_yeelight_ambilight:
+      name: Подсветка люстры
+      room: Лена
+    light.elena_yeelight_nightlight:
+      name: Луна
+      room: Лена
+    light.kitchen_switch_light:
+      name: Люстра
+      room: Кухня
+    light.mama_switch_light:
+      name: Лампа
+      room: Мама
+
+    media_player.elena_tv:
+      type: devices.types.media_device.tv
+      name: Телевизор
+      room: Лена
     media_player.kitchen_tv:
       type: devices.types.media_device.tv
       # relative_volume_only: false
-      name: "Телевизор"
-      room: "Кухня"
-    light.kitchen_switch_light:
-      name: "Люстра"
-      room: "Кухня"
-    light.mama_switch_light:
-      name: "Лампа"
-      room: "Мама"
+      name: Телевизор
+      room: Кухня
     media_player.mama_tv:
-      name: "Телевизор"
-      room: "Мама"
+      name: Телевизор
+      room: Мама
+
+    switch.kitchen_hold_light_on:
+      name: Не выключать свет
+      room: Кухня
+    switch.kitchen_hold_light_off:
+      name: Не включать свет
+      room: Кухня
+
+    sensor.blood_sugar_mmol:
+      name: Сахар крови
+      room: Лена
+
+    temperature_humidity.balcony:
+      name: Температура
+      room: Балкон
+      properties:
+        - type: temperature
+          entity: sensor.balcony_thermometer_temperature
+        - type: humidity
+          entity: sensor.balcony_thermometer_humidity
+    temperature_humidity.elena:
+      name: Температура
+      room: Лена
+      properties:
+        - type: temperature
+          entity: sensor.elena_thermometer_temperature
+        - type: humidity
+          entity: sensor.elena_thermometer_humidity
+    temperature_humidity.mama:
+      name: Температура
+      room: Мама
+      properties:
+        - type: temperature
+          entity: sensor.mama_thermometer_temperature
+        - type: humidity
+          entity: sensor.mama_thermometer_humidity
+    temperature_humidity.michael:
+      name: Температура
+      room: Миша
+      properties:
+        - type: temperature
+          entity: sensor.michael_thermometer_temperature
+        - type: humidity
+          entity: sensor.michael_thermometer_humidity
     temperature_humidity.street:
-      name: "Температура"
-      room: "Улица"
+      name: Температура
+      room: Улица
       properties:
         - type: temperature
           entity: sensor.street_thermometer_temperature
@@ -50,57 +119,11 @@ yandex_smart_home:
           entity: sensor.street_thermometer_humidity
         - type: pressure
           entity: sensor.street_thermometer_pressure
-    temperature_humidity.balcony:
-      name: "Температура"
-      room: "Балкон"
-      properties:
-        - type: temperature
-          entity: sensor.balcony_thermometer_temperature
-        - type: humidity
-          entity: sensor.balcony_thermometer_humidity
     temperature_humidity.svetlana:
-      name: "Температура"
-      room: "Света"
+      name: Температура
+      room: Света
       properties:
         - type: temperature
           entity: sensor.svetlana_thermometer_temperature
         - type: humidity
           entity: sensor.svetlana_thermometer_humidity
-    temperature_humidity.michael:
-      name: "Температура"
-      room: "Миша"
-      properties:
-        - type: temperature
-          entity: sensor.michael_thermometer_temperature
-        - type: humidity
-          entity: sensor.michael_thermometer_humidity
-    temperature_humidity.mama:
-      name: "Температура"
-      room: "Мама"
-      properties:
-        - type: temperature
-          entity: sensor.mama_thermometer_temperature
-        - type: humidity
-          entity: sensor.mama_thermometer_humidity
-    temperature_humidity.elena:
-      name: "Температура"
-      room: "Лена"
-      properties:
-        - type: temperature
-          entity: sensor.elena_0xe72e001268f1_temperature
-        - type: humidity
-          entity: sensor.elena_0xe72e001268f1_humidity
-
-    switch.kitchen_hold_light_on:
-      name: "Не выключать свет"
-      room: "Кухня"
-    switch.kitchen_hold_light_off:
-      name: "Не включать свет"
-      room: "Кухня"
-
-    sensor.blood_sugar_mmol:
-      name: "Сахар крови"
-      room: "Лена"
-
-    button.cancel_all:
-      name: "Отключить тревогу"

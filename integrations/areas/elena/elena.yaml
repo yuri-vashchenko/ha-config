@@ -25,6 +25,9 @@ homeassistant:
       friendly_name: TV
       device_class: tv
 
+    media_player.yandex_station_u00yg86004sfjk:
+      friendly_name: yandex_station_2
+
   customize_glob:
     # Кнопки
     "*158d0003d13dca*":
