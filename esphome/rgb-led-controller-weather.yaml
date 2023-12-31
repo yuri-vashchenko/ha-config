@@ -95,7 +95,7 @@ light:
             }
 
             it.range(led_id, it.size()) = Color(0, 0, 0);
-            it[it.size() / 2] = Color(255, 255, 255);
+            it[it.size() / 2] = Color(128, 128, 128);
             return;
       - addressable_color_wipe:
           name: notification
