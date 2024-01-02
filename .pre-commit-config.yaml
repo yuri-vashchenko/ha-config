@@ -1,7 +1,21 @@
----
-# Update the rev variable with the release version that you want, from the yamllint repo
-# You can pass your custom .yamllint with args attribute.
+exclude: custom_components
+
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+        exclude: config/homeassistant/.HA_VERSION
+      - id: check-added-large-files
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: mixed-line-ending
+      - id: check-xml
+      - id: check-yaml
+        args: [--unsafe]
+      - id: sort-simple-yaml
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.32.0
     hooks:
