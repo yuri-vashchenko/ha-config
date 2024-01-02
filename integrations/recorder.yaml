@@ -19,6 +19,8 @@ recorder:
       - sun.sun
       - sensor.season
       - sensor.time
+      - sensor.time_date
+      - sensor.date
 
 automation:
   - id: Сжатие базы
