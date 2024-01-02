@@ -58,4 +58,3 @@ sensor:
 #   state_topic: 'espresense/devices/mifit:f2542ae6f8bd'
 #   timeout: 10
 #   away_timeout: 120  # number of seconds after which the enitity will get status not_home
-

@@ -11,70 +11,70 @@ cards:
     # wide: true
     sections:
       - entities:
-        - entity_id: sensor.house_total_energy
-          color: var(--warning-color)
-          remaining:
-            name: Other
-          children:
-            - sensor.entrance_plug_camera_energy
-            - sensor.kitchen_total_energy
-            - sensor.elena_total_energy
-            - sensor.michael_total_energy
-            - sensor.mama_plug_tv_energy
-            - sensor.balcony_plug_mainsrv_energy
-            - sensor.bathroom_plug_washer_machine_energy
+          - entity_id: sensor.house_total_energy
+            color: var(--warning-color)
+            remaining:
+              name: Other
+            children:
+              - sensor.entrance_plug_camera_energy
+              - sensor.kitchen_total_energy
+              - sensor.elena_total_energy
+              - sensor.michael_total_energy
+              - sensor.mama_plug_tv_energy
+              - sensor.balcony_plug_mainsrv_energy
+              - sensor.bathroom_plug_washer_machine_energy
       - entities:
-        - entity_id: sensor.entrance_plug_camera_energy
-          color: var(--warning-color)
-          children:
-            - sensor.entrance_plug_camera_energy
+          - entity_id: sensor.entrance_plug_camera_energy
+            color: var(--warning-color)
+            children:
+              - sensor.entrance_plug_camera_energy
       - entities:
-        - entity_id: sensor.kitchen_total_energy
-          color: var(--warning-color)
-          children:
-            - sensor.kitchen_plug_multipot_energy
-            - sensor.kitchen_plug_tv_energy
-            - sensor.kitchen_switch_energy
+          - entity_id: sensor.kitchen_total_energy
+            color: var(--warning-color)
+            children:
+              - sensor.kitchen_plug_multipot_energy
+              - sensor.kitchen_plug_tv_energy
+              - sensor.kitchen_switch_energy
       - entities:
-        - entity_id: sensor.elena_total_energy
-          color: var(--warning-color)
-          children:
-            - sensor.elena_plug_ac_energy
-            - sensor.elena_plug_tv_energy
+          - entity_id: sensor.elena_total_energy
+            color: var(--warning-color)
+            children:
+              - sensor.elena_plug_ac_energy
+              - sensor.elena_plug_tv_energy
       - entities:
-        - entity_id: sensor.michael_total_energy
-          color: var(--warning-color)
-          children:
-            - sensor.michael_plug_michael_pc_energy
-            - sensor.michael_plug_yuri_energy
+          - entity_id: sensor.michael_total_energy
+            color: var(--warning-color)
+            children:
+              - sensor.michael_plug_michael_pc_energy
+              - sensor.michael_plug_yuri_energy
       - entities:
-        - entity_id: sensor.mama_plug_tv_energy
-          color: var(--warning-color)
-          children:
-            - sensor.mama_plug_tv_energy
+          - entity_id: sensor.mama_plug_tv_energy
+            color: var(--warning-color)
+            children:
+              - sensor.mama_plug_tv_energy
       - entities:
-        - entity_id: sensor.balcony_plug_mainsrv_energy
-          color: var(--warning-color)
-          children:
-            - sensor.balcony_plug_mainsrv_energy
+          - entity_id: sensor.balcony_plug_mainsrv_energy
+            color: var(--warning-color)
+            children:
+              - sensor.balcony_plug_mainsrv_energy
       - entities:
-        - entity_id: sensor.bathroom_plug_washer_machine_energy
-          color: var(--warning-color)
-          children:
-            - sensor.bathroom_plug_washer_machine_energy
-            - total_house_other
+          - entity_id: sensor.bathroom_plug_washer_machine_energy
+            color: var(--warning-color)
+            children:
+              - sensor.bathroom_plug_washer_machine_energy
+              - total_house_other
       - entities:
-        - sensor.balcony_plug_mainsrv_energy
-        - sensor.bathroom_plug_washer_machine_energy
-        - sensor.elena_plug_ac_energy
-        - sensor.elena_plug_tv_energy
-        - sensor.entrance_plug_camera_energy
-        - sensor.kitchen_plug_multipot_energy
-        - sensor.kitchen_plug_tv_energy
-        - sensor.kitchen_switch_energy
-        - sensor.mama_plug_tv_energy
-        - sensor.michael_plug_michael_pc_energy
-        - sensor.michael_plug_yuri_energy
-        - entity_id: total_house_other
-          type: remaining_parent_state
-          name: other
+          - sensor.balcony_plug_mainsrv_energy
+          - sensor.bathroom_plug_washer_machine_energy
+          - sensor.elena_plug_ac_energy
+          - sensor.elena_plug_tv_energy
+          - sensor.entrance_plug_camera_energy
+          - sensor.kitchen_plug_multipot_energy
+          - sensor.kitchen_plug_tv_energy
+          - sensor.kitchen_switch_energy
+          - sensor.mama_plug_tv_energy
+          - sensor.michael_plug_michael_pc_energy
+          - sensor.michael_plug_yuri_energy
+          - entity_id: total_house_other
+            type: remaining_parent_state
+            name: other

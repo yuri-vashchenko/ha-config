@@ -65,7 +65,6 @@ template:
         unit_of_measurement: "kWh"
         device_class: energy
 
-
 automation:
   - id: michael_turn_off_plug_when_note_asus_becomes_unavailable
     alias: "Выключить розетку когда ноутбук становится недоступен"
