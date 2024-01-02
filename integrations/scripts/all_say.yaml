@@ -30,6 +30,23 @@ script:
         speaker_target: media_player.elena_nest
         announcement_message: "{{ message }}"
 
+  elena_yandex_station_say:
+    alias: Elena yandex station say
+    description: ""
+    fields:
+      message:
+        description: "The message to say"
+        example: "Как прекрасен этот мир"
+      volume:
+        description: "The volume from 0 to 100"
+        example: "80"
+    use_blueprint:
+      path: yuri-vashchenko/yandex-station-say.yaml
+      input:
+        speaker_target: media_player.yandex_station_u00yg86004sfjk
+        announcement_message: "{{ message }}"
+        volume_level: "{{ volume }}"
+
   all_say:
     alias: all_speaker_announce_message
     fields:

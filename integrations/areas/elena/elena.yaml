@@ -26,7 +26,7 @@ homeassistant:
       device_class: tv
 
     media_player.yandex_station_u00yg86004sfjk:
-      friendly_name: yandex_station_2
+      friendly_name: yandex_station_elena
 
   customize_glob:
     # Кнопки
