@@ -16,13 +16,13 @@ homeassistant:
       friendly_name: Розетка mainsrv 65 память отключения
 
     # Розетка телевизора на кухне
-    switch.kitchen_plug_tv_power_outage_memory:
-      friendly_name: Розетка телевизора на кухне память отключения
+    switch.kitchen_plug_tv_power_on_state:
+      friendly_name: Розетка телевизора на кухне состояние при подаче питания
 
     media_player.yandex_station_ff98f02959560d534ab998c1:
       friendly_name: yandex_station_nev11
 
-    media_player.yandex_station_2:
+    media_player.yandex_station_mk0000000000000856020000ea9f455c:
       friendly_name: yandex_station_kitchen
 
   customize_glob:
@@ -54,12 +54,8 @@ template:
         state: "{{ state_attr('switch.kitchen_power_strip', 'load_power') }}"
       - name: kitchen_ble_presence
         state: >
-          {{is_state('sensor.michael_mi_smart_band_5', "kitchen") or
-            is_state('sensor.mama_mi_smart_band_4', "kitchen") or
-            is_state('sensor.papa_mi_smart_band_4', "kitchen") or
-            is_state('sensor.elena_mi_smart_band_6', "kitchen") or
-            is_state('sensor.yuri_mi_smart_band_6_nfc', "kitchen") or
-            is_state('sensor.svetlana_mi_smart_band_6', "kitchen")}}
+          {{is_state('sensor.yuri_location', "kitchen") or
+            is_state('sensor.elena_location', "kitchen")}}
       - name: kitchen_total_power
         state: >
           {% set ns = namespace(states=[]) -%}

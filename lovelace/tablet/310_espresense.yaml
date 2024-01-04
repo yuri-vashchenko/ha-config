@@ -32,9 +32,8 @@ cards:
           entity: person.elena_vashchenko
           use_entity_picture: true
         - type: entity
-          entity: sensor.room_elena_mi_smart_band_6
+          entity: input_text.elena_room
           icon: mdi:map-marker
-        - type: template
-          content: '{{state_attr(entity, ''distance'')}}m'
-          entity: sensor.room_elena_mi_smart_band_6
+        - type: entity
+          entity: input_number.elena_room_distance
           icon: mdi:map-marker-distance

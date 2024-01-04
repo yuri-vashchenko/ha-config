@@ -16,7 +16,7 @@ input_text:
 
 template:
   - sensor:
-      - name: Yuri location
+      - name: yuri_location
         state: "{{ states('input_text.yuri_room') }}"
 
 automation:

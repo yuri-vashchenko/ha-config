@@ -28,7 +28,6 @@ mqtt_statestream:
       - sensor.house_esphome_version
       - sensor.house_ip_address
       - sensor.house_connected_ssid
-      - sensor.hacs
       - sensor.time
       - sensor.time_date
       - sensor.date

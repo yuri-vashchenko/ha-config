@@ -28,6 +28,12 @@ sensor:
     timeout: 10
     away_timeout: 120  # number of seconds after which the enitity will get status not_home
   - platform: mqtt_room
+    device_id: "elena_phone_ble"
+    name: 'room Elena Phone BLE'
+    state_topic: 'espresense/devices/elena_phone_ble'
+    timeout: 10
+    away_timeout: 120  # number of seconds after which the enitity will get status not_home
+  - platform: mqtt_room
     device_id: "mifit:d3ccfa54baeb"
     name: 'room Mama Mi Smart Band 4'
     state_topic: 'espresense/devices/mifit:d3ccfa54baeb'

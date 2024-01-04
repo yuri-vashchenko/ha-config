@@ -10,22 +10,18 @@ homeassistant:
     sensor.michael_thermometer_pressure:
       friendly_name: Миша давление
 
-    # Розетка Миша
-    switch.michael_plug_power_outage_memory:
-      friendly_name: Розетка Миша память отключения
-
   customize_glob:
+    # Розетка
+    "*switch.michael_plug_michael_pc*":
+      friendly_name: Розетка Миша
+    "*michael_plug_yuri_*":
+      friendly_name: Розетка Юра
+
     # Датчик движения
     "*158d000465a633*":
       friendly_name: Миша движение
     "*michael_motion*":
       friendly_name: Миша движение
-
-    # Розетка
-    "*158d0003c77d8b*":
-      friendly_name: Розетка Миша
-    "*michael_plug_yuri_*":
-      friendly_name: Розетка Юра
 
     # Влажность и температура
     "*158d0006b11191*":

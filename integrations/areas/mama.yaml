@@ -3,7 +3,7 @@
 homeassistant:
   customize:
     # Выключатель
-    switch.mama_switch_light_switch:
+    switch.mama_switch_light:
       friendly_name: Мама выключатель
     light.mama_switch_light:
       friendly_name: Мама свет
