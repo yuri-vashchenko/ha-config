@@ -66,12 +66,12 @@ script:
         event_id: water_leak
         ringtone_id: 2
         ringtone_volume: 100
-        announcement_message: Тревога! Обнаружена протечка воды на кухне
+        announcement_message: Тревога! Обнаружена протечка воды в туалете
         wait_entity: binary_sensor.toilet_water_leak
         wait_entity_state: "off"
         delay_between_repeats: 60
         max_repeats: 15
-        announcement_message_end: Протечка воды на кухне устранена
+        announcement_message_end: Протечка воды в туалете устранена
 
 automation:
   - id: toilet_water_leak_detector_publish_mqtt
