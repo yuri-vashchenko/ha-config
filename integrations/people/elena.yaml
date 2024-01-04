@@ -1,0 +1,99 @@
+input_boolean:
+  elena_at_home:
+    name: Elena at home
+    icon: mdi:home
+
+input_number:
+  elena_room_distance:
+    name: Elena room distance
+    min: 0
+    max: 999.99
+    icon: mdi:distance
+
+input_text:
+  elena_room:
+    name: Elena room
+
+template:
+  - sensor:
+      - name: elena_location
+        state: "{{ states('input_text.elena_room') }}"
+
+automation:
+  - id: Set Elena room based on ESPresence
+    alias: Sets room which Elena is in based on ESPresence
+    trigger:
+      - id: elena_phone_ble
+        platform: state
+        entity_id: sensor.room_elena_phone_ble
+      - id: not_home
+        platform: state
+        entity_id: sensor.room_elena_phone_ble
+        to: not_home
+    condition:
+      - alias: Main control
+        condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+    action:
+      - alias: "Choose by trigger id"
+        choose:
+          - conditions:
+              - alias: "Elena Phone BLE"
+                condition: and
+                conditions:
+                  - alias: "trigger"
+                    condition: trigger
+                    id: elena_phone_ble
+                  - alias: "Elena phone ble not not_home"
+                    condition: not
+                    conditions:
+                      - condition: state
+                        entity_id: sensor.room_elena_phone_ble
+                        state: "not_home"
+            sequence:
+              - alias: "Set Elena room"
+                service: input_text.set_value
+                target:
+                  entity_id: input_text.elena_room
+                data:
+                  value: "{{ states('sensor.room_elena_phone_ble') }}"
+              - alias: "Set Elena room distance"
+                service: input_number.set_value
+                target:
+                  entity_id: input_number.elena_room_distance
+                data:
+                  value: "{{ state_attr('sensor.room_elena_phone_ble', 'distance') }}"
+              - alias: "Set Elena at home"
+                service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.elena_at_home
+          - conditions:
+              - alias: "Not home"
+                condition: and
+                conditions:
+                  - alias: "trigger"
+                    condition: trigger
+                    id: not_home
+                  - alias: "Elena Phone BLE"
+                    condition: state
+                    entity_id: sensor.room_elena_phone_ble
+                    state: "not_home"
+            sequence:
+              - alias: "Set Elena room"
+                service: input_text.set_value
+                target:
+                  entity_id: input_text.elena_room
+                data:
+                  value: "not_home"
+              - alias: "Set Elena room distance"
+                service: input_number.set_value
+                target:
+                  entity_id: input_number.elena_room_distance
+                data:
+                  value: NaN
+              - alias: "Set Elena at home"
+                service: input_boolean.turn_off
+                target:
+                  entity_id: input_boolean.elena_at_home
+    mode: restart
