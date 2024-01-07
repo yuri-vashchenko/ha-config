@@ -9,11 +9,9 @@ homeassistant:
       friendly_name: Балкон влажность
     sensor.balcony_thermometer_battery:
       friendly_name: Балкон климат
-    sensor.balcony_thermometer_linkquality:
-      friendly_name: Балкон климат
 
     # Розетка сервера mainsrv
-    switch.balcony_plug_server_main_main_power_outage_memory:
+    switch.balcony_plug_mainsrv_power_outage_memory:
       friendly_name: Розетка mainsrv память отключения
 
     # Датчики

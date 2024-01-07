@@ -12,10 +12,6 @@ homeassistant:
     switch.mama_plug_tv_power_outage_memory:
       friendly_name: Розетка телевизора 49 память отключения
 
-    # Ping
-    binary_sensor.printer_hp:
-      friendly_name: Принтер hp
-
     media_player.yandex_station_ff98f029014bad091f5988de:
       friendly_name: yandex_station_mama
 
