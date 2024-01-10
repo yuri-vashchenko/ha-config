@@ -518,3 +518,63 @@ automation:
         service: script.turn_on
         target:
           entity_id: script.elena_turn_off_tv_light_ac
+
+  - id: Включить ambilight при включении света
+    alias: Включить ambilight при включении света
+    trigger:
+      - platform: state
+        entity_id: light.elena_yeelight
+        to: "on"
+      - platform: state
+        entity_id: light.elena_yeelight_nightlight
+        to: "on"
+    condition:
+      - alias: "main control"
+        condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+      - alias: "ambilight is off"
+        condition: state
+        entity_id: light.elena_yeelight_ambilight
+        state: "off"
+    action:
+      - alias: "action alias (name)"
+        service: light.turn_on
+        target:
+          entity_id: light.elena_yeelight_ambilight
+
+  - id: Включить свет когда кто-то зашёл и вечер и темно
+    alias: Включить свет когда кто-то зашёл и вечер и темно
+    trigger:
+      - platform: state
+        entity_id: input_text.yuri_room
+        to: "elena"
+      - platform: state
+        entity_id: input_text.elena_room
+        to: "elena"
+    condition:
+      - alias: "control mode"
+        condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+      - alias: "It is evening"
+        condition: state
+        entity_id: binary_sensor.evening
+        state: "on"
+      - alias: "it is dark"
+        condition: numeric_state
+        entity_id: sensor.elena_motion_illuminance_illuminance_lux
+        below: 25
+      - alias: "main light is off"
+        condition: state
+        entity_id: light.elena_yeelight
+        state: "off"
+      - alias: "nightlight is off"
+        condition: state
+        entity_id: light.elena_yeelight_nightlight
+        state: "off"
+    action:
+      - alias: "Turn on the light"
+        service: light.turn_on
+        target:
+          entity_id: light.elena_yeelight_nightlight
