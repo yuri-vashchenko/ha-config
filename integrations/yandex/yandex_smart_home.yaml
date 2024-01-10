@@ -8,6 +8,7 @@ yandex_smart_home:
       - media_player.elena_tv
       - media_player.kitchen_tv
       - media_player.mama_tv
+      - script.elena_turn_off_tv_light_ac
       - script.update_shopping_list
       - sensor.balcony_thermometer_temperature
       - sensor.balcony_thermometer_humidity
@@ -75,6 +76,10 @@ yandex_smart_home:
 
     sensor.blood_sugar_mmol:
       name: Сахар крови
+      room: Лена
+
+    script.elena_turn_off_tv_light_ac:
+      name: Выключить всё у Лены
       room: Лена
 
     temperature_humidity.balcony:
