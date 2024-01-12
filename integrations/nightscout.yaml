@@ -37,7 +37,7 @@ automation:
         data_template:
           variables:
             message: "Внимание! Гипогликемия! Срочно съешь что-нибудь"
-            volume: 50
+            volume: 40
       - wait_for_trigger:
           - platform: numeric_state
             entity_id: sensor.blood_sugar_mmol
