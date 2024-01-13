@@ -1,0 +1,14 @@
+template:
+  - sensor:
+      - name: ip_hams_ns
+        state: !secret instance_ip_hams_ns
+      - name: ip_habs_ns
+        state: !secret instance_ip_habs_ns
+      - name: instance_name
+        state: >
+          {{ "hams"
+              if states("sensor.local_ip") == states("sensor.ip_hams_ns")
+              else
+                "habs"
+                if states("sensor.local_ip") == states("sensor.ip_habs_ns")
+                else "unknown" }}
