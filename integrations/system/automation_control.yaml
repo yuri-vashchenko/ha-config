@@ -9,8 +9,8 @@ mqtt:
       icon: "mdi:lightbulb-on"
       options:
         - "none"
-        - "192.168.0.5"
-        - "192.168.0.8"
+        - !secret instance_ip_hams_ns
+        - !secret instance_ip_habs_ns
 
     - name: main_controller
       command_topic: "automation_controller/main"
@@ -19,8 +19,8 @@ mqtt:
       icon: "mdi:gamepad-outline"
       options:
         - "none"
-        - "192.168.0.5"
-        - "192.168.0.8"
+        - !secret instance_ip_hams_ns
+        - !secret instance_ip_habs_ns
 
     - name: sound_controller
       command_topic: "automation_controller/sound"
@@ -29,8 +29,8 @@ mqtt:
       icon: "mdi:volume-high"
       options:
         - "none"
-        - "192.168.0.5"
-        - "192.168.0.8"
+        - !secret instance_ip_hams_ns
+        - !secret instance_ip_habs_ns
 
     - name: climate_controller
       command_topic: "automation_controller/climate"
@@ -39,8 +39,8 @@ mqtt:
       icon: "mdi:home-thermometer"
       options:
         - "none"
-        - "192.168.0.5"
-        - "192.168.0.8"
+        - !secret instance_ip_hams_ns
+        - !secret instance_ip_habs_ns
 
 binary_sensor:
   - platform: template
