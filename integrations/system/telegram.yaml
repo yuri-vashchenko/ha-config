@@ -1,0 +1,35 @@
+telegram_bot:
+  - platform: webhooks
+    api_key: !secret telegram_bot_key
+    allowed_chat_ids:
+      - !secret telegram_id_yuri
+      - !secret telegram_id_alerts
+
+notify:
+  - platform: telegram
+    name: yuri
+    chat_id: !secret telegram_id_yuri
+  - platform: telegram
+    name: alerts
+    chat_id: !secret telegram_id_alerts
+
+automation:
+  - id: Получение ID в телеграмм
+    alias: get_telegram_id
+    initial_state: true
+    trigger:
+      - platform: event
+        event_type: telegram_text
+    condition:
+      - condition: template
+        value_template: >-
+          {{ trigger.event.data.text in ["whoami"] }}
+      - condition: state
+        entity_id: binary_sensor.main_control
+        state: 'on'
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          target: "{{ trigger.event.data.chat_id }}"
+          message: |
+            Твой ID {{ trigger.event.data.user_id }}
