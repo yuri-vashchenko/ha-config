@@ -1,0 +1,39 @@
+template:
+  - sensor:
+      - name: smoke_detected
+        state: >
+          {% set ns = namespace(alarms = []) %}
+          {% for entity in states.binary_sensor
+                if is_state_attr(entity.entity_id, 'device_class', 'smoke') and
+                  is_state(entity.entity_id, 'on') %}
+                  {% set ns.alarms = ns.alarms + [entity.name] %}
+          {% endfor %}
+          {{ ns.alarms | length }}
+        attributes:
+          list_entities: >
+            {% set ns = namespace(alarms = []) %}
+            {% for entity in states.binary_sensor
+                if is_state_attr(entity.entity_id, 'device_class', 'smoke') and
+                  is_state(entity.entity_id, 'on') %}
+                  {% set ns.alarms = ns.alarms + [entity.name] %}
+            {% endfor %}
+            {{ ns.alarms }}
+
+      - name: water_leak_detected
+        state: >
+          {% set ns = namespace(alarms = []) %}
+          {% for entity in states.binary_sensor
+                if is_state_attr(entity.entity_id, 'device_class', 'smoke') and
+                  is_state(entity.entity_id, 'on') %}
+                  {% set ns.alarms = ns.alarms + [entity.name] %}
+          {% endfor %}
+          {{ ns.alarms | length }}
+        attributes:
+          list_entities: >
+            {% set ns = namespace(alarms = []) %}
+            {% for entity in states.binary_sensor
+                if is_state_attr(entity.entity_id, 'device_class', 'smoke') and
+                  is_state(entity.entity_id, 'on') %}
+                  {% set ns.alarms = ns.alarms + [entity.name] %}
+            {% endfor %}
+            {{ ns.leak_alarms }}
