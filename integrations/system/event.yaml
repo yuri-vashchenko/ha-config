@@ -1,78 +1,163 @@
 # Notification/Warning/Alarm
 mqtt:
-  binary_sensor:
-    - name: is_notification
-      state_topic: "home/system/notification/on"
-      payload_on: "true"
-      payload_off: "false"
-    - name: is_warning
-      state_topic: "home/system/warning/on"
-      payload_on: "true"
-      payload_off: "false"
-    - name: is_alarm
-      state_topic: "home/system/alarm/on"
-      payload_on: "true"
-      payload_off: "false"
-  button:
-    - unique_id: cancel_all
-      name: "Cancel all"
-      command_topic: "home/system/cancel_all"
+  - switch:
+      - name: alarm
+        state_topic: home/system/alarm
+        command_topic: home/system/alarm
+        payload_on: "on"
+        payload_off: "off"
+        retain: true
+      - name: warning
+        state_topic: home/system/warning
+        command_topic: home/system/warning
+        payload_on: "on"
+        payload_off: "off"
+        retain: true
+      - name: notification
+        state_topic: home/system/notification
+        command_topic: home/system/notification
+        payload_on: "on"
+        payload_off: "off"
+        retain: true
+  - button:
+      - name: "Cancel all"
+        unique_id: cancel_all
+        command_topic: "home/system/cancel_all"
+
+template:
+  - binary_sensor:
+      - name: alarm
+        state: "{{ states('switch.alarm') }}"
+        device_class: problem
+      - name: warning
+        state: "{{ states('switch.warning') }}"
+        device_class: problem
+      - name: notification
+        state: "{{ states('switch.notification') }}"
+        device_class: problem
+
+  - sensor:
+      - name: smoke_detected
+        state: >
+          {% set ns = namespace(alarms = []) %}
+          {% for entity in states.binary_sensor
+                if is_state_attr(entity.entity_id, 'device_class', 'smoke') and
+                  is_state(entity.entity_id, 'on') %}
+                  {% set ns.alarms = ns.alarms + [entity.name] %}
+          {% endfor %}
+          {{ ns.alarms | length }}
+        attributes:
+          list_entities: >
+            {% set ns = namespace(alarms = []) %}
+            {% for entity in states.binary_sensor
+                if is_state_attr(entity.entity_id, 'device_class', 'smoke') and
+                  is_state(entity.entity_id, 'on') %}
+                  {% set ns.alarms = ns.alarms + [entity.name] %}
+            {% endfor %}
+            {{ ns.alarms }}
+
+      - name: water_leak_detected
+        state: >
+          {% set ns = namespace(alarms = []) %}
+          {% for entity in states.binary_sensor
+                if is_state_attr(entity.entity_id, 'device_class', 'smoke') and
+                  is_state(entity.entity_id, 'on') %}
+                  {% set ns.alarms = ns.alarms + [entity.name] %}
+          {% endfor %}
+          {{ ns.alarms | length }}
+        attributes:
+          list_entities: >
+            {% set ns = namespace(alarms = []) %}
+            {% for entity in states.binary_sensor
+                if is_state_attr(entity.entity_id, 'device_class', 'smoke') and
+                  is_state(entity.entity_id, 'on') %}
+                  {% set ns.alarms = ns.alarms + [entity.name] %}
+            {% endfor %}
+            {{ ns.leak_alarms }}
 
 script:
-  generate_notification:
-    use_blueprint:
-      path: yuri-vashchenko/generate_event.yaml
-      input:
-        event_severity: "notification"
-        value: "true"
-  generate_warning:
-    use_blueprint:
-      path: yuri-vashchenko/generate_event.yaml
-      input:
-        event_severity: "warning"
-        value: "true"
-  generate_alarm:
-    use_blueprint:
-      path: yuri-vashchenko/generate_event.yaml
-      input:
-        event_severity: "alarm"
-        value: "true"
-  cancel_notification:
-    use_blueprint:
-      path: yuri-vashchenko/generate_event.yaml
-      input:
-        event_severity: "notification"
-        value: "false"
-  cancel_warning:
-    use_blueprint:
-      path: yuri-vashchenko/generate_event.yaml
-      input:
-        event_severity: "warning"
-        value: "false"
-  cancel_alarm:
-    use_blueprint:
-      path: yuri-vashchenko/generate_event.yaml
-      input:
-        event_severity: "alarm"
-        value: "false"
+  trigger_alarm:
+    alias: "Trigger alarm, warning or notification"
+    sequence:
+      - alias: "main control"
+        condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+      - alias: "Iterate over notifications, warnings and errors"
+        repeat:
+          for_each:
+            - set_notification
+            - set_warning
+            - set_alarm
+          sequence:
+            - alias: "Generate list of scripts"
+              variables:
+                scripts: >
+                  {% set ns = namespace(scripts = []) %}
+                  {% for s in states.script %}
+                    {% if repeat.item in s.name %}
+                      {% set ns.scripts = ns.scripts + [s.name] %}
+                    {% endif %}
+                  {% endfor %}
+                  {{ ns.scripts }}
+            - alias: "Run all scritps"
+              repeat:
+                for_each: "{{ scripts }}"
+                sequence:
+                  - service: script.turn_on
+                    target:
+                      entity_id: "script.{{ repeat.item }}"
+
   cancel_all:
     sequence:
-      - alias: "Cancel notification"
-        service: script.turn_on
-        target:
-          entity_id: script.cancel_notification
-      - alias: "Cancel warning"
-        service: script.turn_on
-        target:
-          entity_id: script.cancel_warning
-      - alias: "Cancel alarm"
-        service: script.turn_on
-        target:
-          entity_id: script.cancel_alarm
+      - alias: "Cancel all"
+        repeat:
+          for_each:
+            - switch.alarm
+            - switch.warning
+            - switch.notification
+          sequence:
+            - alias: "turn off"
+              service: switch.turn_off
+              target:
+                entity_id: "{{ repeat.item }}"
     mode: queued
     max: 100
 
 automation:
+  - id: trigger alarm when smoke or water leak detected
+    alias: Включить тревогу при срабатывании датчика дыма или датчика протечки
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.smoke_detected
+        id: smoke
+      - platform: numeric_state
+        entity_id: sensor.water_leak_detected
+        id: water_leak
+    condition:
+      - alias: "Main control is on"
+        condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+    action:
+      - alias: "Check detectors walue"
+        choose:
+          - conditions:
+              - "{{ state('sensor.smoke_detected') + state('sensor.smoke_detected') > 0 }}"
+            sequence:
+              - alias: "turn on the alarm"
+                service: switch.turn_on
+                target:
+                  entity_id: switch.alarm
+          - conditions:
+              - "{{ state('sensor.smoke_detected') + state('sensor.smoke_detected') == 0 }}"
+            sequence:
+              - alias: "turn off the alarm"
+                service: switch.turn_off
+                target:
+                  entity_id: switch.alarm
+    mode: restart
+
   - id: cancel_all_on_button_press
     alias: cancell all on button press
     trigger:
