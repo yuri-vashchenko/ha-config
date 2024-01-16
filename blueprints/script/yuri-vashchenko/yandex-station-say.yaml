@@ -20,7 +20,7 @@ blueprint:
       selector:
         text:
           multiline: true
-    volume_level:
+    volume:
       name: Volume level
       description: Volume level is an integer number from 0 to 100
       selector:
@@ -31,8 +31,8 @@ blueprint:
           mode: slider
 mode: queued
 variables:
-  input_volume: !input 'volume_level'
-  volume: >
+  input_volume: !input 'volume'
+  vol: >
     {{ (input_volume | float) / 100.0 }}
 sequence:
   - service: media_player.play_media
@@ -42,4 +42,4 @@ sequence:
       media_content_id: !input 'announcement_message'
       media_content_type: text
       extra:
-        volume_level: "{{ volume }}"
+        volume_level: "{{ vol | float }}"
