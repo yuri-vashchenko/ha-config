@@ -158,6 +158,13 @@ template:
         unit_of_measurement: "kWh"
         device_class: energy
 
+      - name: users_in_elena_room
+        state: >
+          {{ states.input_text | selectattr('entity_id','contains','room') | selectattr('state','eq','elena') | list | count }}
+        attributes:
+          users: >
+            {{ states.input_text | selectattr('entity_id','contains','room') | selectattr('state','eq','elena') | map(attribute='name') | list }}
+
 climate:
   - platform: smartir
     name: elena_ac
@@ -547,11 +554,9 @@ automation:
     alias: Включить свет когда кто-то зашёл и вечер и темно
     trigger:
       - platform: state
-        entity_id: input_text.yuri_room
-        to: "elena"
-      - platform: state
-        entity_id: input_text.elena_room
-        to: "elena"
+        entity_id: sensor.users_in_elena_room
+        from: 0
+        to: 1
     condition:
       - alias: "control mode"
         condition: state

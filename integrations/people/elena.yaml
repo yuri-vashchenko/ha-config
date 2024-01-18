@@ -12,7 +12,7 @@ input_number:
 
 input_text:
   elena_room:
-    name: Elena room
+    name: Elena
 
 template:
   - sensor:

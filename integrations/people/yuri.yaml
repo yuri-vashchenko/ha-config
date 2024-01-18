@@ -12,7 +12,7 @@ input_number:
 
 input_text:
   yuri_room:
-    name: Yuri room
+    name: Yuri
 
 template:
   - sensor:
