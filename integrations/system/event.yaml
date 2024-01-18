@@ -128,10 +128,10 @@ automation:
   - id: trigger alarm when smoke or water leak detected
     alias: Включить тревогу при срабатывании датчика дыма или датчика протечки
     trigger:
-      - platform: numeric_state
+      - platform: state
         entity_id: sensor.smoke_detected
         id: smoke
-      - platform: numeric_state
+      - platform: state
         entity_id: sensor.water_leak_detected
         id: water_leak
     condition:
