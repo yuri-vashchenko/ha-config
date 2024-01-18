@@ -555,8 +555,8 @@ automation:
     trigger:
       - platform: state
         entity_id: sensor.users_in_elena_room
-        from: 0
-        to: 1
+        from: "0"
+        to: "1"
     condition:
       - alias: "control mode"
         condition: state
@@ -578,6 +578,10 @@ automation:
         condition: state
         entity_id: light.elena_yeelight_nightlight
         state: "off"
+      - alias: "motion is detected"
+        condition: state
+        entity_id: binary_sensor.elena_motion
+        state: "on"
     action:
       - alias: "Turn on the light"
         service: light.turn_on
