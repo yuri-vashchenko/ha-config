@@ -13,11 +13,11 @@ binary_sensor:
   - platform: tod
     name: day
     after: '09:00'
-    before: '19:00'
+    before: '18:00'
 
   - platform: tod
     name: evening
-    after: '19:00'
+    after: '18:00'
     before: '23:00'
 
 sensor:
