@@ -1,0 +1,87 @@
+blueprint:
+  name: Reset WLED if unavailable
+  source_url: https://gist.github.com/yuri-vashchenko/4caac2ec589da09d4a8a5ce732831779
+  description: "Resets a WLED if it becomes unavailable by pusting a message to its\n
+    IP address.\nRequired inputs:\n  - wled_entity (Entity ID of WLED to monitor)\n
+    \  - rest_command (REST command to run to reset WLED. Must have 'ip' parameter)\n
+    \  - wled_ip (WLED ip address) - Should be saved or hardcoded, because ip sensor
+    \ for WLED is also unavailable when the whole WLED is unavailable\n \n\nOptional
+    inputs:\n  - Enabling Entity (the automation will execute only when  enabling_entity
+    is in Enabling Entity State)\n  - Enabling Entity State (see  Enabling Entity
+    above)\n"
+  domain: automation
+  input:
+    wled_entity:
+      name: Entity ID of wled to monitor
+      description: Automation will monitor this entity and resets it once it becomes
+        unavailable
+      selector:
+        entity:
+          domain:
+            - light
+          multiple: false
+    wled_reset:
+      name: wled_reset REST command
+      description: REST command to run to reset WLED. Must have 'ip' parameter
+      selector:
+        entity:
+          domain:
+            - rest_command
+          multiple: false
+    wled_ip:
+      name: WLED ip address
+      description: Should be saved or hardcoded, because ip sensor for WLED is also
+        unavailable when the whole WLED is unavailable
+      selector:
+        entity:
+          domain:
+            - input_text
+          multiple: false
+    enabling_entity:
+      name: (Optional) Enabling entity
+      description: If this entity's state is set to enable entity state (see below)
+        automation will trigger. This may be used to make automation triggering based
+        on other entity state
+      default:
+      selector:
+        entity:
+          multiple: false
+    enabling_entity_state:
+      name: (Optional) Enabling entity state
+      description: If enabling entity is in this state the automation will trigger
+      default: 'on'
+      selector:
+        entity:
+          domain:
+            - input_text
+          multiple: false
+variables:
+  wled_entity: !input wled_entity
+  wled_reset: !input wled_reset
+  enabling_entity: !input enabling_entity
+  enabling_entity_state: !input enabling_entity_state
+trigger:
+  - platform: state
+    entity_id: !input wled_entity
+    to:
+      - unknown
+      - unavailable
+  - platform: time_pattern
+    hours: "/1"
+condition:
+  - '{{ enabling_entity == none or is_state(enabling_entity, enabling_entity_state) }}'
+action:
+  - alias: Run rest command while WLED is not available
+    repeat:
+      while:
+        - "{{ states(wled_entity) in ['unknown', 'unavailable']}}"
+      sequence:
+        - alias: Run REST command
+          service: rest_command.{{ wled_reset }}
+          data:
+            ip: !input wled_ip
+        - alias: Wait for WLED to restart
+          wait_template: "{{ states(wled_entity) not in ['unknown', 'unavailable']}}"
+          timeout: 60
+mode: single
+max_exceeded: silent

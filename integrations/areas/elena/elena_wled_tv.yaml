@@ -52,141 +52,126 @@ template:
           }}
         device_class: motion
 
-script:
-  elena_tv_wled_alarm:
-    alias: wled_alarm
-    sequence:
-      - alias: "Turn on the light and select effect"
-        service: light.turn_on
-        target:
-          entity_id: light.elena_tv_wled
-        data:
-          effect: Scanner
-          brightness_pct: 100
-      - service: select.select_option
-        data:
-          option: Red Shift
-        target:
-          entity_id: select.elena_tv_wled_color_palette
-      - service: number.set_value
-        target:
-          entity_id: number.elena_tv_wled_wled_speed
-        data:
-          value: 85
-      - service: number.set_value
-        target:
-          entity_id: number.elena_tv_wled_intensity
-        data:
-          value: 0
+mqtt:
+  sensor:
+    - name: elena_tv_wled_ip_saved
+      state_topic: home/wled/elena-tv-wled/ip
+      icon: mdi:ip-network
 
-  elena_tv_wled_warning:
-    alias: wled_warning
+rest_command:
+  wled_reset:
+    url: "http://{{ ip }}/reset"
+
+script:
+  wled_control_test:
     sequence:
-      - alias: "Turn on the light and select effect"
-        service: light.turn_on
+      - alias: "test wled"
+        service: script.turn_on
         target:
-          entity_id: light.elena_tv_wled
+          entity_id: script.wled_control
         data:
-          effect: Phased
-          brightness_pct: 100
-      - service: select.select_option
+          variables:
+            wled_target: light.elena_tv_wled
+            wled_palette: "* Color 1"
+            wled_effect: Blink
+            wled_speed: 226
+            wled_intensity: 128
+
+  elena_tv_wled_off:
+    sequence:
+      - alias: "Выключить ленту"
+        service: script.wled_turn_off
         data:
-          option: Yellowout
-        target:
-          entity_id: select.elena_tv_wled_color_palette
-      - service: number.set_value
-        target:
-          entity_id: number.elena_tv_wled_wled_speed
-        data:
-          value: 85
-      - service: number.set_value
-        target:
-          entity_id: number.elena_tv_wled_intensity
-        data:
-          value: 85
+          wled_target: light.elena_tv_wled
 
   elena_tv_wled_notification:
-    alias: wled_notification
     sequence:
-      - alias: "Turn on the light and select effect"
-        service: light.turn_on
-        target:
-          entity_id: light.elena_tv_wled
+      - alias: "Включить режим нотификации"
+        service: script.wled_set_mode_notification
         data:
-          effect: Aurora
-          brightness_pct: 100
-      - service: select.select_option
+          wled_target: light.elena_tv_wled
+
+  elena_tv_wled_warning:
+    sequence:
+      - alias: "Включить режим предупреждения"
+        service: script.wled_set_mode_warning
         data:
-          option: Aurora
-        target:
-          entity_id: select.elena_tv_wled_color_palette
-      - service: number.set_value
-        target:
-          entity_id: number.elena_tv_wled_wled_speed
+          wled_target: light.elena_tv_wled
+
+  elena_tv_wled_alarm:
+    sequence:
+      - alias: "Включить режим тревоги"
+        service: script.wled_set_mode_alarm
         data:
-          value: 140
-      - service: number.set_value
-        target:
-          entity_id: number.elena_tv_wled_intensity
-        data:
-          value: 212
+          wled_target: light.elena_tv_wled
+
+  elena_tv_wled_set_notification:
+    sequence:
+      - if:
+          - "{{ is_state('binary_sensor.notification', 'on') }}"
+        then:
+          - alias: Включить режим нотификации
+            service: script.elena_tv_wled_notification
+        else:
+          - alias: Выключить режим нотификации
+            service: script.elena_tv_wled_off
+
+  elena_tv_wled_set_warning:
+    sequence:
+      - if:
+          - "{{ is_state('binary_sensor.warning', 'on') }}"
+        then:
+          - alias: Включить режим предупреждения
+            service: script.elena_tv_wled_warning
+        else:
+          - alias: Выключить режим предупреждения
+            service: script.elena_tv_wled_off
+
+  elena_tv_wled_set_alarm:
+    sequence:
+      - if:
+          - "{{ is_state('binary_sensor.warning', 'on') }}"
+        then:
+          - alias: Включить режим тревоги
+            service: script.elena_tv_wled_alarm
+        else:
+          - alias: Выключить режим тревоги
+            service: script.elena_tv_wled_off
 
   elena_tv_wled_tv:
     alias: wled_tv
     sequence:
-      - alias: "Turn on the light and select effect"
-        service: light.turn_on
-        target:
-          entity_id: light.elena_tv_wled
+      - alias: "Включить режим просмотра телевизора"
+        service: script.wled_control
         data:
-          effect: Solid
-          brightness_pct: 50
-      - service: select.select_option
-        data:
-          option: "* Color 1"
-        target:
-          entity_id: select.elena_tv_wled_color_palette
-      - service: number.set_value
-        target:
-          entity_id: number.elena_tv_wled_wled_speed
-        data:
-          value: 85
-      - service: number.set_value
-        target:
-          entity_id: number.elena_tv_wled_intensity
-        data:
-          value: 0
+          wled_target: !input wled_target
+          wled_color: [239, 250, 10] # yellow
+          wled_effect: Solid
+          wled_brightness_pct: 50
 
-  elena_tv_wled_motion:
-    alias: wled_motion
+  elena_tv_wled_night_motion:
+    alias: Включить ночник при обнаружении движения ночью
     sequence:
       - alias: "Turn on the light and select effect"
-        service: light.turn_on
-        target:
-          entity_id: light.elena_tv_wled
+        service: script.wled_control
         data:
-          effect: Solid
-          brightness_pct: 10
-      - service: select.select_option
-        data:
-          option: "* Color 1"
-        target:
-          entity_id: select.elena_tv_wled_color_palette
-      - service: number.set_value
-        target:
-          entity_id: number.elena_tv_wled_wled_speed
-        data:
-          value: 85
-      - service: number.set_value
-        target:
-          entity_id: number.elena_tv_wled_intensity
-        data:
-          value: 0
-      - service: switch.turn_on
-        target:
-          entity_id: switch.elena_tv_wled_nightlight
+          wled_target: !input wled_target
+          wled_color: [239, 250, 10] # yellow
+          wled_effect: Solid
+          wled_brightness_pct: 10
 
 automation:
+  - id: reset_wled_if_unavailable
+    alias: Перезагрузить WLED если недоступен
+    description: "Перезагрузить WLED если недоступен"
+    use_blueprint:
+      path: yuri-vashchenko/reset_wled_if_unavailable.yaml
+      input:
+        wled_entity: light.elena_tv_wled
+        wled_reset: wled_reset
+        wled_ip: sensor.elena_tv_wled_ip_saved
+        enabling_entity: binary_sensor.main_control
+
   - id: Elena TV WLED Alarm
     alias: elena_tv_wled_alarm
     trigger:
@@ -368,4 +353,26 @@ automation:
         service: light.turn_off
         target:
           entity_id: light.elena_tv_wled
+    mode: restart
+
+  - id: save_elena_wled_tv_ip
+    alias: Когда WLED становится доступным, сохранить его IP адрес
+    trigger:
+      - platform: state
+        entity_id: sensor.elena_tv_wled_ip
+        from:
+          - unknown
+          - unavailable
+    condition:
+      - alias: "Проверка control"
+        condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+    action:
+      - alias: "Публикация IP адреса MQTT топик"
+        service: mqtt.publish
+        data:
+          topic: "home/wled/elena-tv-wled/ip"
+          payload: "{{ states('sensor.elena_tv_wled_ip') }}"
+          retain: true
     mode: restart

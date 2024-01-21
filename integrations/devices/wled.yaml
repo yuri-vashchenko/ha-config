@@ -1,0 +1,203 @@
+# WLED control
+
+script:
+  wled_control:
+    fields:
+      wled_target:
+        name: Device to control
+        description: WLED light entity or group
+        default: light.elena_tv_wled
+        selector:
+          entity:
+            domain: light
+      wled_state:
+        name: WLED state
+        description: State to put WLED to, usually 'on' or 'off'
+        default: "on"
+        selector:
+          entity:
+            domain: input_text
+      wled_palette:
+        name: WLED palette
+        description: Selects WLED palette
+        selector:
+          entity:
+            domain: input_text
+      wled_color:
+        name: WLED color
+        description: Selects WLED primary color
+        selector:
+          color_rgb:
+      wled_effect:
+        name: WLED effect
+        description: Selects WLED effect
+        selector:
+          entity:
+            domain: input_text
+      wled_brightness_pct:
+        name: WLED brightness
+        description: Sets WLED brightness in percent
+        default: 100
+        selector:
+          number:
+            min: 0
+            max: 100
+            unit_of_measurement: "%"
+      wled_speed:
+        name: WLED speed
+        description: Sets WLED effect speed
+        selector:
+          number:
+            min: 0
+            max: 100
+            unit_of_measurement: "%"
+      wled_intensity:
+        name: WLED brightness
+        description: Sets WLED effect intensity
+        selector:
+          number:
+            min: 0
+            max: 100
+            unit_of_measurement: "%"
+
+    variables:
+      wled_name: >
+        {% set base_name = wled_target.split('.')[1] %}
+        {{ base_name }}
+      wled_color: "{{ wled_color or state_attr(wled_target, 'rgb_color') }}"
+      service_name: light.turn_{{ wled_state | default('on') }}
+      brightness_pct: "{{ wled_brightness_pct | default(100) }}"
+    sequence:
+      - alias: "Entity is available"
+        condition: "{{ states(wled_target) in ['on', 'off'] }}"
+      - alias: "Set WLED palette"
+        if:
+          - "{{ wled_palette != Undefined }}"
+        then:
+          - service: select.select_option
+            target:
+              entity_id: select.{{ wled_name }}_color_palette
+            data:
+              option: "{{ wled_palette }}"
+      - alias: "Set WLED speed"
+        if:
+          - "{{ wled_speed != Undefined }}"
+        then:
+          - service: number.set_value
+            target:
+              entity_id: number.{{ wled_name }}_speed
+            data:
+              value: "{{ wled_speed }}"
+      - alias: "Set WLED intensity"
+        if:
+          - "{{ wled_intensity != Undefined }}"
+        then:
+          - service: number.set_value
+            target:
+              entity_id: number.{{ wled_name }}_intensity
+            data:
+              value: "{{ wled_intensity }}"
+      - alias: "Set WLED effect"
+        if:
+          - "{{ wled_effect != Undefined }}"
+        then:
+          - alias: "Set WLED effect"
+            service: "{{ service_name }}"
+            data:
+              rgb_color: "{{ wled_color }}"
+              effect: "{{ wled_effect }}"
+              brightness_pct: "{{ brightness_pct }}"
+            target:
+              entity_id: light.elena_tv_wled
+        else:
+          - alias: "Set the WLED to desired state"
+            if:
+              - "{{ wled_state == 'on' }}"
+            then:
+              - alias: "Turn WLED on with specified color"
+                service: light.turn_on
+                data:
+                  rgb_color: "{{ wled_color }}"
+                target:
+                  entity_id: "{{ wled_target }}"
+            else:
+              - alias: "Turn WLED off"
+                service: light.turn_off
+                target:
+                  entity_id: "{{ wled_target }}"
+
+  wled_turn_off:
+    fields:
+      wled_target:
+        name: Device to control
+        description: WLED light entity or group
+        default: light.elena_tv_wled
+        selector:
+          entity:
+            domain: light
+    sequence:
+      - alias: "Выключить ленту"
+        service: script.wled_control
+        data:
+          wled_target: "{{ wled_target }}"
+          wled_state: 'off'
+
+  wled_set_mode_notification:
+    fields:
+      wled_target:
+        name: Device to control
+        description: WLED light entity or group
+        default: light.elena_tv_wled
+        selector:
+          entity:
+            domain: light
+    sequence:
+      - alias: "Включить режим нотификации"
+        service: script.wled_control
+        data:
+          wled_target: "{{ wled_target }}"
+          wled_palette: "* Color 1"
+          wled_color: [14, 250, 10] # green
+          wled_effect: Blink
+          wled_speed: 128
+          wled_intensity: 128
+
+  wled_set_mode_warning:
+    fields:
+      wled_target:
+        name: Device to control
+        description: WLED light entity or group
+        default: light.elena_tv_wled
+        selector:
+          entity:
+            domain: light
+    sequence:
+      - alias: "Включить режим предупреждения"
+        service: script.wled_control
+        data:
+          wled_target: "{{ wled_target }}"
+          wled_palette: "* Color 1"
+          wled_color: [250, 250, 10] # yellow
+          wled_effect: Blink
+          wled_speed: 180
+          wled_intensity: 128
+
+  wled_set_mode_alarm:
+    fields:
+      wled_target:
+        name: Device to control
+        description: WLED light entity or group
+        default: light.elena_tv_wled
+        selector:
+          entity:
+            domain: light
+    sequence:
+      - alias: "Включить режим тревоги"
+        service: script.wled_control
+        data:
+          wled_target: "{{ wled_target }}"
+          wled_palette: "* Color 1"
+          wled_color: [255, 10, 47] # red
+          wled_effect: Blink
+          wled_speed: 226
+          wled_intensity: 128
