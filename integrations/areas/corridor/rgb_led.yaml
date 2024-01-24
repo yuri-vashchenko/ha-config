@@ -116,7 +116,7 @@ script:
 
 automation:
   - id: turn_on_rgb_led_on_switch
-    alias: Включить режим температуры на ленте в коридоре по выключателю"
+    alias: "Включить режим температуры на ленте в коридоре по выключателю"
     trigger:
       - platform: state
         entity_id: switch.need_to_show_temperature

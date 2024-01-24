@@ -1,6 +1,7 @@
 script:
   run_script_if_state:
     alias: "Проверить состояние сущности и запустить соответствующий скрипт"
+    mode: parallel
     fields:
       entity_id:
         name: Entity to check state
@@ -61,3 +62,50 @@ script:
               - alias: "Запустить скрипт с данными"
                 service: "{{ script_if_false }}"
                 data: "{{ data_false }}"
+
+  increment_number:
+    alias: "Увеличивает число на шаг если новое значение не больше максимального"
+    mode: parallel
+    fields:
+      entity_id:
+        name: Number to increment
+        description: Сущность домена number для увеличения
+        selector:
+          entity:
+            domain: number
+    variables:
+      min_value: "{{ state_attr(entity_id, 'min') | float(0.0)}}"
+      max_value: "{{ state_attr(entity_id, 'max') | float(100.0)}}"
+      step: "{{ state_attr(entity_id, 'step') | float(1.0)}}"
+      current_value: "{{ states(entity_id) | float(min_value)}}"
+      new_value: "{{ min(current_value + step, max_value) }}"
+    sequence:
+      - alias: "Установить новое значение"
+        service: number.set_value
+        target:
+          entity_id: "{{ entity_id }}"
+        data:
+          value: "{{ new_value }}"
+  decrement_number:
+    alias: "Уменьшает число на шаг если новое значение не меньше минимального"
+    mode: parallel
+    fields:
+      entity_id:
+        name: Number to increment
+        description: Сущность домена number для увеличения
+        selector:
+          entity:
+            domain: number
+    variables:
+      min_value: "{{ state_attr(entity_id, 'min') | float(0.0)}}"
+      max_value: "{{ state_attr(entity_id, 'max') | float(100.0)}}"
+      step: "{{ state_attr(entity_id, 'step') | float(1.0)}}"
+      current_value: "{{ states(entity_id) | float(min_value)}}"
+      new_value: "{{ max(current_value - step, min_value) }}"
+    sequence:
+      - alias: "Установить новое значение"
+        service: number.set_value
+        target:
+          entity_id: "{{ entity_id }}"
+        data:
+          value: "{{ new_value }}"

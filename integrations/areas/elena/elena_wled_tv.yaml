@@ -147,7 +147,7 @@ script:
       - alias: "Включить режим просмотра телевизора"
         service: script.wled_control
         data:
-          wled_target: !input wled_target
+          wled_target: light.elena_tv_wled
           wled_color: [239, 250, 10] # yellow
           wled_effect: Solid
           wled_brightness_pct: 50
@@ -158,7 +158,7 @@ script:
       - alias: "Turn on the light and select effect"
         service: script.wled_control
         data:
-          wled_target: !input wled_target
+          wled_target: light.elena_tv_wled
           wled_color: [239, 250, 10] # yellow
           wled_effect: Solid
           wled_brightness_pct: 10

@@ -2,6 +2,7 @@
 
 script:
   wled_control:
+    mode: parallel
     fields:
       wled_target:
         name: Device to control
@@ -127,6 +128,7 @@ script:
                   entity_id: "{{ wled_target }}"
 
   wled_turn_off:
+    mode: parallel
     fields:
       wled_target:
         name: Device to control
@@ -143,6 +145,7 @@ script:
           wled_state: 'off'
 
   wled_set_mode_notification:
+    mode: parallel
     fields:
       wled_target:
         name: Device to control
@@ -163,6 +166,7 @@ script:
           wled_intensity: 128
 
   wled_set_mode_warning:
+    mode: parallel
     fields:
       wled_target:
         name: Device to control
@@ -183,6 +187,7 @@ script:
           wled_intensity: 128
 
   wled_set_mode_alarm:
+    mode: parallel
     fields:
       wled_target:
         name: Device to control
