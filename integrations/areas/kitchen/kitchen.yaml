@@ -164,7 +164,7 @@ automation:
     condition: "{{ states('binary_sensor.light_control') == 'on' }}"
     action:
       - delay:
-          minutes: "{{ (states('number.kitchen_hold_light_on_timeout') | int) }}"
+          minutes: "{{ (states('number.kitchen_hold_light_on_timeout') | int(60)) }}"
       - service: switch.turn_off
         target:
           entity_id: switch.kitchen_hold_light_on
@@ -183,7 +183,7 @@ automation:
     condition: "{{ states('binary_sensor.light_control') == 'on' }}"
     action:
       - delay:
-          minutes: "{{ (states('number.kitchen_hold_light_off_timeout') | int) }}"
+          minutes: "{{ (states('number.kitchen_hold_light_off_timeout') | int(60)) }}"
       - service: switch.turn_off
         target:
           entity_id: switch.kitchen_hold_light_off

@@ -77,28 +77,28 @@ script:
             wled_speed: 226
             wled_intensity: 128
 
-  elena_tv_wled_off:
+  elena_tv_wled_turn_off:
     sequence:
       - alias: "Выключить ленту"
         service: script.wled_turn_off
         data:
           wled_target: light.elena_tv_wled
 
-  elena_tv_wled_notification:
+  elena_tv_wled_set_mode_notification:
     sequence:
       - alias: "Включить режим нотификации"
         service: script.wled_set_mode_notification
         data:
           wled_target: light.elena_tv_wled
 
-  elena_tv_wled_warning:
+  elena_tv_wled_set_mode_warning:
     sequence:
       - alias: "Включить режим предупреждения"
         service: script.wled_set_mode_warning
         data:
           wled_target: light.elena_tv_wled
 
-  elena_tv_wled_alarm:
+  elena_tv_wled_set_mode_alarm:
     sequence:
       - alias: "Включить режим тревоги"
         service: script.wled_set_mode_alarm
@@ -107,38 +107,41 @@ script:
 
   elena_tv_wled_set_notification:
     sequence:
-      - if:
-          - "{{ is_state('binary_sensor.notification', 'on') }}"
-        then:
-          - alias: Включить режим нотификации
-            service: script.elena_tv_wled_notification
-        else:
-          - alias: Выключить режим нотификации
-            service: script.elena_tv_wled_off
+      - alias: "Включить режим нотификации"
+        service: script.run_script_if_state
+        data:
+          entity_id: binary_sensor.notification
+          entity_state: "on"
+          entity_id_else: binary_sensor.event
+          entity_state_else: "off"
+          script_if_true: script.elena_tv_wled_set_mode_notification
+          script_if_false: script.elena_tv_wled_turn_off
 
   elena_tv_wled_set_warning:
     sequence:
-      - if:
-          - "{{ is_state('binary_sensor.warning', 'on') }}"
-        then:
-          - alias: Включить режим предупреждения
-            service: script.elena_tv_wled_warning
-        else:
-          - alias: Выключить режим предупреждения
-            service: script.elena_tv_wled_off
+      - alias: "Включить режим предупреждения"
+        service: script.run_script_if_state
+        data:
+          entity_id: binary_sensor.warning
+          entity_state: "on"
+          entity_id_else: binary_sensor.event
+          entity_state_else: "off"
+          script_if_true: script.elena_tv_wled_set_mode_warning
+          script_if_false: script.elena_tv_wled_turn_off
 
   elena_tv_wled_set_alarm:
     sequence:
-      - if:
-          - "{{ is_state('binary_sensor.warning', 'on') }}"
-        then:
-          - alias: Включить режим тревоги
-            service: script.elena_tv_wled_alarm
-        else:
-          - alias: Выключить режим тревоги
-            service: script.elena_tv_wled_off
+      - alias: "Включить режим тревоги"
+        service: script.run_script_if_state
+        data:
+          entity_id: binary_sensor.alarm
+          entity_state: "on"
+          entity_id_else: binary_sensor.event
+          entity_state_else: "off"
+          script_if_true: script.elena_tv_wled_set_mode_alarm
+          script_if_false: script.elena_tv_wled_turn_off
 
-  elena_tv_wled_tv:
+  elena_tv_wled_set_mode_tv:
     alias: wled_tv
     sequence:
       - alias: "Включить режим просмотра телевизора"
@@ -169,7 +172,7 @@ automation:
       input:
         wled_entity: light.elena_tv_wled
         wled_reset: wled_reset
-        wled_ip: sensor.elena_tv_wled_ip_saved
+        wled_ip: "{{ states('sensor.elena_tv_wled_ip_saved') }}"
         enabling_entity: binary_sensor.main_control
 
   - id: Elena TV WLED Alarm
@@ -187,7 +190,7 @@ automation:
       - alias: "Run alarm script"
         service: script.turn_on
         target:
-          entity_id: script.elena_tv_wled_alarm
+          entity_id: script.elena_tv_wled_set_mode_alarm
     mode: restart
 
   - id: Elena TV WLED Warning
@@ -205,7 +208,7 @@ automation:
       - alias: "Run warning script"
         service: script.turn_on
         target:
-          entity_id: script.elena_tv_wled_warning
+          entity_id: script.elena_tv_wled_set_mode_warning
     mode: restart
 
   - id: Elena TV WLED Notification
@@ -223,7 +226,7 @@ automation:
       - alias: "Run notification script"
         service: script.turn_on
         target:
-          entity_id: script.elena_tv_wled_notification
+          entity_id: script.elena_tv_wled_set_mode_notification
     mode: restart
 
   - id: Elena TV WLED TV power
@@ -241,7 +244,7 @@ automation:
       - alias: "Run 'tv on' script"
         service: script.turn_on
         target:
-          entity_id: script.elena_tv_wled_tv
+          entity_id: script.elena_tv_wled_set_mode_tv
     mode: restart
 
   - id: Elena TV WLED motion
@@ -292,7 +295,7 @@ automation:
       - alias: "No alarm, warning or notification but TV is on"
         service: script.turn_on
         target:
-          entity_id: script.elena_tv_wled_tv
+          entity_id: script.elena_tv_wled_set_mode_tv
     mode: restart
 
   - id: Elena TV WLED Off

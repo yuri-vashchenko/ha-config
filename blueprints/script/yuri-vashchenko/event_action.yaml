@@ -184,11 +184,9 @@ sequence:
       topic: "home/system/announcement/all"
       payload_template: "{{announcement_payload}}"
   - alias: публикация события
-    service: mqtt.publish
-    data_template:
-      topic: "home/system/{{ event_severity }}/on"
-      payload: "true"
-      retain: true
+    service: number.increment
+    target:
+      entity_id: number.{{ event_severity }}s
   - alias: ожидание завершения события
     repeat:
       while: >
@@ -206,22 +204,18 @@ sequence:
             topic: "home/system/announcement/all"
             payload_template: "{{ announcement_payload_repeat }}"
         - alias: сохранение события
-          service: mqtt.publish
-          data_template:
-            topic: "home/system/{{ event_severity }}/on"
-            payload: "true"
-            retain: true
+          service: number.increment
+          target:
+            entity_id: number.{{ event_severity }}s
         - alias: ожидание
           wait_template: >
             {{ is_state(wait_entity, wait_entity_state) }}
           timeout:
             seconds: !input 'delay_between_repeats'
   - alias: публикация окончания события
-    service: mqtt.publish
-    data:
-      topic: "home/system/{{ event_severity }}/on"
-      payload: "false"
-      retain: true
+    service: number.decrement
+    target:
+      entity_id: number.{{ event_severity }}s
   - condition: template
     value_template: "{{ announcement_message_end != '' }}"
   - alias: публикация голосового сообщения об окончании события

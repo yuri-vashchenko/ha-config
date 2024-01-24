@@ -1,0 +1,63 @@
+script:
+  run_script_if_state:
+    alias: "Проверить состояние сущности и запустить соответствующий скрипт"
+    fields:
+      entity_id:
+        name: Entity to check state
+        description: Проверяемая сущность
+        selector:
+          entity:
+      entity_state:
+        name: Entity state to check
+        description: Проверяемое состояние
+        selector:
+          text:
+      entity_id_else:
+        name: Entity to check state if entity_id state is not entity_state (blocker entity)
+        description: Проверяемая сущность иначе
+        selector:
+          entity:
+      entity_state_else:
+        name: Entity state to check (blocker entity state)
+        description: Проверяемое состояние иначе
+        selector:
+          text:
+      script_if_true:
+        name: Script to run if entity state matches
+        description: Скрипт для запуска если состояние совпало
+        selector:
+          text:
+      data_if_true:
+        name: Data to pass to script to run if entity state matches
+        description: Данные для скрипта для запуска если состояние совпало
+        selector:
+          text:
+      script_if_false:
+        name: Script to run if entity state does not matches
+        description: Скрипт для запуска если состояние не совпало
+        selector:
+          text:
+      data_if_false:
+        name: Data to pass to script to run if entity state does not matche
+        description: Данные для скрипта для запуска если состояние не совпало
+        selector:
+          text:
+    variables:
+      state: "{{ entity_state | default(on) }}"
+      state_else: "{{ entity_state_else | default(on) }}"
+      data_true: "{{ data_if_true | default({}) }}"
+      data_false: "{{ data_if_false | default({}) }}"
+    sequence:
+      - if:
+          - "{{ is_state(entity_id, state) }}"
+        then:
+          - alias: "Запустить скрипт с данными"
+            service: "{{ script_if_true }}"
+            data: "{{ data_true }}"
+        else:
+          - if:
+              - "{{ is_state(entity_id_else, state_else) }}"
+            then:
+              - alias: "Запустить скрипт с данными"
+                service: "{{ script_if_false }}"
+                data: "{{ data_false }}"

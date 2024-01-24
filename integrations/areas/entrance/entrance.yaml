@@ -65,7 +65,7 @@ automation:
         entity_id: binary_sensor.entrance_door_contact
         to: "on"
         for:
-          seconds: "{{ states('number.entrance_door_warning_open_duration') | int}}"
+          seconds: "{{ states('number.entrance_door_warning_open_duration') | int(120)}}"
     condition:
       - condition: state
         entity_id: binary_sensor.main_control

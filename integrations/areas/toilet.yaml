@@ -123,26 +123,26 @@ automation:
                 target:
                   entity_id: light.toilet_light
                 data:
-                  brightness_pct: "{{ states('number.toilet_light_brightness_max') }}"
+                  brightness_pct: "{{ states('number.toilet_light_brightness_max') | int(30) }}"
               - repeat:
                   while: >
                     {{ state_attr('light.toilet_light', 'brightness') / 2.55 >
-                      states('number.toilet_light_brightness_min') | int }}
+                      states('number.toilet_light_brightness_min') | int(2) }}
                   sequence:
                     - alias: Dim light
                       service: light.turn_on
                       target:
                         entity_id: light.toilet_light
                       data:
-                        transition: "{{ states('number.toilet_light_brightness_step_timeout') }}"
-                        brightness_step_pct: "{{ states('number.toilet_light_brightness_step') }}"
+                        transition: "{{ states('number.toilet_light_brightness_step_timeout') | int(20) }}"
+                        brightness_step_pct: "{{ states('number.toilet_light_brightness_step') | int(-2) }}"
                     - wait_for_trigger:
                         - alias: Wait until light is off
                           platform: state
                           entity_id: binary_sensor.toilet_presence
                           to: "off"
                       timeout:
-                        seconds: "{{ states('number.toilet_light_brightness_step_timeout') }}"
+                        seconds: "{{ states('number.toilet_light_brightness_step_timeout') | int(20) }}"
           - conditions: "{{ trigger.to_state.state == 'off'}}"
             sequence:
               - alias: Turn off the light

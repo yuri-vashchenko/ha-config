@@ -1,39 +1,45 @@
 # Notification/Warning/Alarm
 mqtt:
-  - switch:
-      - name: alarm
-        state_topic: home/system/alarm
-        command_topic: home/system/alarm
-        payload_on: "on"
-        payload_off: "off"
-        retain: true
-      - name: warning
-        state_topic: home/system/warning
-        command_topic: home/system/warning
-        payload_on: "on"
-        payload_off: "off"
-        retain: true
-      - name: notification
-        state_topic: home/system/notification
-        command_topic: home/system/notification
-        payload_on: "on"
-        payload_off: "off"
-        retain: true
   - button:
       - name: "Cancel all"
         unique_id: cancel_all
         command_topic: "home/system/cancel_all"
+  - number:
+      - name: alarms
+        command_topic: home/system/alarm/count
+        min: 0
+        max: 100
+        step: 1
+        retain: true
+      - name: warnings
+        command_topic: home/system/warning/count
+        min: 0
+        max: 100
+        step: 1
+        retain: true
+      - name: notifications
+        command_topic: home/system/notification/count
+        min: 0
+        max: 100
+        step: 1
+        retain: true
 
 template:
   - binary_sensor:
       - name: alarm
-        state: "{{ states('switch.alarm') }}"
+        state: "{{ (states('number.alarms') | int(0)) > 0 }}"
         device_class: problem
       - name: warning
-        state: "{{ states('switch.warning') }}"
+        state: "{{ (states('number.warnings') | int(0)) > 0 }}"
         device_class: problem
       - name: notification
-        state: "{{ states('switch.notification') }}"
+        state: "{{ (states('number.notifications') | int(0)) > 0 }}"
+        device_class: problem
+      - name: event
+        state: >
+          {{ is_state('binary_sensor.notification', 'on') or
+            is_state('binary_sensor.warning', 'on') or
+            is_state('binary_sensor.alarm', 'on') }}
         device_class: problem
 
   - sensor:
@@ -76,7 +82,7 @@ template:
             {{ ns.leak_alarms }}
 
 script:
-  trigger_alarm:
+  trigger_event:
     alias: "Trigger alarm, warning or notification"
     sequence:
       - alias: "main control"
@@ -95,8 +101,8 @@ script:
                 scripts: >
                   {% set ns = namespace(scripts = []) %}
                   {% for s in states.script %}
-                    {% if repeat.item in s.name %}
-                      {% set ns.scripts = ns.scripts + [s.name] %}
+                    {% if repeat.item in s.object_id %}
+                      {% set ns.scripts = ns.scripts + [s.object_id] %}
                     {% endif %}
                   {% endfor %}
                   {{ ns.scripts }}
@@ -113,14 +119,16 @@ script:
       - alias: "Cancel all"
         repeat:
           for_each:
-            - switch.alarm
-            - switch.warning
-            - switch.notification
+            - number.alarms
+            - number.warnings
+            - number.notifications
           sequence:
-            - alias: "turn off"
-              service: switch.turn_off
+            - alias: "turn off everything"
+              service: number.set_value
               target:
                 entity_id: "{{ repeat.item }}"
+              data:
+                value: 0
     mode: queued
     max: 100
 
@@ -140,23 +148,33 @@ automation:
         entity_id: binary_sensor.main_control
         state: "on"
     action:
-      - alias: "Check detectors walue"
-        choose:
-          - conditions:
-              - "{{ state('sensor.smoke_detected') + state('sensor.smoke_detected') > 0 }}"
-            sequence:
-              - alias: "turn on the alarm"
-                service: switch.turn_on
-                target:
-                  entity_id: switch.alarm
-          - conditions:
-              - "{{ state('sensor.smoke_detected') + state('sensor.smoke_detected') == 0 }}"
-            sequence:
-              - alias: "turn off the alarm"
-                service: switch.turn_off
-                target:
-                  entity_id: switch.alarm
+      - alias: "Обновить счётчик тревог"
+        service: number.set_value
+        target:
+          entity_id: number.alarms
+        data:
+          value: >
+            {{ states('sensor.smoke_detected') | int + states('sensor.smoke_detected') | int }}
     mode: restart
+
+  - id: trigger event
+    alias: Запустить или выключить режим тревоги, предупреждения или нотификации
+    trigger:
+      - platform: state
+        entity_id: number.notifications
+      - platform: state
+        entity_id: number.warnings
+      - platform: state
+        entity_id: number.alarms
+    condition:
+      - alias: "Main control is on"
+        condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+    action:
+      - alias: "Запустить скрипт для генерации или отключения события"
+        service: script.trigger_event
+    mode: queued
 
   - id: cancel_all_on_button_press
     alias: cancell all on button press

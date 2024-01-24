@@ -238,7 +238,7 @@ automation:
         entity_id: group.elena_doors
         to: "on"
         for:
-          seconds: "{{ states('number.elena_ac_door_open_duration') | int}}"
+          seconds: "{{ states('number.elena_ac_door_open_duration') | int(60) }}"
         id: door_opened
       - platform: state
         entity_id: group.elena_doors
@@ -267,11 +267,11 @@ automation:
         id: humid
       - platform: template
         value_template: >
-          {% set temperature = states("sensor.elena_thermometer_temperature") %}
-          {% set humidity = states("sensor.elena_thermometer_humidity") %}
-          {% set min_temp = states("number.elena_ac_cold_threshold") %}
-          {% set max_temp = states("number.elena_ac_hot_threshold") %}
-          {% set max_humidity = states("number.elena_ac_humid_threshold") %}
+          {% set temperature = states("sensor.elena_thermometer_temperature") | float(23.0) %}
+          {% set humidity = states("sensor.elena_thermometer_humidity") | float(50.0) %}
+          {% set min_temp = states("number.elena_ac_cold_threshold") | float(23.0) %}
+          {% set max_temp = states("number.elena_ac_hot_threshold") | float(26.0) %}
+          {% set max_humidity = states("number.elena_ac_humid_threshold") | float(60.0) %}
           {{ temperature > min_temp and temperature < max_temp and humidity < max_humidity }}
         id: comfort
     condition:
@@ -299,11 +299,11 @@ automation:
           50.0
         {%- endif -%}
       is_cold: >
-        {{ has_in_temp and in_temp < (states("number.elena_ac_cold_threshold") | float) }}
+        {{ has_in_temp and in_temp < (states("number.elena_ac_cold_threshold") | float(23.0)) }}
       is_hot: >
-        {{ has_in_temp and in_temp > (states("number.elena_ac_hot_threshold") | float) }}
+        {{ has_in_temp and in_temp > (states("number.elena_ac_hot_threshold") | float(26.0)) }}
       is_humid: >
-        {{ has_in_humidity and in_humidity > (states("number.elena_ac_humid_threshold") | float) }}
+        {{ has_in_humidity and in_humidity > (states("number.elena_ac_humid_threshold") | float(60.0)) }}
       is_warm: "{{ not is_cold and not is_hot }}"
       is_comfort: "{{ not is_cold and not is_hot and not is_humid }}"
       has_out_temp: >

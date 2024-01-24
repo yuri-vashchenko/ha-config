@@ -78,168 +78,25 @@ automation:
     alias: corridor_rgb_led_strip_on_motion
     description: "turn on the rgb led strip in coridor for short time on motion"
     trigger:
-      - platform: homeassistant
-        event: start
-        id: "off"
-      - platform: event
-        event_type: automation_reloaded
-        id: "off"
       - platform: state
         entity_id: binary_sensor.corridor_motion_entrance_occupancy
         from: "off"
         to: "on"
-        id: "motion"
-      - platform: mqtt
-        topic: "home/system/+/on"
-        payload: "false"
-        id: "off"
-      - platform: mqtt
-        topic: "home/system/notification/on"
-        payload: "true"
-        id: "notification"
-      - platform: mqtt
-        topic: "home/system/warning/on"
-        payload: "true"
-        id: "warning"
-      - platform: mqtt
-        topic: "home/system/alarm/on"
-        payload: "true"
-        id: "alarm"
     condition:
       - condition: state
         entity_id: binary_sensor.main_control
         state: "on"
     action:
-      choose:
-        - alias: "Select Temperature effect on motion"
-          conditions:
-            - condition: trigger
-              id: "motion"
-            - condition: state
-              entity_id: select.corridor_rgb_led
-              state:
-                - "off"
-                - "temperature"
-          sequence:
-            - service: select.select_option
-              data:
-                option: "temperature"
-              target:
-                entity_id: select.corridor_rgb_led
-            - wait_for_trigger:
-                - platform: state
-                  entity_id: binary_sensor.corridor_motion_entrance_occupancy
-                  from: "on"
-                  to: "off"
-            - service: select.select_option
-              data:
-                option: "off"
-              target:
-                entity_id: select.corridor_rgb_led
-        - alias: "Select Notification effect"
-          conditions:
-            - condition: trigger
-              id: "notification"
-            - condition: state
-              entity_id: select.corridor_rgb_led
-              state:
-                - "off"
-                - "temperature"
-          sequence:
-            - service: select.select_option
-              data:
-                option: "notification"
-              target:
-                entity_id: select.corridor_rgb_led
-        - alias: "Select Warning effect"
-          conditions:
-            - condition: trigger
-              id: "warning"
-            - condition: state
-              entity_id: select.corridor_rgb_led
-              state:
-                - "off"
-                - "temperature"
-                - "notification"
-          sequence:
-            - service: select.select_option
-              data:
-                option: "warning"
-              target:
-                entity_id: select.corridor_rgb_led
-        - alias: "Select Alarm effect"
-          conditions:
-            condition: trigger
-            id: "alarm"
-          sequence:
-            - service: select.select_option
-              data:
-                option: "alarm"
-              target:
-                entity_id: select.corridor_rgb_led
-        - alias: "Something goes off"
-          conditions:
-            condition: trigger
-            id: "off"
-          sequence:
-            choose:
-              - alias: "Select 'off'"
-                conditions:
-                  - condition: state
-                    entity_id: binary_sensor.is_notification
-                    state: "off"
-                  - condition: state
-                    entity_id: binary_sensor.is_warning
-                    state: "off"
-                  - condition: state
-                    entity_id: binary_sensor.is_alarm
-                    state: "off"
-                sequence:
-                  - service: select.select_option
-                    data:
-                      option: "off"
-                    target:
-                      entity_id: select.corridor_rgb_led
-              - alias: "Resume notification"
-                conditions:
-                  - condition: state
-                    entity_id: binary_sensor.is_notification
-                    state: "on"
-                  - condition: state
-                    entity_id: binary_sensor.is_warning
-                    state: "off"
-                  - condition: state
-                    entity_id: binary_sensor.is_alarm
-                    state: "off"
-                sequence:
-                  - service: select.select_option
-                    data:
-                      option: "notification"
-                    target:
-                      entity_id: select.corridor_rgb_led
-              - alias: "Resume warning"
-                conditions:
-                  - condition: state
-                    entity_id: binary_sensor.is_warning
-                    state: "on"
-                  - condition: state
-                    entity_id: binary_sensor.is_alarm
-                    state: "off"
-                sequence:
-                  - service: select.select_option
-                    data:
-                      option: "warning"
-                    target:
-                      entity_id: select.corridor_rgb_led
-              - alias: "Resume alarm"
-                conditions:
-                  - condition: state
-                    entity_id: binary_sensor.is_alarm
-                    state: "on"
-                sequence:
-                  - service: select.select_option
-                    data:
-                      option: "alarm"
-                    target:
-                      entity_id: select.corridor_rgb_led
+      - alias: "Select Temperature effect on motion"
+        service: switch.turn_on
+        target:
+          entity_id: switch.need_to_show_temperature
+      - wait_for_trigger:
+          - platform: state
+            entity_id: binary_sensor.corridor_motion_entrance_occupancy
+            from: "on"
+            to: "off"
+      - service: switch.turn_off
+        target:
+          entity_id: switch.need_to_show_temperature
     mode: restart

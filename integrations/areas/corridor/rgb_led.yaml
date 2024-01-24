@@ -1,97 +1,130 @@
 # RGB LED in corridor
 
 mqtt:
-  sensor:
-    - name: corridor_rgb_led_state
-      state_topic: "home/corridor/rgb_led/state"
-  select:
-    - name: corridor_rgb_led
-      command_topic: "home/corridor/rgb_led/state"
-      state_topic: "home/corridor/rgb_led/state"
+  switch:
+    - name: need_to_show_temperature
+      command_topic: "home/corridor/rgb_led/need_to_show_temperature"
       retain: true
-      options:
-        - "off"
-        - "temperature"
-        - "notification"
-        - "warning"
-        - "alarm"
+
+template:
+  binary_sensor:
+    - name: show_temperature
+      state: >
+        {{ is_state("switch.need_to_show_temperature", "on") and
+          is_state("binary_sensor.event", "off") }}
+
+script:
+  corridor_rgb_led_turn_off:
+    alias: "Выключить светодиодную ленту в коридоре"
+    sequence:
+      - alias: "Выключить светодиодную ленту"
+        service: light.turn_off
+        target:
+          entity_id: light.rgb_led_light
+
+  corridor_rgb_led_set_mode_temperature:
+    alias: "Включить режим температуры на ленте в коридоре"
+    sequence:
+      - alias: "Включить режим температуры"
+        service: light.turn_on
+        target:
+          entity_id: light.rgb_led_light
+        data:
+          effect: "temperature"
+
+  corridor_rgb_led_set_mode_notification:
+    alias: "Включить режим нотификации на ленте в коридоре"
+    sequence:
+      - alias: "Включить режим нотификации"
+        service: light.turn_on
+        target:
+          entity_id: light.rgb_led_light
+        data:
+          effect: "notification"
+
+  corridor_rgb_led_set_mode_warning:
+    alias: "Включить режим предупреждения на ленте в коридоре"
+    sequence:
+      - alias: "Включить режим предупреждения"
+        service: light.turn_on
+        target:
+          entity_id: light.rgb_led_light
+        data:
+          effect: "warning"
+
+  corridor_rgb_led_set_mode_alarm:
+    alias: "Включить режим тревоги на ленте в коридоре"
+    sequence:
+      - alias: "Включить режим тревоги"
+        service: light.turn_on
+        target:
+          entity_id: light.rgb_led_light
+        data:
+          effect: "alarm"
+
+  corridor_rgb_led_set_notification:
+    alias: "Включить режим нотификации на ленте в коридоре если активна нотификация"
+    sequence:
+      - alias: "Включить режим нотификации на ленте в коридоре"
+        service: script.run_script_if_state
+        data:
+          entity_id: binary_sensor.notification
+          entity_state: "on"
+          entity_id_else: binary_sensor.event
+          entity_state_else: "off"
+          script_if_true: script.corridor_rgb_led_set_mode_notification
+          script_if_false: script.corridor_rgb_led_turn_off
+
+  corridor_rgb_led_set_warning:
+    alias: "Включить режим предупреждения на ленте в коридоре если активно предупреждение"
+    sequence:
+      - alias: "Включить режим предупреждения на ленте в коридоре"
+        service: script.run_script_if_state
+        data:
+          entity_id: binary_sensor.warning
+          entity_state: "on"
+          entity_id_else: binary_sensor.event
+          entity_state_else: "off"
+          script_if_true: script.corridor_rgb_led_set_mode_warning
+          script_if_false: script.corridor_rgb_led_turn_off
+
+  corridor_rgb_led_set_alarm:
+    alias: "Включить режим тревоги на ленте в коридоре если активна тревога"
+    sequence:
+      - alias: "Включить режим тревоги на ленте в коридоре"
+        service: script.run_script_if_state
+        data:
+          entity_id: binary_sensor.alarm
+          entity_state: "on"
+          entity_id_else: binary_sensor.event
+          entity_state_else: "off"
+          script_if_true: script.corridor_rgb_led_set_mode_alarm
+          script_if_false: script.corridor_rgb_led_turn_off
+
+  corridor_rgb_led_set_temperature:
+    alias: "Включить режим температуры на ленте в коридоре по выключателю"
+    sequence:
+      - alias: "Включить режим температуры на ленте в коридоре"
+        service: script.run_script_if_state
+        data:
+          entity_id: binary_sensor.show_temperature
+          entity_state: "on"
+          entity_id_else: binary_sensor.event
+          entity_state_else: "off"
+          script_if_true: script.corridor_rgb_led_set_mode_temperature
+          script_if_false: script.corridor_rgb_led_turn_off
 
 automation:
-  - id: Control RGB LED on/off in corridor
-    alias: corridor_rgb_led_control
+  - id: turn_on_rgb_led_on_switch
+    alias: Включить режим температуры на ленте в коридоре по выключателю"
     trigger:
-      - platform: mqtt
-        topic: "home/corridor/rgb_led/state"
-        payload: "off"
-        id: "off"
-      - platform: mqtt
-        topic: "home/corridor/rgb_led/state"
-        payload: "temperature"
-        id: "temperature"
-      - platform: mqtt
-        topic: "home/corridor/rgb_led/state"
-        payload: "notification"
-        id: "notification"
-      - platform: mqtt
-        topic: "home/corridor/rgb_led/state"
-        payload: "warning"
-        id: "warning"
-      - platform: mqtt
-        topic: "home/corridor/rgb_led/state"
-        payload: "alarm"
-        id: "alarm"
+      - platform: state
+        entity_id: switch.need_to_show_temperature
     condition:
-      condition: state
-      entity_id: binary_sensor.light_control
-      state: "on"
+      - alias: "Light control is on"
+        condition: state
+        entity_id: binary_sensor.light_control
+        state: "on"
     action:
-      choose:
-        - alias: corridor_rgb_led_turn_off
-          conditions:
-            condition: trigger
-            id: "off"
-          sequence:
-            service: light.turn_off
-            target:
-              entity_id: light.rgb_led_light
-        - alias: corridor_rgb_led_temperature
-          conditions:
-            condition: trigger
-            id: "temperature"
-          sequence:
-            service: light.turn_on
-            target:
-              entity_id: light.rgb_led_light
-            data:
-              effect: "Temperature"
-        - alias: corridor_rgb_led_notification
-          conditions:
-            condition: trigger
-            id: "notification"
-          sequence:
-            service: light.turn_on
-            target:
-              entity_id: light.rgb_led_light
-            data:
-              effect: "notification"
-        - alias: corridor_rgb_led_warning
-          conditions:
-            condition: trigger
-            id: "warning"
-          sequence:
-            service: light.turn_on
-            target:
-              entity_id: light.rgb_led_light
-            data:
-              effect: "warning"
-        - alias: corridor_rgb_led_alarm
-          conditions:
-            condition: trigger
-            id: "alarm"
-          sequence:
-            service: light.turn_on
-            target:
-              entity_id: light.rgb_led_light
-            data:
-              effect: "alarm"
-    mode: restart
+      - alias: "Включить режим температуры на ленте в коридоре"
+        service: script.corridor_rgb_led_set_temperature

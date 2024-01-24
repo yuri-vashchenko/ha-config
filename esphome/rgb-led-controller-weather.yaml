@@ -61,7 +61,7 @@ light:
     name: "RGB LED Light"
     effects:
       - addressable_lambda:
-          name: "temperature"
+          name: temperature
           update_interval: 1s
           lambda: |-
             // it.size() - Number of LEDs
@@ -75,23 +75,29 @@ light:
             int led_id = (int)(1.0 * (float)(id(temperature_value) + 40) * (float)it.size() / 80.0);
 
             // clear old values
-            // it.all().fade_to_black(10);
+            if (initial_run)
+            {
+              it.all().fade_to_black(1);
+            }
 
             for (int i = 0; i < led_id; i++)
             {
-              int r = 0;
-              int g = 0;
-              int b = 0;
+              int red = i;
+              int green = 0;
+              int blue = it.size() - i;
               // 0 .. 72 .. 144
-              if (i < it.size() / 3)
-                r = 0;
-              else
-                r = 255 * 2 * i / it.size() / 3;
-              if (i > it.size() * 2 / 3)
-                b = 0;
-              else
-                b = 255 * 2 * (it.size() - i) / it.size() / 3;
-              it[i] = Color(r, g, b);
+              // if (i < it.size() / 3)
+              //   r = 0;
+              // else
+              //   r = 255 * 2 * i / it.size() / 3;
+              // if (i > it.size() * 2 / 3)
+              //   b = 0;
+              // else
+              //   b = 255 * 2 * (it.size() - i) / it.size() / 3;
+              red = (int)(255.0 * (float)red / (float)it.size());
+              green = (int)(255.0 * (float)green / (float)it.size());
+              blue = (int)(255.0 * (float)blue / (float)it.size());
+              it[i] = Color(red, green, blue);
             }
 
             it.range(led_id, it.size()) = Color(0, 0, 0);
@@ -105,7 +111,7 @@ light:
               blue: 0%
               num_leds: 20
             - red: 0%
-              green: 10%
+              green: 0%
               blue: 0%
               num_leds: 5
           add_led_interval: 100ms
@@ -113,12 +119,12 @@ light:
       - addressable_color_wipe:
           name: warning
           colors:
-            - red: 80%
-              green: 80%
+            - red: 100%
+              green: 100%
               blue: 0%
               num_leds: 10
-            - red: 10%
-              green: 10%
+            - red: 0%
+              green: 0%
               blue: 0%
               num_leds: 3
           add_led_interval: 60ms
@@ -130,7 +136,7 @@ light:
               green: 0%
               blue: 0%
               num_leds: 5
-            - red: 20%
+            - red: 0%
               green: 0%
               blue: 0%
               num_leds: 2
