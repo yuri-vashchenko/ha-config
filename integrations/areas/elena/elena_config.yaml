@@ -2,21 +2,11 @@
 
 homeassistant:
   customize:
-    # Климат
-    sensor.elena_thermometer_01_temperature:
-      friendly_name: Температура в Лениной комнате 01
-    sensor.elena_thermometer_01_humidity:
-      friendly_name: Влажность в Лениной комнате 01
-    sensor.elena_thermometer_02_temperature:
-      friendly_name: Температура в Лениной комнате 02
-    sensor.elena_thermometer_02_humidity:
-      friendly_name: Влажность в Лениной комнате 02
-
     # Розетка кондиционера
     switch.elena_plug_ac_power_outage_memory:
       friendly_name: Розетка кондиционера память отключения
 
-    # Розетка кондиционера
+    # Розетка телевизора 65
     switch.elena_plug_tv_power_outage_memory:
       friendly_name: Розетка телевизора 65 память отключения
 
@@ -83,51 +73,12 @@ template:
             false
           {%- endif -%}
         device_class: plug
-      - name: elena_thermometer_01_available
-        state: >
-          {{ true if
-            is_number(states("sensor.elena_thermometer_01_temperature")) and
-            is_number(states("sensor.elena_thermometer_01_humidity")) else false }}
-        device_class: connectivity
-      - name: elena_thermometer_02_available
-        state: >
-          {{ true if
-            is_number(states("sensor.elena_thermometer_02_temperature")) and
-            is_number(states("sensor.elena_thermometer_02_humidity")) else false }}
-        device_class: connectivity
       - name: host_occupancy
         state: >
           {{ states('person.yuri_vashchenko') in ['home', 'Дом'] or
             states('person.elena_vashchenko') in ['home', 'Дом'] }}
 
   - sensor:
-      - name: elena_thermometer_temperature
-        state: >
-          {{ (states("sensor.elena_thermometer_01_temperature") | float +
-              states("sensor.elena_thermometer_02_temperature") | float) / 2.0
-              if is_state("binary_sensor.elena_thermometer_01_available", "on") and
-                  is_state("binary_sensor.elena_thermometer_02_available", "on")
-              else
-              states("sensor.elena_thermometer_01_temperature") | float
-              if is_state("binary_sensor.elena_thermometer_01_available", "on")
-              else
-              states("sensor.elena_thermometer_02_temperature") }}
-        state_class: measurement
-        unit_of_measurement: °C
-      - name: elena_thermometer_humidity
-        state: >
-          {{ (states("sensor.elena_thermometer_01_humidity") | float +
-              states("sensor.elena_thermometer_02_humidity") | float) / 2.0
-              if is_state("binary_sensor.elena_thermometer_01_available", "on") and
-                  is_state("binary_sensor.elena_thermometer_02_available", "on")
-              else
-              states("sensor.elena_thermometer_01_humidity") | float
-              if is_state("binary_sensor.elena_thermometer_01_available", "on")
-              else
-              states("sensor.elena_thermometer_02_humidity") }}
-        state_class: measurement
-        unit_of_measurement: "%"
-
       - name: elena_total_power
         state: >
           {% set ns = namespace(states=[]) -%}
@@ -164,16 +115,6 @@ template:
         attributes:
           users: >
             {{ states.input_text | selectattr('entity_id','contains','room') | selectattr('state','eq','elena') | map(attribute='name') | list }}
-
-climate:
-  - platform: smartir
-    name: elena_ac
-    unique_id: elena_ac
-    device_code: 1400
-    controller_data: remote.elena_remote_broadlink
-    temperature_sensor: sensor.elena_thermometer_temperature
-    humidity_sensor: sensor.elena_thermometer_humidity
-    power_sensor: binary_sensor.elena_ac_power
 
 script:
   led_strip_toggle:
@@ -251,27 +192,27 @@ automation:
         event_type: automation_reloaded
         id: started
       - platform: numeric_state
-        entity_id: sensor.elena_thermometer_temperature
-        above: number.elena_ac_hot_threshold
+        entity_id: sensor.elena_room_temperature
+        above: number.elena_room_hot_threshold
         for: "00:01:00"
         id: hot
       - platform: numeric_state
-        entity_id: sensor.elena_thermometer_temperature
-        below: number.elena_ac_cold_threshold
+        entity_id: sensor.elena_room_temperature
+        below: number.elena_room_cold_threshold
         for: "00:01:00"
         id: cold
       - platform: numeric_state
-        entity_id: sensor.elena_thermometer_humidity
-        above: number.elena_ac_humid_threshold
+        entity_id: sensor.elena_room_humidity
+        above: number.elena_room_humid_threshold
         for: "00:01:00"
         id: humid
       - platform: template
         value_template: >
-          {% set temperature = states("sensor.elena_thermometer_temperature") | float(23.0) %}
-          {% set humidity = states("sensor.elena_thermometer_humidity") | float(50.0) %}
-          {% set min_temp = states("number.elena_ac_cold_threshold") | float(23.0) %}
-          {% set max_temp = states("number.elena_ac_hot_threshold") | float(26.0) %}
-          {% set max_humidity = states("number.elena_ac_humid_threshold") | float(60.0) %}
+          {% set temperature = states("sensor.elena_room_temperature") | float(23.0) %}
+          {% set humidity = states("sensor.elena_room_humidity") | float(50.0) %}
+          {% set min_temp = states("number.elena_room_cold_threshold") | float(23.0) %}
+          {% set max_temp = states("number.elena_room_hot_threshold") | float(26.0) %}
+          {% set max_humidity = states("number.elena_room_humid_threshold") | float(60.0) %}
           {{ temperature > min_temp and temperature < max_temp and humidity < max_humidity }}
         id: comfort
     condition:
@@ -279,31 +220,35 @@ automation:
         condition: state
         entity_id: binary_sensor.climate_control
         state: "on"
+      - alias: "not night"
+        condition: state
+        entity_id: binary_sensor.night
+        state: "off"
     variables:
       has_in_temp: >
-        {{ states("sensor.elena_thermometer_temperature") not in
+        {{ states("sensor.elena_room_temperature") not in
           ['unknown', 'unavailable'] }}
       has_in_humidity: >
-        {{ states("sensor.elena_thermometer_humidity") not in
+        {{ states("sensor.elena_room_humidity") not in
           ['unknown', 'unavailable'] }}
       in_temp: >
         {%- if has_in_temp -%}
-          {{ states("sensor.elena_thermometer_temperature") | float }}
+          {{ states("sensor.elena_room_temperature") | float }}
         {%- else -%}
           25.0
         {%- endif -%}
       in_humidity: >
         {%- if has_in_humidity -%}
-          {{ states("sensor.elena_thermometer_humidity") | float }}
+          {{ states("sensor.elena_room_humidity") | float }}
         {%- else -%}
           50.0
         {%- endif -%}
       is_cold: >
-        {{ has_in_temp and in_temp < (states("number.elena_ac_cold_threshold") | float(23.0)) }}
+        {{ has_in_temp and in_temp < (states("number.elena_room_cold_threshold") | float(23.0)) }}
       is_hot: >
-        {{ has_in_temp and in_temp > (states("number.elena_ac_hot_threshold") | float(26.0)) }}
+        {{ has_in_temp and in_temp > (states("number.elena_room_hot_threshold") | float(26.0)) }}
       is_humid: >
-        {{ has_in_humidity and in_humidity > (states("number.elena_ac_humid_threshold") | float(60.0)) }}
+        {{ has_in_humidity and in_humidity > (states("number.elena_room_humid_threshold") | float(60.0)) }}
       is_warm: "{{ not is_cold and not is_hot }}"
       is_comfort: "{{ not is_cold and not is_hot and not is_humid }}"
       has_out_temp: >

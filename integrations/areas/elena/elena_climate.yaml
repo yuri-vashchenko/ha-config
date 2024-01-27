@@ -1,0 +1,143 @@
+homeassistant:
+  customize:
+    sensor.elena_thermometer_01_temperature:
+      friendly_name: Температура в Лениной комнате на часах
+    sensor.elena_thermometer_01_humidity:
+      friendly_name: Влажность в Лениной комнате на часах
+    sensor.elena_thermometer_02_temperature:
+      friendly_name: Температура в Лениной комнате у кровати
+    sensor.elena_thermometer_02_humidity:
+      friendly_name: Влажность в Лениной комнате у кровати
+    sensor.elena_room_temperature:
+      friendly_name: Температура в Лениной комнате
+    sensor.elena_room_humidity:
+      friendly_name: Влажность в Лениной комнате
+
+mqtt:
+  number:
+    # Low temperature threshold for 'cold' condition
+    - name: "Холодно, если температура ниже"
+      object_id: elena_room_cold_threshold
+      icon: "mdi:thermometer-low"
+      command_topic: "home/elena/settings/cold_threshold"
+      state_topic: "home/elena/settings/cold_threshold"
+      min: 10.0
+      max: 25.0
+      step: 1
+      retain: true
+
+    # High temperature threshold for 'hot' condition
+    - name: "Жарко, если температура выше"
+      object_id: elena_room_hot_threshold
+      icon: "mdi:thermometer-high"
+      command_topic: "home/elena/settings/hot_threshold"
+      state_topic: "home/elena/settings/hot_threshold"
+      min: 25.0
+      max: 40.0
+      step: 1
+      retain: true
+
+    # Low humidity threshold for 'dry' condition
+    - name: "Сухо, если влажность ниже"
+      object_id: elena_room_dry_threshold
+      icon: "mdi:water-percent-alert"
+      command_topic: "home/elena/settings/dry_threshold"
+      state_topic: "home/elena/settings/dry_threshold"
+      min: 1.0
+      max: 50.0
+      step: 1
+      retain: true
+
+    # High humidity threshold for 'humid' condition
+    - name: "Влажно, если влажность выше"
+      object_id: elena_room_humid_threshold
+      icon: "mdi:water-percent-alert"
+      command_topic: "home/elena/settings/humid_threshold"
+      state_topic: "home/elena/settings/humid_threshold"
+      min: 50.0
+      max: 100.0
+      step: 1
+      retain: true
+
+template:
+  - binary_sensor:
+      - unique_id: elena_thermometer_01_available
+        state: >
+          {{ is_number(states("sensor.elena_thermometer_01_temperature")) and
+            is_number(states("sensor.elena_thermometer_01_humidity")) }}
+        device_class: connectivity
+      - unique_id: elena_thermometer_02_available
+        state: >
+          {{ is_number(states("sensor.elena_thermometer_02_temperature")) and
+            is_number(states("sensor.elena_thermometer_02_humidity")) }}
+        device_class: connectivity
+      - unique_id: elena_room_is_cold
+        state: >
+          {{ states("sensor.elena_room_temperature") <
+            states("number.elena_room_cold_threshold") }}
+        device_class: cold
+      - unique_id: elena_room_is_hot
+        state: >
+          {{ states("sensor.elena_room_temperature") >
+            states("number.elena_room_hot_threshold") }}
+        device_class: heat
+      - unique_id: elena_room_is_humid
+        state: >
+          {{ states("sensor.elena_room_humidity") >
+            states("number.elena_room_humid_threshold") }}
+      - unique_id: elena_room_is_dry
+        state: >
+          {{ states("sensor.elena_room_humidity") <
+            states("number.elena_room_dry_threshold") }}
+      - unique_id: elena_room_is_temperature_normal
+        state: >
+          {{ is_state("binary_sensor.elena_room_is_cold", "off") and
+            is_state("binary_sensor.elena_room_is_hot", "off") }}
+      - unique_id: elena_room_is_humidity_normal
+        state: >
+          {{ is_state("binary_sensor.elena_room_is_humid", "off") and
+            is_state("binary_sensor.elena_room_is_dry", "off") }}
+      - unique_id: elena_room_is_climate_normal
+        state: >
+          {{ is_state("binary_sensor.elena_room_is_temperature_normal", "on") and
+            is_state("binary_sensor.elena_room_is_humidity_normal", "on") }}
+
+  - sensor:
+      - unique_id: elena_room_temperature
+        state: >
+          {{ (states("sensor.elena_thermometer_01_temperature") | float +
+              states("sensor.elena_thermometer_02_temperature") | float) / 2.0
+              if is_state("binary_sensor.elena_thermometer_01_available", "on") and
+                  is_state("binary_sensor.elena_thermometer_02_available", "on")
+              else
+                states("sensor.elena_thermometer_01_temperature") | float
+              if is_state("binary_sensor.elena_thermometer_01_available", "on")
+              else
+                states("sensor.elena_thermometer_02_temperature") }}
+        state_class: measurement
+        device_class: temperature
+        unit_of_measurement: °C
+      - unique_id: elena_room_humidity
+        state: >
+          {{ (states("sensor.elena_thermometer_01_humidity") | float +
+              states("sensor.elena_thermometer_02_humidity") | float) / 2.0
+              if is_state("binary_sensor.elena_thermometer_01_available", "on") and
+                  is_state("binary_sensor.elena_thermometer_02_available", "on")
+              else
+                states("sensor.elena_thermometer_01_humidity") | float
+              if is_state("binary_sensor.elena_thermometer_01_available", "on")
+              else
+                states("sensor.elena_thermometer_02_humidity") }}
+        state_class: measurement
+        device_class: humidity
+        unit_of_measurement: "%"
+
+climate:
+  - platform: smartir
+    name: elena_ac
+    unique_id: elena_ac
+    device_code: 1400
+    controller_data: remote.elena_remote_broadlink
+    temperature_sensor: sensor.elena_room_temperature
+    humidity_sensor: sensor.elena_room_humidity
+    power_sensor: binary_sensor.elena_ac_power

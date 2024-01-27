@@ -13,8 +13,8 @@ yandex_smart_home:
       - sensor.balcony_thermometer_temperature
       - sensor.balcony_thermometer_humidity
       - sensor.blood_sugar_mmol
-      - sensor.elena_thermometer_temperature
-      - sensor.elena_thermometer_humidity
+      - sensor.elena_room_temperature
+      - sensor.elena_room_humidity
       - sensor.mama_thermometer_temperature
       - sensor.mama_thermometer_humidity
       - sensor.michael_thermometer_temperature
@@ -95,9 +95,9 @@ yandex_smart_home:
       room: Лена
       properties:
         - type: temperature
-          entity: sensor.elena_thermometer_temperature
+          entity: sensor.elena_room_temperature
         - type: humidity
-          entity: sensor.elena_thermometer_humidity
+          entity: sensor.elena_room_humidity
     temperature_humidity.mama:
       name: Температура
       room: Мама

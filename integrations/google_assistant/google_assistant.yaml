@@ -46,11 +46,11 @@ google_assistant:
       aliases:
         - Air conditioner
       room: Lena
-    sensor.elena_thermometer_temperature:
+    sensor.elena_room_temperature:
       name: Temperature
       expose: true
       room: Lena
-    sensor.elena_thermometer_humidity:
+    sensor.elena_room_humidity:
       name: Humidity
       expose: true
       room: Lena
