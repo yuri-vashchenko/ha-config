@@ -113,7 +113,7 @@ template:
           {% endfor %}
           {% set ns.state = ns.state and (states('binary_sensor.balcony_door_elena_contact') | bool) %}
           {% set ns.state = ns.state or (states('binary_sensor.elena_door_contact') | bool) %}
-          {{ iif(ns.state, 'on', 'off') }}
+          {{ ns.state }}
 
   - sensor:
       - unique_id: elena_room_temperature
