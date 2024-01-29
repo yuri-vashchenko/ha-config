@@ -171,7 +171,7 @@ automation:
         humid_threshold: number.elena_room_humid_threshold
         warm_diff: 1.0
         windows_entity: binary_sensor.elena_doors_windows
-        window_open_duration: number.elena_ac_door_open_duration
+        window_open_duration: 60
         cool_hvac_mode: "cool"
         cool_target_temperature: 16.0
         heat_hvac_mode: "heat"

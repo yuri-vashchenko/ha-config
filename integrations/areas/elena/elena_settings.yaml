@@ -1,16 +1,1 @@
 # settings for devices in Elena room
-
-# Elena Air conditioner
-
-mqtt:
-  number:
-    # Doors open duration (seconds) to turn off the AC
-    - name: "Кондиционер выключится, если двери открыты дольше чем (секунд)"
-      object_id: elena_ac_door_open_duration
-      icon: "mdi:thermometer-high"
-      command_topic: "home/elena/settings/ac/door_open_duration"
-      state_topic: "home/elena/settings/ac/door_open_duration"
-      min: 0
-      max: 600
-      step: 1
-      retain: true
