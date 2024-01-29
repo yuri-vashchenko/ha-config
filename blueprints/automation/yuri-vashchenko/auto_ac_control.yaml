@@ -5,14 +5,22 @@ blueprint:
   domain: automation
   input:
     climate_entity:
-    temperature_entity:
-    humidity_entity:
-    out_temperature_entity:
-    cold_threshold:
       selector:
         entity:
-          domain: input_number
-    cold_duration:
+          domain: climate
+    temperature_entity:
+      selector:
+        entity:
+          domain: sensor
+    humidity_entity:
+      selector:
+        entity:
+          domain: sensor
+    out_temperature_entity:
+      selector:
+        entity:
+          domain: sensor
+    cold_threshold:
       selector:
         entity:
           domain: input_number
@@ -20,27 +28,18 @@ blueprint:
       selector:
         entity:
           domain: input_number
-    hot_duration:
-      selector:
-        entity:
-          domain: input_number
     humid_threshold:
       selector:
         entity:
           domain: input_number
-    humid_duration:
+    warm_diff:
       selector:
         entity:
           domain: input_number
-    warm_duration:
+    windows_entity:
       selector:
         entity:
-          domain: input_number
-    comfort_duration:
-      selector:
-        entity:
-          domain: input_number
-    window_entity:
+          domain: binary_sensor
     window_open_duration:
       selector:
         entity:
@@ -85,32 +84,6 @@ blueprint:
         entity:
           domain: input_text
 trigger_variables:
-  temperature_entity: !input temperature_entity
-  humidity_entity: !input humidity_entity
-  _cold_threshold: !input cold_threshold
-  cold_threshold: >
-    {{ _cold_threshold | default(22.0) }}
-  _cold_duration: !input cold_duration
-  cold_duration: >
-    {{ _cold_duration | default(60) }}
-  _hot_threshold: !input hot_threshold
-  hot_threshold: >
-    {{ _hot_threshold | default(28.0) }}
-  _hot_duration: !input hot_duration
-  hot_duration: >
-    {{ _hot_duration | default(60) }}
-  _warm_duration: !input warm_duration
-  warm_duration: >
-    {{ _warm_duration | default(60) }}
-  _humid_threshold: !input humid_threshold
-  humid_threshold: >
-    {{ _humid_threshold | default(80.0) }}
-  _humid_duration: !input humid_duration
-  humid_duration: >
-    {{ _humid_duration | default(60) }}
-  _comfort_duration: !input comfort_duration
-  comfort_duration: >
-    {{ _comfort_duration | default(60) }}
   _window_open_duration: !input window_open_duration
   window_open_duration: >
     {{ _window_open_duration | default(60) }}
@@ -123,70 +96,63 @@ trigger:
     event_type: automation_reloaded
     id: started
   - platform: state
-    entity_id: !input window_entity
+    entity_id: !input windows_entity
     to: "on"
     for:
-      seconds: "{{ window_open_duration if is_number(window_open_duration) else states(window_open_duration) | int(60) }} "
+      seconds: "{{ window_open_duration }} "
     id: window_opened
   - platform: state
-    entity_id: !input window_entity
+    entity_id: !input windows_entity
     to: "off"
     id: window_closed
-  - platform: numeric_state
+  - platform: state
     entity_id: !input temperature_entity
-    above: "{{ hot_threshold if is_number(hot_threshold) else states(hot_threshold) | float(28.0) }}"
-    for:
-      seconds: "{{ hot_duration if is_number(hot_duration) else states(hot_duration) | int(60) }}"
-    id: hot
-  - platform: numeric_state
-    entity_id: !input temperature_entity
-    below: "{{ cold_threshold if is_number(cold_threshold) else states(cold_threshold) | float(22.0)  }}"
-    for:
-      seconds: "{{ cold_duration if is_number(cold_duration) else states(cold_duration) | int(60) }}"
-    id: cold
-  - platform: numeric_state
+    not_to:
+      - unknown
+      - unavailable
+    id: temperature
+  - platform: state
     entity_id: !input humidity_entity
-    above: "{{ humid_threshold if is_number(humid_threshold) else states(humid_threshold) | float(80.0) }}"
-    for:
-      seconds: "{{ humid_duration if is_number(humid_duration) else states(humid_duration) | int(60) }}"
-    id: humid
-  - platform: numeric_state
-    entity_id: !input humidity_entity
-    below: "{{ humid_threshold if is_number(humid_threshold) else states(humid_threshold) | float(80.0) }}"
-    for:
-      seconds: "{{ humid_duration if is_number(humid_duration) else states(humid_duration) | int(60) }}"
-    id: not_humid
-  - platform: template
-    value_template: >
-      {% set temperature = states(temperature_entity) | float(23.0) %}
-      {% set humidity = states(humidity_entity) | float(50.0) %}
-      {% set min_temp = cold_threshold if is_number(cold_threshold) else states(cold_threshold) | float(22.0) %}
-      {% set max_temp = hot_threshold if is_number(hot_threshold) else states(hot_threshold) | float(28.0) %}
-      {{ temperature > min_temp and temperature < max_temp }}
-    for:
-      seconds: "{{ warm_duration  if is_number(warm_duration) else states(warm_duration) | int(60)}}"
-    id: warm
-  - platform: template
-    value_template: >
-      {% set temperature = states(temperature_entity) | float(23.0) %}
-      {% set humidity = states(humidity_entity) | float(50.0) %}
-      {% set min_temp = cold_threshold if is_number(cold_threshold) else states(cold_threshold) | float(22.0) %}
-      {% set max_temp = hot_threshold if is_number(hot_threshold) else states(hot_threshold) | float(28.0) %}
-      {% set max_humidity = humid_threshold if is_number(humid_threshold) else states(humid_threshold) | float(80.0) %}
-      {{ temperature > min_temp and temperature < max_temp and humidity < max_humidity }}
-    for:
-      seconds: "{{ comfort_duration if is_number(comfort_duration) else states(comfort_duration) | int(60) }}"
-    id: comfort
-
+    not_to:
+      - unknown
+      - unavailable
+    id: humidity
 condition:
   - alias: "climate control is on"
     condition: state
     entity_id: binary_sensor.climate_control
     state: "on"
 variables:
+  climate_entity: !input climate_entity
   temperature_entity: !input temperature_entity
+  humidity_entity: !input humidity_entity
   out_temperature_entity: !input out_temperature_entity
-  window_entity: !input window_entity
+  windows_entity: !input windows_entity
+
+  __cold_threshold: !input cold_threshold
+  _cold_threshold: >
+    {{ __cold_threshold | default(22.0) }}
+  cold_threshold: >
+    {{ _cold_threshold if is_number(_cold_threshold) else states(_cold_threshold) | float(22.0) }}
+
+  __hot_threshold: !input hot_threshold
+  _hot_threshold: >
+    {{ __hot_threshold | default(28.0) }}
+  hot_threshold: >
+    {{ _hot_threshold if is_number(_hot_threshold) else states(_hot_threshold) | float(22.0) }}
+
+  __humid_threshold: !input humid_threshold
+  _humid_threshold: >
+    {{ __humid_threshold | default(80.0) }}
+  humid_threshold: >
+    {{ _humid_threshold if is_number(_humid_threshold) else states(_humid_threshold) | float(22.0) }}
+
+  __warm_diff: !input warm_diff
+  _warm_diff: >
+    {{ __warm_diff | default(1.0) }}
+  warm_diff: >
+    {{ _warm_diff if is_number(_warm_diff) else states(_warm_diff) | float(1.0) }}
+
   __cool_target_temperature: !input cool_target_temperature
   _cool_target_temperature: >
     {{ __cool_target_temperature | default(16.0) }}
@@ -197,7 +163,7 @@ variables:
   _dry_target_temperature: >
     {{ __dry_target_temperature | default(22.0) }}
   dry_target_temperature: >
-    {{ _dry_target_temperature | if is_number(_dry_target_temperature) else states(_dry_target_temperature) | float(22.0) }}
+    {{ _dry_target_temperature if is_number(_dry_target_temperature) else states(_dry_target_temperature) | float(22.0) }}
 
   __heat_target_temperature: !input heat_target_temperature
   _heat_target_temperature: >
@@ -216,11 +182,9 @@ variables:
     {{ _dry_hvac_mode or "dry" | trim }}
 
   has_in_temp: >
-    {{ states(temperature_entity) not in
-      ['unknown', 'unavailable'] }}
+    {{ states(temperature_entity) not in ['unknown', 'unavailable'] }}
   has_in_humidity: >
-    {{ states(humidity_entity) not in
-      ['unknown', 'unavailable'] }}
+    {{ states(humidity_entity) not in ['unknown', 'unavailable'] }}
   in_temp: >
     {%- if has_in_temp -%}
       {{ states(temperature_entity) | float }}
@@ -238,9 +202,9 @@ variables:
   is_hot: >
     {{ has_in_temp and in_temp > hot_threshold }}
   is_humid: >
-    {{ has_in_humidity and in_humidity > humid_threshold) }}
-  is_warm: "{{ not is_cold and not is_hot }}"
-  is_comfort: "{{ not is_cold and not is_hot and not is_humid }}"
+    {{ has_in_humidity and in_humidity > humid_threshold }}
+  is_warm: "{{ has_in_temp and in_temp > cold_threshold + warm_diff and in_temp < hot_threshold - warm_diff }}"
+  is_comfort: "{{ is_warm and not is_humid }}"
   has_out_temp: >
     {{ states(out_temperature_entity) not in
       ['unknown', 'unavailable'] }}
@@ -250,21 +214,21 @@ variables:
     {%- else -%}
       25.0
     {%- endif -%}
-  doors_state: >
-    {{ states(window_entity) }}
+  windows_state: >
+    {{ states(windows_entity) }}
   ac_state: >
     {{ states(climate_entity) }}
   need_off: >
-    {{ (doors_state == 'on' or is_comfort ) and ac_state != 'off' }}
+    {{ (windows_state == 'on' or is_comfort ) and ac_state != 'off' }}
   can_heat: >
-    {{ has_out_temp and doors_state == 'off' and
+    {{ has_out_temp and windows_state == 'off' and
       out_temp < 18 and ac_state == 'off' }}
   can_cool: >
-    {{ has_out_temp and doors_state == 'off' and
+    {{ has_out_temp and windows_state == 'off' and
       out_temp > 10 and ac_state == 'off' }}
   can_dry: >
-    {{ has_in_humidity and is_humid and
-      doors_state == 'off' and ac_state == 'off' }}
+    {{ has_out_temp and windows_state == 'off' and
+      out_temp > 10 and ac_state == 'off' }}
 action:
   choose:
     - alias: elena_ac_turn_off
@@ -272,8 +236,9 @@ action:
         - condition: trigger
           id:
             - started
-            - door_opened
-            - comfort
+            - window_opened
+            - temperature
+            - humidity
         - "{{ need_off }}"
       sequence:
         - alias: "log event"
@@ -282,19 +247,36 @@ action:
             name: "turning Elena AC OFF"
             message: >
               Turning AC off on: trigger: {{ trigger.id }}
+                climate_entity: {{ climate_entity }},
+                temperature_entity: {{ temperature_entity }},
+                out_temperature_entity: {{ out_temperature_entity }},
+                windows_entity: {{ windows_entity }},
+                cold_threshold: {{ cold_threshold }},
+                hot_threshold: {{ hot_threshold }},
+                humid_threshold: {{ humid_threshold }},
+                cool_target_temperature: {{ cool_target_temperature }},
+                dry_target_temperature: {{ dry_target_temperature }},
+                heat_target_temperature: {{ heat_target_temperature }},
+                cool_hvac_mode: {{ cool_hvac_mode }},
+                heat_hvac_mode: {{ heat_hvac_mode }},
+                dry_hvac_mode: {{ dry_hvac_mode }},
+                has_in_temp: {{ has_in_temp }},
+                has_in_humidity: {{ has_in_humidity }},
+                in_temp: {{ in_temp }},
+                in_humidity: {{ in_humidity }},
+                is_cold: {{ is_cold }},
+                is_hot: {{ is_hot }},
+                is_humid: {{ is_humid }},
+                is_warm: {{ is_warm }},
+                is_comfort: {{ is_comfort }},
+                has_out_temp: {{ has_out_temp }},
+                out_temp: {{ out_temp }},
+                windows_state: {{ windows_state }},
                 ac_state: {{ ac_state }},
                 need_off: {{ need_off }},
                 can_heat: {{ can_heat }},
                 can_cool: {{ can_cool }},
-                can_dry: {{ can_dry }},
-                doors_state: {{ doors_state }},
-                is_comfort: {{ is_comfort }},
-                is_cold: {{ is_cold }},
-                is_hot: {{ is_hot }},
-                is_warm: {{ is_warm }},
-                is_humid: {{ is_humid }},
-                in_temp: {{ in_temp }},
-                out_temp: {{ out_temp }}
+                can_dry: {{ can_dry }}
             entity_id: climate.elena_ac
             domain: climate
         - alias: "turn AC off"
@@ -308,7 +290,7 @@ action:
           id:
             - started
             - doors_closed
-            - cold
+            - temperature
         - "{{ is_cold and can_heat }}"
       sequence:
         - alias: "log event"
@@ -317,19 +299,36 @@ action:
             name: "Turn AC on (heat)"
             message: >
               Turning AC ON (heat) on: trigger: {{ trigger.id }},
+                climate_entity: {{ climate_entity }},
+                temperature_entity: {{ temperature_entity }},
+                out_temperature_entity: {{ out_temperature_entity }},
+                windows_entity: {{ windows_entity }},
+                cold_threshold: {{ cold_threshold }},
+                hot_threshold: {{ hot_threshold }},
+                humid_threshold: {{ humid_threshold }},
+                cool_target_temperature: {{ cool_target_temperature }},
+                dry_target_temperature: {{ dry_target_temperature }},
+                heat_target_temperature: {{ heat_target_temperature }},
+                cool_hvac_mode: {{ cool_hvac_mode }},
+                heat_hvac_mode: {{ heat_hvac_mode }},
+                dry_hvac_mode: {{ dry_hvac_mode }},
+                has_in_temp: {{ has_in_temp }},
+                has_in_humidity: {{ has_in_humidity }},
+                in_temp: {{ in_temp }},
+                in_humidity: {{ in_humidity }},
+                is_cold: {{ is_cold }},
+                is_hot: {{ is_hot }},
+                is_humid: {{ is_humid }},
+                is_warm: {{ is_warm }},
+                is_comfort: {{ is_comfort }},
+                has_out_temp: {{ has_out_temp }},
+                out_temp: {{ out_temp }},
+                windows_state: {{ windows_state }},
                 ac_state: {{ ac_state }},
                 need_off: {{ need_off }},
                 can_heat: {{ can_heat }},
                 can_cool: {{ can_cool }},
-                can_dry: {{ can_dry }},
-                doors_state: {{ doors_state }},
-                is_comfort: {{ is_comfort }},
-                is_cold: {{ is_cold }},
-                is_hot: {{ is_hot }},
-                is_warm: {{ is_warm }},
-                is_humid: {{ is_humid }},
-                in_temp: {{ in_temp }},
-                out_temp: {{ out_temp }}
+                can_dry: {{ can_dry }}
             entity_id: "{{ climate_entity }}"
             domain: climate
         - alias: "Turn AC on (heat)"
@@ -345,7 +344,7 @@ action:
           id:
             - started
             - doors_closed
-            - hot
+            - temperature
         - "{{ is_hot and can_cool }}"
       sequence:
         - alias: "log event"
@@ -354,19 +353,36 @@ action:
             name: "Turn AC on (cool)"
             message: >
               Turning AC ON (cool) on: trigger: {{ trigger.id }},
+                climate_entity: {{ climate_entity }},
+                temperature_entity: {{ temperature_entity }},
+                out_temperature_entity: {{ out_temperature_entity }},
+                windows_entity: {{ windows_entity }},
+                cold_threshold: {{ cold_threshold }},
+                hot_threshold: {{ hot_threshold }},
+                humid_threshold: {{ humid_threshold }},
+                cool_target_temperature: {{ cool_target_temperature }},
+                dry_target_temperature: {{ dry_target_temperature }},
+                heat_target_temperature: {{ heat_target_temperature }},
+                cool_hvac_mode: {{ cool_hvac_mode }},
+                heat_hvac_mode: {{ heat_hvac_mode }},
+                dry_hvac_mode: {{ dry_hvac_mode }},
+                has_in_temp: {{ has_in_temp }},
+                has_in_humidity: {{ has_in_humidity }},
+                in_temp: {{ in_temp }},
+                in_humidity: {{ in_humidity }},
+                is_cold: {{ is_cold }},
+                is_hot: {{ is_hot }},
+                is_humid: {{ is_humid }},
+                is_warm: {{ is_warm }},
+                is_comfort: {{ is_comfort }},
+                has_out_temp: {{ has_out_temp }},
+                out_temp: {{ out_temp }},
+                windows_state: {{ windows_state }},
                 ac_state: {{ ac_state }},
                 need_off: {{ need_off }},
                 can_heat: {{ can_heat }},
                 can_cool: {{ can_cool }},
-                can_dry: {{ can_dry }},
-                doors_state: {{ doors_state }},
-                is_comfort: {{ is_comfort }},
-                is_cold: {{ is_cold }},
-                is_hot: {{ is_hot }},
-                is_warm: {{ is_warm }},
-                is_humid: {{ is_humid }},
-                in_temp: {{ in_temp }},
-                out_temp: {{ out_temp }}
+                can_dry: {{ can_dry }}
             entity_id: climate_entity
             domain: climate
         - alias: "Turn AC on (cool)"
@@ -382,9 +398,9 @@ action:
           id:
             - started
             - doors_closed
-            - warm
-            - humid
-        - "{{ is_humid and can_dry }}"
+            - temperature
+            - humidity
+        - "{{ is_warm and is_humid and can_dry }}"
       sequence:
         - alias: "log event"
           service: logbook.log
@@ -392,19 +408,36 @@ action:
             name: "Turn AC on (dry)"
             message: >
               Turning AC ON (dry) on: trigger: {{ trigger.id }},
+                climate_entity: {{ climate_entity }},
+                temperature_entity: {{ temperature_entity }},
+                out_temperature_entity: {{ out_temperature_entity }},
+                windows_entity: {{ windows_entity }},
+                cold_threshold: {{ cold_threshold }},
+                hot_threshold: {{ hot_threshold }},
+                humid_threshold: {{ humid_threshold }},
+                cool_target_temperature: {{ cool_target_temperature }},
+                dry_target_temperature: {{ dry_target_temperature }},
+                heat_target_temperature: {{ heat_target_temperature }},
+                cool_hvac_mode: {{ cool_hvac_mode }},
+                heat_hvac_mode: {{ heat_hvac_mode }},
+                dry_hvac_mode: {{ dry_hvac_mode }},
+                has_in_temp: {{ has_in_temp }},
+                has_in_humidity: {{ has_in_humidity }},
+                in_temp: {{ in_temp }},
+                in_humidity: {{ in_humidity }},
+                is_cold: {{ is_cold }},
+                is_hot: {{ is_hot }},
+                is_humid: {{ is_humid }},
+                is_warm: {{ is_warm }},
+                is_comfort: {{ is_comfort }},
+                has_out_temp: {{ has_out_temp }},
+                out_temp: {{ out_temp }},
+                windows_state: {{ windows_state }},
                 ac_state: {{ ac_state }},
                 need_off: {{ need_off }},
                 can_heat: {{ can_heat }},
                 can_cool: {{ can_cool }},
-                can_dry: {{ can_dry }},
-                doors_state: {{ doors_state }},
-                is_comfort: {{ is_comfort }},
-                is_cold: {{ is_cold }},
-                is_hot: {{ is_hot }},
-                is_warm: {{ is_warm }},
-                is_humid: {{ is_humid }},
-                in_temp: {{ in_temp }},
-                out_temp: {{ out_temp }}
+                can_dry: {{ can_dry }}
             entity_id: climate.elena_ac
             domain: climate
         - alias: "Turn AC on (dry)"
@@ -413,3 +446,42 @@ action:
             entity_id: "{{ climate_entity }}"
             temperature: "{{ dry_target_temperature }}"
             hvac_mode: "{{ dry_hvac_mode }}"
+  default:
+    - alias: "log event"
+      service: logbook.log
+      data_template:
+        name: "Turn AC on (dry)"
+        message: >
+          Doing nothing. Trigger id: {{ trigger.id }},
+          climate_entity: {{ climate_entity }},
+          temperature_entity: {{ temperature_entity }},
+          out_temperature_entity: {{ out_temperature_entity }},
+          windows_entity: {{ windows_entity }},
+          cold_threshold: {{ cold_threshold }},
+          hot_threshold: {{ hot_threshold }},
+          humid_threshold: {{ humid_threshold }},
+          cool_target_temperature: {{ cool_target_temperature }},
+          dry_target_temperature: {{ dry_target_temperature }},
+          heat_target_temperature: {{ heat_target_temperature }},
+          cool_hvac_mode: {{ cool_hvac_mode }},
+          heat_hvac_mode: {{ heat_hvac_mode }},
+          dry_hvac_mode: {{ dry_hvac_mode }},
+          has_in_temp: {{ has_in_temp }},
+          has_in_humidity: {{ has_in_humidity }},
+          in_temp: {{ in_temp }},
+          in_humidity: {{ in_humidity }},
+          is_cold: {{ is_cold }},
+          is_hot: {{ is_hot }},
+          is_humid: {{ is_humid }},
+          is_warm: {{ is_warm }},
+          is_comfort: {{ is_comfort }},
+          has_out_temp: {{ has_out_temp }},
+          out_temp: {{ out_temp }},
+          windows_state: {{ windows_state }},
+          ac_state: {{ ac_state }},
+          need_off: {{ need_off }},
+          can_heat: {{ can_heat }},
+          can_cool: {{ can_cool }},
+          can_dry: {{ can_dry }}
+        entity_id: climate.elena_ac
+        domain: climate
