@@ -108,17 +108,13 @@ template:
             is_state("binary_sensor.night", "off") }}
       - unique_id: elena_doors_windows
         state: >
-          # namespace for result
           {% set ns = namespace(state=false) -%}
-          # check that all windows on balcony are closed
           {% for window in states.binary_sensor | selectattr('object_id', 'contains', 'balcony_window') | selectattr('object_id', 'contains', 'contact') | map(attribute='state') | list %}
           {% set ns.state = ns.state or (window | bool) %}
           {% endfor %}
-          # it is OK if windows opened and balcony door closed or vice versa
           {% set ns.state = ns.state and (states('binary_sensor.balcony_door_elena_contact') | bool) %}
-          # it is not OK if room door opened
           {% set ns.state = ns.state or (states('binary_sensor.elena_door_contact') | bool) %}
-          {{ ns.state }}
+          {{ iif(ns.state, 'on', 'off') }}
 
   - sensor:
       - unique_id: elena_room_temperature
