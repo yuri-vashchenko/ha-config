@@ -103,7 +103,6 @@ template:
             is_state("binary_sensor.elena_room_is_humidity_normal", "on") }}
       - unique_id: elena_ac_control
         state: >
-          # don't allow auto AC control on night or when main control is off
           {{ is_state("binary_sensor.main_control", "on") and
             is_state("binary_sensor.night", "off") }}
       - unique_id: elena_doors_windows
