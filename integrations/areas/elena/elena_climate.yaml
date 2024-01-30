@@ -109,10 +109,10 @@ template:
         state: >
           {% set ns = namespace(state=false) -%}
           {% for window in states.binary_sensor | selectattr('object_id', 'contains', 'balcony_window') | selectattr('object_id', 'contains', 'contact') | map(attribute='state') | list %}
-          {% set ns.state = ns.state or (window | bool) %}
+          {% set ns.state = ns.state or (window | bool(true)) %}
           {% endfor %}
-          {% set ns.state = ns.state and (states('binary_sensor.balcony_door_elena_contact') | bool) %}
-          {% set ns.state = ns.state or (states('binary_sensor.elena_door_contact') | bool) %}
+          {% set ns.state = ns.state and (states('binary_sensor.balcony_door_elena_contact') | bool(true)) %}
+          {% set ns.state = ns.state or (states('binary_sensor.elena_door_contact') | bool(true)) %}
           {{ ns.state }}
 
   - sensor:
