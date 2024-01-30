@@ -233,12 +233,6 @@ action:
   choose:
     - alias: elena_ac_turn_off
       conditions:
-        - condition: trigger
-          id:
-            - started
-            - window_opened
-            - temperature
-            - humidity
         - "{{ need_off }}"
       sequence:
         - alias: "log event"
@@ -285,12 +279,7 @@ action:
             entity_id: "{{ climate_entity }}"
     - alias: elena_ac_heat
       conditions:
-        # turn on heating on homeassistant start or automation reloaded if cold
-        - condition: trigger
-          id:
-            - started
-            - doors_closed
-            - temperature
+        # turn on heating if cold
         - "{{ is_cold and can_heat }}"
       sequence:
         - alias: "log event"
@@ -339,12 +328,7 @@ action:
             hvac_mode: "{{ heat_hvac_mode }}"
     - alias: elena_ac_cool
       conditions:
-        # turn on cooling on homeassistant start or automation reloaded if cold
-        - condition: trigger
-          id:
-            - started
-            - doors_closed
-            - temperature
+        # turn on cooling if hot
         - "{{ is_hot and can_cool }}"
       sequence:
         - alias: "log event"
@@ -393,13 +377,7 @@ action:
             hvac_mode: "{{ cool_hvac_mode }}"
     - alias: elena_ac_dry
       conditions:
-        # turn on drying on homeassistant start or automation reloaded if cold
-        - condition: trigger
-          id:
-            - started
-            - doors_closed
-            - temperature
-            - humidity
+        # turn on drying if warm and humid
         - "{{ is_warm and is_humid and can_dry }}"
       sequence:
         - alias: "log event"
@@ -450,7 +428,7 @@ action:
     - alias: "log event"
       service: logbook.log
       data_template:
-        name: "Turn AC on (dry)"
+        name: "Just log message"
         message: >
           Doing nothing. Trigger id: {{ trigger.id }},
           climate_entity: {{ climate_entity }},
@@ -485,3 +463,4 @@ action:
           can_dry: {{ can_dry }}
         entity_id: climate.elena_ac
         domain: climate
+mode: restart
