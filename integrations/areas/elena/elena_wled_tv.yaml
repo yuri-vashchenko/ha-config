@@ -148,7 +148,7 @@ script:
         service: script.wled_control
         data:
           wled_target: light.elena_tv_wled
-          wled_color: [255, 255, 0] # yellow
+          wled_color: [248, 204, 48] # yellow
           wled_effect: Solid
           wled_brightness_pct: 80
 
@@ -159,7 +159,7 @@ script:
         service: script.wled_control
         data:
           wled_target: light.elena_tv_wled
-          wled_color: [255, 255, 0] # yellow
+          wled_color: [248, 204, 48] # yellow
           wled_effect: Solid
           wled_brightness_pct: 50
 
