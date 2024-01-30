@@ -10,6 +10,12 @@ sensor:
     timeout: 10
     away_timeout: 120  # number of seconds after which the enitity will get status not_home
   - platform: mqtt_room
+    device_id: "iBeacon:2cf60582-2829-4ba9-befe-8462bc00e0ca-100-1"
+    name: 'room Yuri Watch BLE'
+    state_topic: 'espresense/devices/iBeacon:2cf60582-2829-4ba9-befe-8462bc00e0ca-100-1'
+    timeout: 10
+    away_timeout: 120  # number of seconds after which the enitity will get status not_home
+  - platform: mqtt_room
     device_id: "name:bubble-mini"
     name: 'room Yuri Bubble mini'
     state_topic: 'espresense/devices/name:bubble-mini'
