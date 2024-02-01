@@ -62,32 +62,32 @@ template:
         icon: mdi:cash-100
         unit_of_measurement: "RUB"
         state: |
-          {% set d_day = states("sensor.daily_energy_day") | float %}
-          {% set d_night = states("sensor.daily_energy_night") | float %}
+          {% set d_day = states("sensor.daily_energy_day") | float(0) %}
+          {% set d_night = states("sensor.daily_energy_night") | float(0) %}
           {{ ((d_day + d_night) * (states("number.energy_single_tariff") | float(3.75))) | round(2) }}
       - name: monthly_energy_total_cost_single_tariff
         device_class: monetary
         icon: mdi:cash-100
         unit_of_measurement: "RUB"
         state: |
-          {% set m_day = states("sensor.monthly_energy_day") | float %}
-          {% set m_night = states("sensor.monthly_energy_night") | float %}
+          {% set m_day = states("sensor.monthly_energy_day") | float(0) %}
+          {% set m_night = states("sensor.monthly_energy_night") | float(0) %}
           {{ ((m_day + m_night) * states("number.energy_single_tariff") | float(3.75)) | round(2) }}
       - name: daily_energy_total_cost_double_tariff
         device_class: monetary
         icon: mdi:cash-100
         unit_of_measurement: "RUB"
         state: |
-          {% set d_day = states("sensor.daily_energy_day") | float %}
-          {% set d_night = states("sensor.daily_energy_night") | float %}
+          {% set d_day = states("sensor.daily_energy_day") | float(0) %}
+          {% set d_night = states("sensor.daily_energy_night") | float(0) %}
           {{ ((d_day * states("number.energy_day_tariff") | float(7.0)) + (d_night * states("number.energy_night_tariff") | float(2.0))) | round(2) }}
       - name: monthly_energy_total_cost_double_tariff
         device_class: monetary
         icon: mdi:cash-100
         unit_of_measurement: "RUB"
         state: |
-          {% set m_day = states("sensor.monthly_energy_day") | float %}
-          {% set m_night = states("sensor.monthly_energy_night") | float %}
+          {% set m_day = states("sensor.monthly_energy_day") | float(0) %}
+          {% set m_night = states("sensor.monthly_energy_night") | float(0) %}
           {{ (m_day * (states("number.energy_day_tariff") | float(7.0)) + (m_night * states("number.energy_night_tariff") | float(2.0))) | round(2) }}
 
 utility_meter:

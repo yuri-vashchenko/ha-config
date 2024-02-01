@@ -1,7 +1,7 @@
 script:
   run_script_if_state:
     alias: "Проверить состояние сущности и запустить соответствующий скрипт"
-    mode: parallel
+    mode: queued
     fields:
       entity_id:
         name: Entity to check state
@@ -65,7 +65,7 @@ script:
 
   increment_number:
     alias: "Увеличивает число на шаг если новое значение не больше максимального"
-    mode: parallel
+    mode: queued
     fields:
       entity_id:
         name: Number to increment
@@ -88,7 +88,7 @@ script:
           value: "{{ new_value }}"
   decrement_number:
     alias: "Уменьшает число на шаг если новое значение не меньше минимального"
-    mode: parallel
+    mode: queued
     fields:
       entity_id:
         name: Number to increment
