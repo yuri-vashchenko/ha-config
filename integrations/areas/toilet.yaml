@@ -95,17 +95,17 @@ automation:
     action:
       service: script.toilet_water_leak_triggered
 
-  # - id: toilet_light_on_presence
-  #   alias: Toilet_light_on_presence
-  #   initial_state: true
-  #   use_blueprint:
-  #     path: kevinxw/state_based_entity_control.yaml
-  #     input:
-  #       trigger_entity: binary_sensor.toilet_presence
-  #       target_entity: light.toilet_light
-  #       blocker_entity: binary_sensor.light_control
-  #       blocker_entity_state: "off"
-  #       trigger_timeout: 1
+  - id: toilet_light_on_presence
+    alias: Toilet_light_on_presence
+    initial_state: true
+    use_blueprint:
+      path: kevinxw/state_based_entity_control.yaml
+      input:
+        trigger_entity: binary_sensor.toilet_presence
+        target_entity: light.toilet_light
+        blocker_entity: binary_sensor.light_control
+        blocker_entity_state: "off"
+        trigger_timeout: 1
 
   - id: dim_light_in_toilet
     alias: Dim light in toilet on long stay

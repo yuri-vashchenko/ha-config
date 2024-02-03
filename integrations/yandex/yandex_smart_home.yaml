@@ -50,7 +50,7 @@ yandex_smart_home:
     light.kitchen_switch_light:
       name: Люстра
       room: Кухня
-    light.mama_switch_light:
+    light.mama_main:
       name: Лампа
       room: Мама
 

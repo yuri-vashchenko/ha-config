@@ -25,8 +25,8 @@ recorder:
       - sensor.date
 
 automation:
-  - id: Сжатие базы
-    alias: database_purge_everyday
+  - id: system_database_purge_everyday
+    alias: Система - Ежедневная чистка базы данных
     initial_state: true
     trigger:
       - platform: time

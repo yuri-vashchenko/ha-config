@@ -10,33 +10,33 @@ template:
           {{(states('sensor.blood_sugar') | int / 18) | round(1, 'floor')}}
 
 automation:
-  - id: wakeup_at_night
-    alias: Разбудить ночью при гипогликемии
+  - id: nightscout_wakeup_at_night
+    alias: Мониторинг глюкозы - разбудить ночью при гипогликемии
     trigger:
       - platform: numeric_state
         entity_id: sensor.blood_sugar_mmol
         below: 4
     condition:
-      - alias: "sound controller"
+      - alias: Проверка контроля звука
         condition: state
         entity_id: binary_sensor.sound_control
         state: "on"
-      - alias: "it is night"
+      - alias: Проверка времени суток
         condition: state
         entity_id: binary_sensor.night
         state: "on"
-      - alias: "only when Yuri is at home"
+      - alias: Проверка присутствия
         condition: state
         entity_id: person.yuri_vashchenko
         state: "home"
     action:
-      - alias: call_elena_yandex_station_say
+      - alias: Озвучка предупреждения
         service: script.turn_on
         target:
           entity_id: script.elena_yandex_station_say
         data_template:
           variables:
-            message: "Внимание! Гипогликемия! Срочно съешь что-нибудь"
+            message: Внимание! Гипогликемия! Срочно съешь что-нибудь
             volume: 40
       - wait_for_trigger:
           - platform: numeric_state
@@ -44,25 +44,29 @@ automation:
             above: 4
     mode: single
     max_exceeded: silent
-  - id: hi_bg
-    alias: Очень высокий сахар - возможно что-то с сенсором?
+  - id: nightscout_high_blood_glucose
+    alias: Мониторинг глюкозы - очень высокий сахар
     trigger:
       - platform: numeric_state
         entity_id: sensor.blood_sugar_mmol
         above: 19.99
     condition:
-      - alias: "sound controller"
+      - alias: Проверка контроля звука
         condition: state
         entity_id: binary_sensor.sound_control
         state: "on"
+      - alias: Проверка присутствия
+        condition: state
+        entity_id: person.yuri_vashchenko
+        state: "home"
     action:
-      - alias: call_elena_yandex_station_say
+      - alias: Озвучка предупреждения
         service: script.turn_on
         target:
           entity_id: script.elena_yandex_station_say
         data_template:
           variables:
-            message: "Внимание! Очень высокий сахар! Возможно сенсор не работает"
+            message: Внимание! Очень высокий сахар! Возможно сенсор не работает
             volume: 80
       - wait_for_trigger:
           - platform: numeric_state

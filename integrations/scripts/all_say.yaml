@@ -77,6 +77,8 @@ script:
             unit_of_measurement: percent
             mode: slider
         example: 80
+    variables:
+      input_volume: "{{ volume | default(80.0) }}"
     sequence:
       - service: script.turn_on
         target:
@@ -84,7 +86,7 @@ script:
         data_template:
           variables:
             message: "{{ message }}"
-            volume: "{{ volume }}"
+            volume: "{{ input_volume | int(80) }}"
       - alias: call_elena_nest_say
         service: script.turn_on
         target:

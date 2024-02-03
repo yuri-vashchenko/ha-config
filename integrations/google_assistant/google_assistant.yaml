@@ -87,7 +87,7 @@ google_assistant:
       room: Kitchen
 
     # Mama
-    light.mama_switch_light:
+    light.mama_main:
       name: Light
       expose: true
       room: Mama

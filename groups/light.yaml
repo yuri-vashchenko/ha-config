@@ -3,7 +3,7 @@ light:
   entities:
     - light.corridor_hub_xiaomi_light
     - light.kitchen_switch_light
-    - light.mama_switch_light
+    - light.mama_main
     - group.elena_light_yeelight
     - light.elena_tv_wled
     - light.rgb_led_light

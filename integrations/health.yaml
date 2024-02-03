@@ -16,8 +16,8 @@ sensor:
           {{ states(sensor_name) }}
 
 automation:
-  - id: Старт системы
-    alias: system_start
+  - id: system_start
+    alias: Система - запуск
     initial_state: true
     trigger:
       - platform: homeassistant
@@ -35,8 +35,8 @@ automation:
           payload_template: 'running'
           retain: true
 
-  - id: Выключение системы
-    alias: system_shutdown
+  - id: system_shutdown
+    alias: Система - ыыключение
     initial_state: true
     trigger:
       - platform: homeassistant
@@ -49,7 +49,7 @@ automation:
           retain: true
 
   - id: system_keepalive
-    alias: system_keepalive
+    alias: Система - периодическое состояние
     initial_state: true
     trigger:
       - platform: homeassistant
@@ -65,8 +65,8 @@ automation:
           payload: "{{ now() }}"
           retain: true
 
-  - id: Неожиданная перезагрузка
-    alias: system_unexpected_reboot
+  - id: system_unexpected_reboot
+    alias: Система - неожиданная перезагрузка
     initial_state: true
     trigger:
       - platform: state

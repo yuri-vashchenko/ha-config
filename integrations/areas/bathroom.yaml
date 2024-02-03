@@ -4,26 +4,27 @@ homeassistant:
   customize:
     # Розетка сервера mainsrv
     switch.bathroom_plug_washer_machine_power_outage_memory:
-      friendly_name: Розетка стиральной машины память отключения
+      friendly_name: "Ванная: Розетка стиральной машины память отключения"
 
   customize_glob:
     "*158d00047f8591*":
-      friendly_name: Ванна утечка воды
-    "*bathroom_water_leak*":
-      friendly_name: Ванна утечка воды
+      friendly_name: Ванная - датчик протечки воды
     "*bathroom_plug_washer_machine*":
-      friendly_name: Розетка стиральной машины
+      friendly_name: Ванная - розетка стиральной машины
 
 mqtt:
   binary_sensor:
-    - name: bathroom_water_leak
+    - object_id: mqtt_bathroom_water_leak
+      unique_id: mqtt_bathroom_water_leak
+      name: Ванная - mqtt датчик протечки воды
       state_topic: "home/bathroom/water_leak"
       payload_on: "on"
       payload_off: "off"
+      device_class: moisture
 
 script:
   bathroom_water_leak_triggered:
-    alias: "bathroom water leak detector triggered"
+    alias: Ванная - сработал датчик протечки воды
     description: "bathroom water leak detector triggered"
     use_blueprint:
       path: "yuri-vashchenko/event_action.yaml"
@@ -34,7 +35,7 @@ script:
         ringtone_id: "2"
         ringtone_volume: "100"
         announcement_message: "Тревога! Обнаружена протечка воды на кухне"
-        wait_entity: binary_sensor.bathroom_water_leak
+        wait_entity: binary_sensor.mqtt_bathroom_water_leak
         wait_entity_state: "off"
         delay_between_repeats: 60
         max_repeats: 15
@@ -42,8 +43,8 @@ script:
 
 automation:
   - id: bathroom_water_leak_detector_publish_mqtt
-    alias: bathroom_water_leak_detector_publish_mqtt
-    description: "publish MQTT message when bathroom water leak detector state changes"
+    alias: Ванная - Публикация MQTT сообщения при обнаружении протечки воды
+    description: "Ванная - Публикация MQTT сообщения при обнаружении протечки воды"
     use_blueprint:
       path: yuri-vashchenko/publish_mqtt_on_entity_state_change.yaml
       input:
@@ -52,11 +53,11 @@ automation:
         retain: true
         enabling_entity: binary_sensor.main_control
   - id: bathroom_water_leak_detector_alarm
-    alias: bathroom_water_leak_detector_alarm
-    description: "Trigger alarm on MQTT message when bathroom water leak triggers"
+    alias: Ванная - запуск скрипта при срабатывании датчика протечки воды
+    description: "Ванная - запуск скрипта при срабатывании датчика протечки воды"
     trigger:
       - platform: state
-        entity_id: binary_sensor.bathroom_water_leak
+        entity_id: binary_sensor.mqtt_bathroom_water_leak
         to: "on"
     condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
     action:

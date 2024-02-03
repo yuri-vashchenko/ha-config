@@ -31,15 +31,16 @@ blueprint:
           mode: slider
 mode: queued
 variables:
-  input_volume: !input 'volume'
+  _input_volume: !input volume
+  input_volume: "{{ _input_volume | default(80.0) }}"
   vol: >
-    {{ (input_volume | float) / 100.0 }}
+    {{ (input_volume | float(80.0)) / 100.0 }}
 sequence:
   - service: media_player.play_media
-    alias: произнести сообщение через яндекс
+    alias: Произнести сообщение через яндекс
     entity_id: !input 'speaker_target'
     data:
       media_content_id: !input 'announcement_message'
       media_content_type: text
       extra:
-        volume_level: "{{ vol | float }}"
+        volume_level: "{{ vol }}"

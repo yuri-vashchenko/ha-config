@@ -107,7 +107,8 @@ utility_meter:
       - night
 
 automation:
-  - alias: Set utility meter tariff
+  - id: utility_meter_set_tariff
+    alias: Энергопотребление - смена тарифа
     trigger:
       - platform: homeassistant
         event: start
@@ -117,7 +118,7 @@ automation:
         at: "23:00:00"
     action:
       choose:
-        - alias: energy_tariff_set_night
+        - alias: Установка ночного тарифа
           conditions: "{{ now().hour < 7 or now().hour >= 23 }}"
           sequence:
             - service: select.select_option
@@ -130,7 +131,7 @@ automation:
                 entity_id: select.monthly_energy
               data:
                 option: night
-        - alias: energy_tariff_set_day
+        - alias: Установка дневного тарифа
           conditions: "{{ now().hour >= 7 and now().hour < 23 }}"
           sequence:
             - service: select.select_option

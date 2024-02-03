@@ -29,7 +29,7 @@ blueprint:
 mode: queued
 sequence:
   - service: tts.google_say
-    alias: произнести сообщение через гугл
+    alias: Произнести сообщение через гугл
     data:
       entity_id: !input "speaker_target"
       message: !input "announcement_message"

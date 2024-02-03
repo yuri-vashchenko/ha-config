@@ -5,8 +5,8 @@ homeassistant:
     # Выключатель
     switch.mama_switch_light:
       friendly_name: Мама выключатель
-    light.mama_switch_light:
-      friendly_name: Мама свет
+    light.mama_main:
+      friendly_name: Мама - основной свет
 
     # Розетка телевизора 49
     switch.mama_plug_tv_power_outage_memory:
@@ -22,11 +22,10 @@ homeassistant:
       friendly_name: Мама влажность
     sensor.mama_thermometer_pressure:
       friendly_name: Мама давление
+
   customize_glob:
     # Кнопка
     "*158d0003ce386f*":
-      friendly_name: Мама кнопка
-    "*button_mama*":
       friendly_name: Мама кнопка
 
     # Выключатель
@@ -54,65 +53,73 @@ homeassistant:
 
 light:
   - platform: switch
-    name: mama_switch_light
+    name: mama_main
     entity_id: switch.mama_switch_light
 
-# switches
-mqtt:
-  switch:
-    - name: mama_switch_mqtt
-      retain: true
-      command_topic: "home/mama/light"
-      state_topic: "home/mama/light"
-      payload_on: "on"
-      payload_off: "off"
+script:
+  mama_button_single_click:
+    alias: Мама - однократное нажатие на кнопку
+    sequence:
+      - alias: Контроль управления светом
+        condition: state
+        entity_id: binary_sensor.light_control
+        state: "on"
+      - alias: Переключить свет
+        service: switch.toggle
+        target:
+          entity_id: switch.mama_switch_light
+  mama_button_double_click:
+    alias: Мама - двухкратное нажатие на кнопку
+    sequence:
+      - alias: Переключить телевизор
+        if:
+          - alias: Состояние телевизора
+            condition: state
+            entity_id: media_player.mama_tv
+            state: "off"
+        then:
+          - alias: Включить телевизор
+            service: media_player.turn_on
+            target:
+              entity_id: media_player.mama_tv
+        else:
+          - alias: Выключить телевизор
+            service: media_player.turn_off
+            target:
+              entity_id: media_player.mama_tv
+  mama_button_hold_click:
+    alias: Мама - длительное нажатие на кнопку
+    sequence:
+      - alias: Контроль управления звуком
+        condition: state
+        entity_id: binary_sensor.sound_control
+        state: "on"
+      - alias: Позвать во всех колонках
+        service: script.all_say
+        data:
+          message: Подойдите в мамину комнату
 
 automation:
-  - id: mama_sync_switches
-    alias: "Mama synchronize mqtt and phisical switches"
+  - id: mama_button_click
+    alias: Мама - нажатие на кнопку
     trigger:
-      - platform: homeassistant
-        event: start
-        id: started
-      - platform: event
-        event_type: automation_reloaded
-        id: started
       - platform: state
-        entity_id:
-          - switch.mama_switch_light
-          - switch.mama_switch_mqtt
-        id: switch_state_change
+        entity_id: sensor.mama_button_bed_action
+        to:
+          - single
+          - double
+          - hold
+    variables:
+      button_state: "{{ trigger.to_state.state }}"
+      script_name: >
+        script.mama_button_{{ button_state }}_click
     condition:
-      - alias: "main control"
+      - alias: Контроль управления светом
         condition: state
         entity_id: binary_sensor.main_control
         state: "on"
     action:
-      - alias: "Sync mqtt switch with phisical switch"
-        choose:
-          - conditions:
-              - alias: "on start"
-                condition: trigger
-                id: started
-            sequence:
-              - alias: "set mqtt switch to physical switch state"
-                service: mqtt.publish
-                data_template:
-                  topic: "home/mama/light"
-                  payload_template: "{{ states('switch.mama_switch_light') }}"
-          - conditions:
-              - alias: "on phisical switch state change"
-                condition: trigger
-                id: switch_state_change
-            sequence:
-              - alias: "check for valid states"
-                condition: template
-                value_template: "{{ trigger.to_state.state in ['on', 'off'] }}"
-              - alias: "set mqtt switch to new physical switch state"
-                service: "{{ 'switch.turn_' + trigger.to_state.state }}"
-                target:
-                  entity_id:
-                    - switch.mama_switch_light
-                    - switch.mama_switch_mqtt
-    mode: single
-    max_exceeded: silent
+      - alias: Запуск скрипта по нажатию
+        service: script.turn_on
+        target:
+          entity_id: "{{ script_name }}"
