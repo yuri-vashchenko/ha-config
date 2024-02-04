@@ -8,7 +8,9 @@ homeassistant:
     "*158d000544a1a2*":
       friendly_name: Входная дверь
 
-    "*entrance_door*":
+    "sensor.*entrance_door*":
+      friendly_name: Входная дверь
+    "binary_sensor.*entrance_door*":
       friendly_name: Входная дверь
 
     # Выключатели, кнопки
@@ -17,18 +19,10 @@ homeassistant:
     "*158d00041d99a1*":
       friendly_name: Кнопка звонка
 
-command_line:
-  - binary_sensor:
-      name: entrance_cam_status
-      command: response=$(curl -LIk -m 3 rtsp://192.168.0.91 -o /dev/null -w "%{http_code}\n" -s); test "$response" -eq 200 && echo "OFF" || echo "ON"
-      scan_interval: 60
-      value_template: "{{ value }}"
-      device_class: "problem"
-
 script:
   entrance_door_opened:
-    alias: "Entrance doorbell opened for too long"
-    description: "Entrance doorbell opened for too long"
+    alias: Прихожая - входная дверь открыта слишком долго
+    description: Входная дверь открыта слишком долго
     use_blueprint:
       path: "yuri-vashchenko/event_action.yaml"
       input:
@@ -37,16 +31,16 @@ script:
         event_id: "opened"
         ringtone_id: "29"
         ringtone_volume: "70"
-        announcement_message: "Внимание! Входная дверь открыта"
+        announcement_message: Внимание! Входная дверь открыта
         wait_entity: binary_sensor.entrance_door_contact
         wait_entity_state: "off"
         delay_between_repeats: 60
         max_repeats: 10
-        announcement_message_end: "Входная дверь закрыта"
+        announcement_message_end: Входная дверь закрыта
 
 automation:
-  - id: Entrance_light_on_motion
-    alias: Entrance_light_on_motion
+  - id: entrance_light_on_motion
+    alias: Прихожая - включить свет по движению
     initial_state: true
     use_blueprint:
       path: kevinxw/state_based_entity_control.yaml
@@ -58,7 +52,7 @@ automation:
         trigger_timeout: 60
 
   - id: entrance_door_opened_for_too_long
-    alias: entrance_door_opened_for_too_long
+    alias: Прихожая - входная дверь открыта слишком долго
     initial_state: true
     trigger:
       - platform: state
@@ -72,35 +66,4 @@ automation:
         state: "on"
     action:
       service: script.entrance_door_opened
-    mode: restart
-
-  - id: entrance_cam_reset_if_unavailable
-    alias: Power cycle entrance cam if it does not return 200 status
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.entrance_cam_status
-        to: "on"
-        for:
-          seconds: 300
-      - platform: homeassistant
-        event: start
-        id: restart
-      - platform: event
-        # Check immediately after the automation is changed.
-        event_type: automation_reloaded
-        id: restart
-    condition:
-      - condition: state
-        entity_id: binary_sensor.main_control
-        state: "on"
-      - condition: state
-        entity_id: binary_sensor.entrance_cam_status
-        state: "on"
-    action:
-      - service: switch.turn_off
-        entity_id: switch.entrance_plug_camera
-      - delay: 10
-      - service: switch.turn_on
-        entity_id: switch.entrance_plug_camera
     mode: single
-    max_exceeded: silent

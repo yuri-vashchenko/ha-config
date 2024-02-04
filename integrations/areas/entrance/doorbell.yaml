@@ -1,0 +1,195 @@
+# Entrance doorbell
+
+mqtt:
+  sensor:
+    - name: entrance_doorbell_state
+      state_topic: "home/entrance/button/doorbell/state"
+  select:
+    - name: entrance_doorbell
+      command_topic: "home/entrance/button/doorbell/state"
+      state_topic: "home/entrance/button/doorbell/state"
+      options:
+        - "off"
+        - "single"
+        - "double"
+        - "triple"
+        - "quadruple"
+        - "hold"
+        - "release"
+        - "many"
+
+script:
+  entrance_doorbell_action_single:
+    alias: Прихожая - дверной звонок одиночное нажатие
+    description: Прихожая - дверной звонок одиночное нажатие
+    use_blueprint:
+      path: "yuri-vashchenko/event_action.yaml"
+      input:
+        event_severity: "notification"
+        event_type: "doorbell"
+        event_id: "single"
+        ringtone_id: "10"
+        announcement_message: "Кто-то пришёл. Откройте дверь!"
+        wait_entity: binary_sensor.entrance_door_contact
+        wait_entity_state: "on"
+        delay_between_repeats: 10
+        max_repeats: 10
+
+  entrance_doorbell_action_double:
+    alias: Прихожая - дверной звонок двойное нажатие
+    description: Прихожая - дверной звонок двойное нажатие
+    use_blueprint:
+      path: "yuri-vashchenko/event_action.yaml"
+      input:
+        event_severity: "notification"
+        event_type: "doorbell"
+        event_id: "double"
+        ringtone_id: "11"
+        announcement_message: "Кто-то свой пришёл. Откройте дверь!"
+        wait_entity: binary_sensor.entrance_door_contact
+        wait_entity_state: "on"
+        delay_between_repeats: 10
+        max_repeats: 10
+
+  entrance_doorbell_action_triple:
+    alias: Прихожая - дверной звонок тройное нажатие
+    description: Прихожая - дверной звонок тройное нажатие
+    use_blueprint:
+      path: "yuri-vashchenko/event_action.yaml"
+      input:
+        event_severity: "notification"
+        event_type: "doorbell"
+        event_id: "triple"
+        ringtone_id: "12"
+        announcement_message: "Юра пришёл. Откройте дверь!"
+        wait_entity: binary_sensor.entrance_door_contact
+        wait_entity_state: "on"
+        delay_between_repeats: 10
+        max_repeats: 10
+
+  entrance_doorbell_action_quadruple:
+    alias: Прихожая - дверной звонок четверное нажатие
+    description: Прихожая - дверной звонок четверное нажатие
+    use_blueprint:
+      path: "yuri-vashchenko/event_action.yaml"
+      input:
+        event_severity: "notification"
+        event_type: "doorbell"
+        event_id: "quadruple"
+        ringtone_id: "20"
+        ringtone_volume: "70"
+        announcement_message: "Лена пришла. Откройте дверь!"
+        wait_entity: binary_sensor.entrance_door_contact
+        wait_entity_state: "on"
+        delay_between_repeats: 10
+        max_repeats: 10
+
+  entrance_doorbell_action_hold:
+    alias: Прихожая - дверной звонок длительное нажатие
+    description: Прихожая - дверной звонок длительное нажатие
+    use_blueprint:
+      path: "yuri-vashchenko/event_action.yaml"
+      input:
+        event_severity: "notification"
+        event_type: "doorbell"
+        event_id: "hold"
+        ringtone_id: "8"
+        announcement_message: "Кто-то пришёл. Откройте дверь!"
+        wait_entity: binary_sensor.entrance_door_contact
+        wait_entity_state: "on"
+        delay_between_repeats: 10
+        max_repeats: 10
+
+  entrance_display_camera_stream:
+    alias: Прихожая - показать картинку с камеры по нажатию кнопки звонка
+    sequence:
+      - alias: "Wake tablet"
+        service: script.turn_on
+        target:
+          entity_id: script.wake_corridor_wall_panel
+      - alias: "Display popup"
+        service: browser_mod.popup
+        data:
+          dismissable: true
+          autoclose: false
+          title: Глазок
+          size: wide
+          timeout: 60000
+          content:
+            type: picture-glance
+            camera_view: live
+            entities: []
+            camera_image: camera.entrance_cam
+            style: "ha-card { height: 50px; }"
+      - alias: "Wait for door open"
+        wait_for_trigger:
+          platform: state
+          entity_id: binary_sensor.entrance_door_contact
+          to: "on"
+      - alias: "Close popup"
+        service: browser_mod.close_popup
+        data:
+          deviceID: corridor_tablet
+    mode: single
+    max_exceeded: silent
+
+automation:
+  - id: entrance_doorbell_control
+    alias: Прихожая - обновление MQTT состояния кнопки
+    trigger:
+      - platform: state
+        entity_id: sensor.entrance_button_doorbell_action
+        to:
+          - "single"
+          - "double"
+          - "triple"
+          - "quadruple"
+          - "hold"
+          - "release"
+          - "many"
+    condition:
+      - alias: Проверка управления
+        condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+    action:
+      - alias: Переключение состояния
+        service: select.select_option
+        data:
+          option: "{{ trigger.to_state.state or 'off' }}"
+        target:
+          entity_id: select.entrance_doorbell
+    mode: queued
+    max: 100
+
+  - id: entrance_doorbell_mqtt_control
+    alias: Прихожая - кнопка дверного звонка MQTT
+    trigger:
+      - platform: state
+        entity_id: select.entrance_doorbell
+        to:
+          - single
+          - double
+          - triple
+          - quadruple
+          - hold
+    variables:
+      script_name: >
+        script.entrance_doorbell_action_{{ trigger.to_state.state }}
+    condition:
+      condition: state
+      entity_id: binary_sensor.main_control
+      state: "on"
+    action:
+      - alias: Запуск соответствующего скрипта
+        service: script.turn_on
+        target:
+          entity_id:
+            - "{{ script_name }}"
+            - script.entrance_display_camera_stream
+      - alias: Отправка фотографии в телеграм
+        service: input_button.press
+        target:
+          entity_id: input_button.entrance_cam_send_photo_to_telegram
+    mode: single
+    max_exceeded: silent

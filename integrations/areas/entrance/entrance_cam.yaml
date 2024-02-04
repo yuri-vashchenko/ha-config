@@ -1,0 +1,85 @@
+# Прихожая
+
+# homeassistant:
+#   customize_glob:
+
+input_button:
+  entrance_cam_send_photo_to_telegram:
+    name: Прихожая - сделать фото с камеры глазка и отправить в телеграм
+    icon: mdi:camera
+
+command_line:
+  - binary_sensor:
+      name: entrance_cam_status
+      command: response=$(curl -LIk -m 3 rtsp://192.168.0.91 -o /dev/null -w "%{http_code}\n" -s); test "$response" -eq 200 && echo "OFF" || echo "ON"
+      scan_interval: 60
+      value_template: "{{ value }}"
+      device_class: "problem"
+
+script:
+  entrance_cam_send_photo_to_telegram:
+    alias: Прихожая - отправить фото с камеры на телеграм
+    description: Прихожая - отправить фото с камеры на телеграм
+    sequence:
+      - alias: Сделать фото
+        service: camera.snapshot
+        data:
+          entity_id: camera.entrance_cam
+          filename: "/config/www/cam_captures/entrance_cam.jpg"
+      - service: telegram_bot.send_photo
+        data:
+          file: /config/www/cam_captures/entrance_cam.jpg
+          target: !secret telegram_id_yuri
+    mode: queued
+    max: 10
+    max_exceeded: silent
+
+automation:
+  - id: entranc_cam_send_photo_to_telegram_on_button_press
+    alias: Прихожая - отправка фото с камеры в телеграм по нажатию кнопки
+    description: Прихожая - отправка фото с камеры глазка в телеграм по нажатию кнопки
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: input_button.entrance_cam_send_photo_to_telegram
+    condition:
+      - condition: state
+        entity_id: binary_sensor.main_control
+        state: 'on'
+    action:
+      - alias: Запустить скрипт для снятия фото и его отправки в телеграм
+        service: script.entrance_cam_send_photo_to_telegram
+    mode: queued
+    max: 10
+    max_exceeded: silent
+
+  - id: entrance_cam_reset_if_unavailable
+    alias: Прихожая - перезагрузить розетку камеры если она недоступна
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.entrance_cam_status
+        to: "on"
+        for:
+          seconds: 300
+      - platform: homeassistant
+        event: start
+        id: restart
+      - platform: event
+        # Check immediately after the automation is changed.
+        event_type: automation_reloaded
+        id: restart
+    condition:
+      - condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+      - condition: state
+        entity_id: binary_sensor.entrance_cam_status
+        state: "on"
+    action:
+      - service: switch.turn_off
+        entity_id: switch.entrance_plug_camera
+      - delay: 10
+      - service: switch.turn_on
+        entity_id: switch.entrance_plug_camera
+    mode: single
+    max_exceeded: silent
