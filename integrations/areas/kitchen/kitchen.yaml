@@ -52,10 +52,6 @@ template:
   - sensor:
       - name: kitchen_switch_load_power
         state: "{{ state_attr('switch.kitchen_power_strip', 'load_power') }}"
-      - name: kitchen_ble_presence
-        state: >
-          {{is_state('sensor.yuri_location', "kitchen") or
-            is_state('sensor.elena_location', "kitchen")}}
       - name: kitchen_total_power
         state: >
           {% set ns = namespace(states=[]) -%}
@@ -85,6 +81,34 @@ template:
         unit_of_measurement: "kWh"
         device_class: energy
 
+  - binary_sensor:
+      - name: kitchen_ble_presence
+        state: >
+          {{ is_state('sensor.yuri_location', "kitchen") or
+            is_state('sensor.elena_location', "kitchen") }}
+        device_class: presence
+      - name: kitchen_tv_power
+        state: >
+          {%- if states('sensor.kitchen_plug_tv_power') not in ['unknown', 'unavailable']-%}
+            {{ states('sensor.kitchen_plug_tv_power') | float > 10.0 }}
+          {%- else -%}
+            false
+          {%- endif -%}
+        device_class: power
+
+      # Prevents turning on the light
+      - name: kitchen_hold_light_off
+        state: >
+          {{ states('binary_sensor.light_control') == 'off' or
+            states('switch.kitchen_hold_light_off') == 'on' }}
+
+      # Prevents turning off the light
+      - name: kitchen_hold_light_on
+        state: >
+          {{ is_state('binary_sensor.light_control', 'off') or
+            is_state('switch.kitchen_hold_light_on', 'on') or
+            is_state('binary_sensor.kitchen_ble_presence', 'on') }}
+
 sensor:
   - platform: integration
     source: sensor.kitchen_switch_load_power
@@ -106,34 +130,6 @@ mqtt:
       retain: true
       command_topic: "home/kitchen/light/hold_off"
       state_topic: "home/kitchen/light/hold_off"
-
-binary_sensor:
-  - platform: template
-    sensors:
-      # 'on' when kitchen tv consumes power
-      kitchen_tv_power:
-        friendly_name: "Kitchen TV power"
-        value_template: >
-          {%- if states('sensor.kitchen_plug_tv_power') not in ['unknown', 'unavailable']-%}
-            {{ states('sensor.kitchen_plug_tv_power') | float > 10.0 }}
-          {%- else -%}
-            false
-          {%- endif -%}
-
-      # Prevents turning on the light
-      kitchen_hold_light_off:
-        friendly_name: Не включать свет
-        value_template: >
-          {{ states('binary_sensor.light_control') == 'off' or
-            states('switch.kitchen_hold_light_off') == 'on' }}
-
-      # Prevents turning off the light
-      kitchen_hold_light_on:
-        friendly_name: Не выключать свет
-        value_template: >
-          {{ states('binary_sensor.light_control') == 'off' or
-            states('switch.kitchen_hold_light_on') == 'on' or
-            states('kitchen_ble_presence') }}
 
 # lights
 light:
