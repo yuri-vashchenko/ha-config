@@ -36,7 +36,7 @@ automation:
           retain: true
 
   - id: system_shutdown
-    alias: Система - ыыключение
+    alias: Система - выключение
     initial_state: true
     trigger:
       - platform: homeassistant
