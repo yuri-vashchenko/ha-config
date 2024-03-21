@@ -150,3 +150,24 @@ automation:
                 target:
                   entity_id: light.toilet_light
     mode: restart
+  - id: toilet_light_press_button_on_dnd_mode_change
+    alias: Туалет - при включении режима DND нажать на кнопку для отправки фото в телеграм
+    trigger:
+      - platform: state
+        entity_id: switch.toilet_light_do_not_disturb
+        to: 'on'
+    condition:
+      condition: state
+      entity_id: binary_sensor.main_control
+      state: "on"
+    action:
+      - alias: Отправка фотографии в телеграм
+        service: input_button.press
+        target:
+          entity_id: input_button.entrance_cam_send_photo_to_telegram
+      - alias: Выключение DND переключателя
+        service: switch.turn_off
+        target:
+          entity_id: switch.toilet_light_do_not_disturb
+    mode: single
+    max_exceeded: silent
