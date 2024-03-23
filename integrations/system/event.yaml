@@ -154,7 +154,7 @@ automation:
           entity_id: number.alarms
         data:
           value: >
-            {{ states('sensor.smoke_detected') | int + states('sensor.smoke_detected') | int }}
+            {{ states('sensor.smoke_detected') | int(0) + states('sensor.water_leak_detected') | int(0) }}
     mode: restart
 
   - id: trigger event
