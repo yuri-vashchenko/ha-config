@@ -10,6 +10,8 @@ lovelace:
       type: module
     - url: /hacsfiles/compass-card/compass-card.js
       type: module
+    - url: /hacsfiles/custom-brand-icons/custom-brand-icons.js
+      type: module
     - url: /hacsfiles/entity-attributes-card/entity-attributes-card.js
       type: module
     - url: /hacsfiles/flipdown-timer-card/flipdown-timer-card.js
@@ -44,7 +46,6 @@ lovelace:
       type: module
     - url: /hacsfiles/weather-chart-card/weather-chart-card.js
       type: module
-
   dashboards:
     lovelace-graph:
       mode: yaml
