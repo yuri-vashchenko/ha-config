@@ -161,19 +161,62 @@ script:
           wled_target: light.elena_tv_wled
           wled_color: [248, 204, 48] # yellow
           wled_effect: Solid
-          wled_brightness_pct: 50
+          wled_brightness_pct: 10
+
+  elena_tv_wled_powercycle:
+    alias: Перезагрузить WLED
+    sequence:
+      - alias: Powercycle WLED
+        service: switch.turn_off
+        data:
+          entity_id: switch.elena_plug_tv_wled
+      - delay: 10
+      - alias: Turn on WLED
+        service: switch.turn_on
+        data:
+          entity_id: switch.elena_plug_tv_wled
 
 automation:
+  # - id: reset_wled_if_unavailable
+  #   alias: Перезагрузить WLED если недоступен
+  #   description: "Перезагрузить WLED если недоступен"
+  #   use_blueprint:
+  #     path: yuri-vashchenko/reset_wled_if_unavailable.yaml
+  #     input:
+  #       wled_entity: light.elena_tv_wled
+  #       wled_reset: wled_reset
+  #       wled_ip: "{{ states('sensor.elena_tv_wled_ip_saved') }}"
+  #       enabling_entity: binary_sensor.main_control
+
   - id: reset_wled_if_unavailable
     alias: Перезагрузить WLED если недоступен
     description: "Перезагрузить WLED если недоступен"
-    use_blueprint:
-      path: yuri-vashchenko/reset_wled_if_unavailable.yaml
-      input:
-        wled_entity: light.elena_tv_wled
-        wled_reset: wled_reset
-        wled_ip: "{{ states('sensor.elena_tv_wled_ip_saved') }}"
-        enabling_entity: binary_sensor.main_control
+    trigger:
+      - platform: homeassistant
+        event: start
+      - platform: event
+        event_type: automation_reloaded
+      - platform: state
+        entity_id: light.elena_tv_wled
+        to:
+          - unavailable
+      - platform: time_pattern
+        minutes: "/15"
+    condition:
+      - alias: "Control mode"
+        condition: state
+        entity_id: binary_sensor.light_control
+        state: "on"
+      - alias: "WLED unavailable"
+        condition: state
+        entity_id: light.elena_tv_wled
+        state:
+          - unavailable
+    action:
+      - alias: Powercycle WLED
+        service: script.elena_tv_wled_powercycle
+    mode: single
+    max_exceeded: silent
 
   - id: Elena TV WLED main controller
     alias: Переключить режим WLED если необходимо

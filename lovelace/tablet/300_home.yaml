@@ -58,18 +58,21 @@ cards:
                   - sensor.street_thermometer_pressure
               - type: custom:compass-card
                 indicator_sensors:
-                  - sensor: sensor.gismeteo_hourly_wind_bearing
+                  - sensor: weather.gismeteo_hourly
+                    attribute: wind_bearing
                     indicator:
                       type: arrow_inward
                 value_sensors:
-                  - sensor: sensor.gismeteo_hourly_wind_speed
+                  - sensor: weather.gismeteo_hourly
+                    attribute: wind_speed
                 header:
                   title:
                     value: Ветер
                     icon:
-                    color: green  # default color (for state is less than the lowest dynamic_style.bands.from_value)
+                    color: green # default color (for state is less than the lowest dynamic_style.bands.from_value)
                     dynamic_style:
-                      sensor: sensor.gismeteo_hourly_wind_speed
+                      sensor: weather.gismeteo_hourly
+                      attribute: wind_speed
                       bands:
                         - from_value: 5
                           color: yellow
@@ -81,9 +84,10 @@ cards:
                           color: purple
                 compass:
                   circle:
-                    color: green  # default color (for state is less than the lowest dynamic_style.bands.from_value)
+                    color: green # default color (for state is less than the lowest dynamic_style.bands.from_value)
                     dynamic_style:
-                      sensor: sensor.gismeteo_hourly_wind_speed
+                      sensor: weather.gismeteo_hourly
+                      attribute: wind_speed
                       bands:
                         - from_value: 5
                           color: yellow
