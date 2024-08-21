@@ -57,5 +57,5 @@ sequence:
   - service: mqtt.publish
     data_template:
       topic: "{{ topic }}"
-      payload_template: "{{ payload }}"
+      payload: "{{ payload }}"
       retain: true

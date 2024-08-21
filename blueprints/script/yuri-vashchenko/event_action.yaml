@@ -165,25 +165,25 @@ sequence:
     data:
       topic: >
         events/date_time/{{ event_severity }}/{{ event_type }}/{{ event_id }}
-      payload_template: "{{ now() }}"
+      payload: "{{ now() }}"
       retain: true
   - alias: запись момента события
     service: mqtt.publish
     data:
       topic: >
         events/date_time/{{ event_severity }}/{{ event_type }}
-      payload_template: "{{ now() }}"
+      payload: "{{ now() }}"
       retain: true
   - alias: публикация сообщения для проигрывания рингтона
     service: mqtt.publish
     data:
       topic: "home/system/notification/xiaomi/play_ringtone"
-      payload_template: "{{play_ringtone_payload}}"
+      payload: "{{play_ringtone_payload}}"
   - alias: публикация голосового оповещения
     service: mqtt.publish
     data:
       topic: "home/system/announcement/all"
-      payload_template: "{{announcement_payload}}"
+      payload: "{{announcement_payload}}"
   - alias: увеличение счётчика событий
     service: script.increment_number
     data:
@@ -198,12 +198,12 @@ sequence:
           service: mqtt.publish
           data:
             topic: "home/system/notification/xiaomi/play_ringtone"
-            payload_template: "{{play_ringtone_payload}}"
+            payload: "{{play_ringtone_payload}}"
         - alias: публикация команды для повторного голосового сообщения
           service: mqtt.publish
           data:
             topic: "home/system/announcement/all"
-            payload_template: "{{ announcement_payload_repeat }}"
+            payload: "{{ announcement_payload_repeat }}"
         - alias: ожидание
           wait_template: >
             {{ is_state(wait_entity, wait_entity_state) }}
@@ -219,4 +219,4 @@ sequence:
     service: mqtt.publish
     data:
       topic: "home/system/announcement/all"
-      payload_template: "{{ announcement_payload_end }}"
+      payload: "{{ announcement_payload_end }}"

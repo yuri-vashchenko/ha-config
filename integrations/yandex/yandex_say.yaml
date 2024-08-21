@@ -25,7 +25,7 @@ automation:
         data_template:
           topic: "home/system/announcement/yandex"
           retain: false
-          payload_template: >
+          payload: >
             {{ "{ \"message\": \"" + message + "\", \"target\": \"" + target + "\", \"volume\": \"" + volume | string + "\" }" }}
 
   - id: Announce message via yandex_say when received mqtt message

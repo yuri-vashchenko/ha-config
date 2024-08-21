@@ -26,13 +26,13 @@ automation:
       - service: mqtt.publish
         data_template:
           topic: "instance/{{ states('sensor.local_ip') }}/sensor/system/state"
-          payload_template: 'starting'
+          payload: 'starting'
           retain: true
       - delay: 00:00:10
       - service: mqtt.publish
         data_template:
           topic: "instance/{{ states('sensor.local_ip') }}/sensor/system/state"
-          payload_template: 'running'
+          payload: 'running'
           retain: true
 
   - id: system_shutdown
@@ -45,7 +45,7 @@ automation:
       - service: mqtt.publish
         data_template:
           topic: "instance/{{ states('sensor.local_ip') }}/sensor/system/state"
-          payload_template: 'shutdown'
+          payload: 'shutdown'
           retain: true
 
   - id: system_keepalive

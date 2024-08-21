@@ -50,7 +50,7 @@ script:
         data:
           topic: >
             events/date_time/notification/washing_machine/started
-          payload_template: "{{ now() }}"
+          payload: "{{ now() }}"
           retain: true
 
   bathroom_washer_machine_washing_complete_notification:

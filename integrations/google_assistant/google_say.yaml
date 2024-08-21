@@ -25,7 +25,7 @@ automation:
         data_template:
           retain: false
           topic: "home/system/announcement/google"
-          payload_template: >
+          payload: >
             { "message": "{{message}}", "target": "{{target}}", "language": "{{language}}" }
 
   - id: Announce message via google_say when received mqtt message
