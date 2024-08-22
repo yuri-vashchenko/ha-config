@@ -22,11 +22,11 @@ script:
     description: Прихожая - отправить фото с камеры на телеграм
     sequence:
       - alias: Сделать фото
-        service: camera.snapshot
+        action: camera.snapshot
         data:
           entity_id: camera.entrance_cam
           filename: "/config/www/cam_captures/entrance_cam.jpg"
-      - service: telegram_bot.send_photo
+      - action: telegram_bot.send_photo
         data:
           file: /config/www/cam_captures/entrance_cam.jpg
           target: !secret telegram_id_yuri
@@ -45,10 +45,10 @@ automation:
     condition:
       - condition: state
         entity_id: binary_sensor.main_control
-        state: 'on'
+        state: "on"
     action:
       - alias: Запустить скрипт для снятия фото и его отправки в телеграм
-        service: script.entrance_cam_send_photo_to_telegram
+        action: script.entrance_cam_send_photo_to_telegram
     mode: queued
     max: 10
     max_exceeded: silent
@@ -76,10 +76,10 @@ automation:
         entity_id: binary_sensor.entrance_cam_status
         state: "on"
     action:
-      - service: switch.turn_off
+      - action: switch.turn_off
         entity_id: switch.entrance_plug_camera
       - delay: 10
-      - service: switch.turn_on
+      - action: switch.turn_on
         entity_id: switch.entrance_plug_camera
     mode: single
     max_exceeded: silent

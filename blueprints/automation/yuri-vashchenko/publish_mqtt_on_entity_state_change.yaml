@@ -26,7 +26,8 @@ blueprint:
         boolean:
     enabling_entity:
       name: (Optional) Enabling entity
-      description: If this entity's state is set to enable entity state (see below)
+      description:
+        If this entity's state is set to enable entity state (see below)
         automation will trigger. This may be used to make automation triggering based
         on other entity state
       default:
@@ -35,14 +36,14 @@ blueprint:
     enabling_entity_state:
       name: (Optional) Enabling entity state
       description: If enabling entity is in this state the automation will trigger
-      default: 'on'
+      default: "on"
       selector:
         entity:
           domain: input_text
 variables:
-  enabling_entity: !input 'enabling_entity'
-  enabling_entity_state: !input 'enabling_entity_state'
-  trigger_entity: !input 'trigger_entity'
+  enabling_entity: !input "enabling_entity"
+  enabling_entity_state: !input "enabling_entity_state"
+  trigger_entity: !input "trigger_entity"
 trigger:
   - platform: homeassistant
     event: "start"
@@ -62,19 +63,19 @@ action:
         condition: trigger
         id: "start"
       sequence:
-        service: mqtt.publish
+        action: mqtt.publish
         data:
-          topic: !input 'topic'
+          topic: !input "topic"
           payload: "{{ states(trigger_entity) }}"
-          retain: !input 'retain'
+          retain: !input "retain"
     - alias: "state"
       conditions:
         condition: trigger
         id: "state"
       sequence:
-        service: mqtt.publish
+        action: mqtt.publish
         data:
-          topic: !input 'topic'
+          topic: !input "topic"
           payload: "{{ trigger.to_state.state }}"
-          retain: !input 'retain'
+          retain: !input "retain"
 mode: queued

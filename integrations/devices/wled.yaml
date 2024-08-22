@@ -75,7 +75,7 @@ script:
         if:
           - "{{ wled_palette != Undefined }}"
         then:
-          - service: select.select_option
+          - action: select.select_option
             target:
               entity_id: select.{{ wled_name }}_color_palette
             data:
@@ -84,7 +84,7 @@ script:
         if:
           - "{{ wled_speed != Undefined }}"
         then:
-          - service: number.set_value
+          - action: number.set_value
             target:
               entity_id: number.{{ wled_name }}_speed
             data:
@@ -93,7 +93,7 @@ script:
         if:
           - "{{ wled_intensity != Undefined }}"
         then:
-          - service: number.set_value
+          - action: number.set_value
             target:
               entity_id: number.{{ wled_name }}_intensity
             data:
@@ -103,7 +103,7 @@ script:
           - "{{ wled_effect != Undefined }}"
         then:
           - alias: "Set WLED effect"
-            service: "{{ service_name }}"
+            action: "{{ service_name }}"
             data:
               rgb_color: "{{ wled_color }}"
               effect: "{{ wled_effect }}"
@@ -116,14 +116,14 @@ script:
               - "{{ wled_state == 'on' }}"
             then:
               - alias: "Turn WLED on with specified color"
-                service: light.turn_on
+                action: light.turn_on
                 data:
                   rgb_color: "{{ wled_color }}"
                 target:
                   entity_id: "{{ wled_target }}"
             else:
               - alias: "Turn WLED off"
-                service: light.turn_off
+                action: light.turn_off
                 target:
                   entity_id: "{{ wled_target }}"
 
@@ -139,10 +139,10 @@ script:
             domain: light
     sequence:
       - alias: "Выключить ленту"
-        service: script.wled_control
+        action: script.wled_control
         data:
           wled_target: "{{ wled_target }}"
-          wled_state: 'off'
+          wled_state: "off"
 
   wled_set_mode_notification:
     mode: parallel
@@ -156,7 +156,7 @@ script:
             domain: light
     sequence:
       - alias: "Включить режим нотификации"
-        service: script.wled_control
+        action: script.wled_control
         data:
           wled_target: "{{ wled_target }}"
           wled_palette: "* Color 1"
@@ -177,7 +177,7 @@ script:
             domain: light
     sequence:
       - alias: "Включить режим предупреждения"
-        service: script.wled_control
+        action: script.wled_control
         data:
           wled_target: "{{ wled_target }}"
           wled_palette: "* Color 1"
@@ -198,7 +198,7 @@ script:
             domain: light
     sequence:
       - alias: "Включить режим тревоги"
-        service: script.wled_control
+        action: script.wled_control
         data:
           wled_target: "{{ wled_target }}"
           wled_palette: "* Color 1"

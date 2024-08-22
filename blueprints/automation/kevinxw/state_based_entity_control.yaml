@@ -17,7 +17,7 @@ blueprint:
         If this value is left empty, it will default to "on".
         This value supports regular expression,
         i.e. you can list multiple values as "state_1|state_2|state_3".
-      default: 'on'
+      default: "on"
       selector:
         entity:
           domain: input_text
@@ -51,7 +51,7 @@ blueprint:
         manually turned on.
         This value supports regular expression,
         i.e. you can list multiple values as "state_1|state_2|state_3".
-      default: 'on'
+      default: "on"
       selector:
         entity:
           domain: input_text
@@ -60,7 +60,7 @@ blueprint:
       description: >-
         Action that will change target entity's state to desired state.
         If this value is left empty, it will default to "homeassistant.turn_on".
-      default: 'homeassistant.turn_on'
+      default: "homeassistant.turn_on"
       selector:
         entity:
           domain: input_text
@@ -71,7 +71,7 @@ blueprint:
         It doesn't necessary have to set the entity's state to 'off',
         as long as it's not the desired state it will be fine.
         If this value is left empty, it will default to "homeassistant.turn_off".
-      default: 'homeassistant.turn_off'
+      default: "homeassistant.turn_off"
       selector:
         entity:
           domain: input_text
@@ -166,7 +166,7 @@ blueprint:
         You can also put the time as "HH:MM:SS". i.e. "01:02:03" means
         one hour two mintues three seconds.
         If left empty, by default this will be 30 seconds.
-      default: '30'
+      default: "30"
       selector:
         entity:
           domain: input_text
@@ -216,10 +216,10 @@ variables:
   target_entity_off: "{{ _target_entity_off | default(target_entity, true) | trim }}"
   _target_entity_state: !input target_entity_state
   target_entity_state: >-
-      {% set st = _target_entity_state or '' | trim %}
-      {% if st != 'none' and not target_entity | regex_match('^(scene|script)\..+', ignorecase=true) %}
-        {{ st }}
-      {% endif %}
+    {% set st = _target_entity_state or '' | trim %}
+    {% if st != 'none' and not target_entity | regex_match('^(scene|script)\..+', ignorecase=true) %}
+      {{ st }}
+    {% endif %}
   _target_entity_action_on: !input target_entity_action_on
   target_entity_action_on: "{{ _target_entity_action_on | default('homeassistant.turn_on', true) | trim }}"
   _target_entity_action_off: !input target_entity_action_off
@@ -241,86 +241,86 @@ variables:
   timeout_blocker_entity_state: "{{ (_timeout_blocker_entity_state or '') | trim }}"
   _alt_trigger_timeouts: !input alt_trigger_timeouts
   _alt_trigger_timeout: >-
-      {% set _alt_trigger_timeouts = _alt_trigger_timeouts | replace(' ', '') %}
-      {% set current_time = now().strftime("%H:%M:%S") %}
-      {% for alt in (_alt_trigger_timeouts or '').split(';') if alt %}
-        {% set val = alt.split(',') %}
-        {% if val | length == 2 and val[0] %}
-          {% set t = val[0].split('-') %}
-          {% if t | length == 2 %}
-            {% if t[0] == t[1] or
-                  (t[0] < t[1] and t[0] <= current_time and current_time <= t[1]) or
-                  (t[0] > t[1] and (current_time >= t[0] or current_time <= t[1]))
-            %}
-              {{ val[1] | default(0, true) }}
-            {% endif %}
-          {% endif %}
-        {% endif %}
-      {% endfor %}
-  trigger_timeout: >-
-      {% set _alt_trigger_timeout = _alt_trigger_timeout | replace(' ', '') %}
-      {% set _trigger_timeout = _trigger_timeout | replace(' ', '') %}
-      {% if _alt_trigger_timeout or _alt_trigger_timeout == 0 %}
-        {{ _alt_trigger_timeout }}
-      {% elif _trigger_timeout or _trigger_timeout == 0 %}
-        {{ _trigger_timeout }}
-      {% else %}
-        {{ 30 }}
-      {% endif %}
-  _execution_time_ranges: !input execution_time_ranges
-  execution_time_ranges: "{{ (_execution_time_ranges or '') | replace(' ', '') }}"
-  execution_time_range_matched: >-
-      {% set current_time = now().strftime("%H:%M:%S") %}
-      {% for val in (execution_time_ranges or '').split(';') if val -%}
-        {% set t = val.split('-') %}
-        {% if t | length == 2 -%}
+    {% set _alt_trigger_timeouts = _alt_trigger_timeouts | replace(' ', '') %}
+    {% set current_time = now().strftime("%H:%M:%S") %}
+    {% for alt in (_alt_trigger_timeouts or '').split(';') if alt %}
+      {% set val = alt.split(',') %}
+      {% if val | length == 2 and val[0] %}
+        {% set t = val[0].split('-') %}
+        {% if t | length == 2 %}
           {% if t[0] == t[1] or
                 (t[0] < t[1] and t[0] <= current_time and current_time <= t[1]) or
                 (t[0] > t[1] and (current_time >= t[0] or current_time <= t[1]))
-          -%}
-            {{ val }}
-          {%- endif %}
+          %}
+            {{ val[1] | default(0, true) }}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  trigger_timeout: >-
+    {% set _alt_trigger_timeout = _alt_trigger_timeout | replace(' ', '') %}
+    {% set _trigger_timeout = _trigger_timeout | replace(' ', '') %}
+    {% if _alt_trigger_timeout or _alt_trigger_timeout == 0 %}
+      {{ _alt_trigger_timeout }}
+    {% elif _trigger_timeout or _trigger_timeout == 0 %}
+      {{ _trigger_timeout }}
+    {% else %}
+      {{ 30 }}
+    {% endif %}
+  _execution_time_ranges: !input execution_time_ranges
+  execution_time_ranges: "{{ (_execution_time_ranges or '') | replace(' ', '') }}"
+  execution_time_range_matched: >-
+    {% set current_time = now().strftime("%H:%M:%S") %}
+    {% for val in (execution_time_ranges or '').split(';') if val -%}
+      {% set t = val.split('-') %}
+      {% if t | length == 2 -%}
+        {% if t[0] == t[1] or
+              (t[0] < t[1] and t[0] <= current_time and current_time <= t[1]) or
+              (t[0] > t[1] and (current_time >= t[0] or current_time <= t[1]))
+        -%}
+          {{ val }}
         {%- endif %}
-      {%- endfor %}
+      {%- endif %}
+    {%- endfor %}
   # At least one trigger entity should be available.
   trigger_entities_available: >-
+    {% for e in trigger_entity.split(',') if e -%}
+      {% if states(e) != 'unknown' and not is_state(e, 'unavailable') -%}
+        {{ e }}:{{ states(e) }};
+      {%- endif %}
+    {%- endfor %}
+  trigger_entities_matched: >-
+    {% if trigger_entity_state %}
       {% for e in trigger_entity.split(',') if e -%}
-        {% if states(e) != 'unknown' and not is_state(e, 'unavailable') -%}
+        {% if (states(e) or '') | regex_match('^('+ trigger_entity_state +')$', ignorecase=true) -%}
           {{ e }}:{{ states(e) }};
         {%- endif %}
       {%- endfor %}
-  trigger_entities_matched: >-
-      {% if trigger_entity_state %}
-        {% for e in trigger_entity.split(',') if e -%}
-          {% if (states(e) or '') | regex_match('^('+ trigger_entity_state +')$', ignorecase=true) -%}
-            {{ e }}:{{ states(e) }};
-          {%- endif %}
-        {%- endfor %}
-      {% endif %}
+    {% endif %}
   trigger_entities_off_matched: >-
-      {% if trigger_entity_state_off %}
-        {% for e in trigger_entity.split(',') if e -%}
-          {% if (states(e) or '') | regex_match('^('+ trigger_entity_state_off +')$', ignorecase=true) -%}
-            {{ e }}:{{ states(e) }};
-          {%- endif %}
-        {%- endfor %}
-      {% endif %}
+    {% if trigger_entity_state_off %}
+      {% for e in trigger_entity.split(',') if e -%}
+        {% if (states(e) or '') | regex_match('^('+ trigger_entity_state_off +')$', ignorecase=true) -%}
+          {{ e }}:{{ states(e) }};
+        {%- endif %}
+      {%- endfor %}
+    {% endif %}
   target_entities_matched: >-
-      {% if target_entity_state %}
-        {% for e in target_entity.split(',') if e -%}
-          {% if (states(e) or '') | regex_match('^('+ target_entity_state +')$', ignorecase=true) -%}
-            {{ e }}:{{ states(e) }};
-          {%- endif %}
-        {%- endfor %}
-      {% endif %}
+    {% if target_entity_state %}
+      {% for e in target_entity.split(',') if e -%}
+        {% if (states(e) or '') | regex_match('^('+ target_entity_state +')$', ignorecase=true) -%}
+          {{ e }}:{{ states(e) }};
+        {%- endif %}
+      {%- endfor %}
+    {% endif %}
   triggered_entity: >-
-      {% if trigger and trigger.platform == 'state' %}
-        {% for e in trigger_entity.split(',') if e -%}
-          {% if e == trigger.entity_id -%}
-            {{ e }}
-          {%- endif %}
-        {%- endfor %}
-      {% endif %}
+    {% if trigger and trigger.platform == 'state' %}
+      {% for e in trigger_entity.split(',') if e -%}
+        {% if e == trigger.entity_id -%}
+          {{ e }}
+        {%- endif %}
+      {%- endfor %}
+    {% endif %}
   sun_elevation_below: !input sun_elevation_below
 
 trigger:
@@ -353,7 +353,7 @@ action:
             # When execution_time_ranges is defined, but right now it's outside of execution time range.
             value_template: "{{ execution_time_ranges != '' and execution_time_range_matched == '' }}"
         sequence:
-          - service: system_log.write
+          - action: system_log.write
             data:
               message: "Skip executing service on {{ state_attr(target_entity, 'friendly_name') }} since it's outside of execution time range."
               level: info
@@ -373,12 +373,12 @@ action:
             # When it's not blocked by blocker_entity.
             value_template: "{{ not blocker_entity or not states(blocker_entity) | regex_match('^('+ blocker_entity_state +')$', ignorecase=true) }}"
         sequence:
-          - service: logbook.log
+          - action: logbook.log
             # Add a logbook entry to indicate what triggered this action.
             data_template:
               name: "{{ state_attr(target_entity, 'friendly_name') or target_entity }}"
               message: "is executing service {{ target_entity_action_on }}"
-          - service: "{{ target_entity_action_on }}"
+          - action: "{{ target_entity_action_on }}"
             data_template:
               # This automation will be restarted immediately since the target_entity's state is now changed.
               entity_id: "{{ target_entity }}"
@@ -396,28 +396,28 @@ action:
           # We don't need to do a "wait for trigger" action.
           # As we listen to any state change of the motion_sensor/target_entity,
           # if the motion_sensor is changed to 'on' during this delay, this automation will be restarted.
-          - service: logbook.log
+          - action: logbook.log
             # Add a logbook entry to indicate what triggered this action.
             data_template:
               name: "{{ state_attr(target_entity_off, 'friendly_name') or target_entity_off }}"
               message: >-
-                  will execute service {{ target_entity_action_off }} after {{ trigger_timeout }}
-                  {% set num_timeout = trigger_timeout | int(-1) %}
-                  {% if num_timeout > 1 %}
-                    seconds.
-                  {% elif num_timeout >= 0 %}
-                    second.
-                  {% else %}
-                    .
-                  {% endif %}
+                will execute service {{ target_entity_action_off }} after {{ trigger_timeout }}
+                {% set num_timeout = trigger_timeout | int(-1) %}
+                {% if num_timeout > 1 %}
+                  seconds.
+                {% elif num_timeout >= 0 %}
+                  second.
+                {% else %}
+                  .
+                {% endif %}
               entity_id: "{{ target_entity_off }}"
           - delay: "{{ trigger_timeout }}"
-          - service: logbook.log
+          - action: logbook.log
             # Add a logbook entry to indicate what triggered this action.
             data_template:
               name: "{{ state_attr(target_entity_off, 'friendly_name') or target_entity_off }}"
               message: "is executing service {{ target_entity_action_off }}"
               entity_id: "{{ target_entity_off }}"
-          - service: "{{ target_entity_action_off }}"
+          - action: "{{ target_entity_action_off }}"
             data_template:
               entity_id: "{{ target_entity_off }}"

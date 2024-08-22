@@ -54,7 +54,7 @@ variables:
     {{ discovery_prefix + '/' + component + '/' + object_id + '/config'}}
 mode: queued
 sequence:
-  - service: mqtt.publish
+  - action: mqtt.publish
     data_template:
       topic: "{{ topic }}"
       payload: "{{ payload }}"

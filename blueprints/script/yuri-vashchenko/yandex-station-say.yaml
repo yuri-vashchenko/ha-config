@@ -1,6 +1,7 @@
 blueprint:
   name: yandex station say
-  description: A script that uses media_player.play_media to send a message to a yandex
+  description:
+    A script that uses media_player.play_media to send a message to a yandex
     station
   source_url: https://gist.github.com/yuri-vashchenko/5f6970b7d019f5faa7a3e2ef620ac806
   domain: script
@@ -36,11 +37,11 @@ variables:
   vol: >
     {{ (input_volume | float(80.0)) / 100.0 }}
 sequence:
-  - service: media_player.play_media
+  - action: media_player.play_media
     alias: Произнести сообщение через яндекс
-    entity_id: !input 'speaker_target'
+    entity_id: !input "speaker_target"
     data:
-      media_content_id: !input 'announcement_message'
+      media_content_id: !input "announcement_message"
       media_content_type: text
       extra:
         volume_level: "{{ vol }}"

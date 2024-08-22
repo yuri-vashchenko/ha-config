@@ -79,7 +79,7 @@ mqtt:
 #               repeat:
 #                 count: "{{light_list|count }}"
 #                 sequence:
-#                   service: switch.turn_{{ states(light_list[index - 1])}}
+#                   action: switch.turn_{{ states(light_list[index - 1])}}
 #                   target:
 #                     entity_id: "{{entity_map[states(light_list[index - 1])]}}"
 #         - conditions:
@@ -91,7 +91,7 @@ mqtt:
 #               condition: template
 #               value_template: "{{ trigger.to_state.state in ['on', 'off'] }}"
 #             - alias: "if light state changed, change switch state and vice versa"
-#               service: homeassistant.turn_{{trigger.to_state.state}}
+#               action: homeassistant.turn_{{trigger.to_state.state}}
 #               target:
 #                 entity_id: "{{entity_map[trigger.entity_id]}}"
 #     mode: single

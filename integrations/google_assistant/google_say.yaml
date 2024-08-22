@@ -21,7 +21,7 @@ automation:
         {{ trigger.payload_json['language'] or 'ru' }}
     action:
       - alias: "publish google_say mqtt message"
-        service: mqtt.publish
+        action: mqtt.publish
         data_template:
           retain: false
           topic: "home/system/announcement/google"
@@ -47,7 +47,7 @@ automation:
       language: >
         {{ trigger.payload_json['language'] or 'ru' }}
     action:
-      - service: tts.google_say
+      - action: tts.google_say
         data_template:
           entity_id: "{{ target }}"
           message: "{{ message }}"

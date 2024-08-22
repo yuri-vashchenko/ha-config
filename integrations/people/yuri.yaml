@@ -59,19 +59,19 @@ automation:
                     state: "not_home"
             sequence:
               - alias: "Set Yuri room"
-                service: input_text.set_value
+                action: input_text.set_value
                 target:
                   entity_id: input_text.yuri_room
                 data:
                   value: "{{ states('sensor.room_yuri_watch_ble') }}"
               - alias: "Set Yuri room distance"
-                service: input_number.set_value
+                action: input_number.set_value
                 target:
                   entity_id: input_number.yuri_room_distance
                 data:
                   value: "{{ state_attr('sensor.room_yuri_watch_ble', 'distance') }}"
               - alias: "Set Yuri at home"
-                service: input_boolean.turn_on
+                action: input_boolean.turn_on
                 target:
                   entity_id: input_boolean.yuri_at_home
           - conditions:
@@ -89,19 +89,19 @@ automation:
                         state: "not_home"
             sequence:
               - alias: "Set Yuri room"
-                service: input_text.set_value
+                action: input_text.set_value
                 target:
                   entity_id: input_text.yuri_room
                 data:
                   value: "{{ states('sensor.room_yuri_phone_ble') }}"
               - alias: "Set Yuri room distance"
-                service: input_number.set_value
+                action: input_number.set_value
                 target:
                   entity_id: input_number.yuri_room_distance
                 data:
                   value: "{{ state_attr('sensor.room_yuri_phone_ble', 'distance') }}"
               - alias: "Set Yuri at home"
-                service: input_boolean.turn_on
+                action: input_boolean.turn_on
                 target:
                   entity_id: input_boolean.yuri_at_home
           - conditions:
@@ -118,19 +118,19 @@ automation:
                 state: "not_home"
             sequence:
               - alias: "Set Yuri room"
-                service: input_text.set_value
+                action: input_text.set_value
                 target:
                   entity_id: input_text.yuri_room
                 data:
                   value: "not_home"
               - alias: "Set Yuri room distance"
-                service: input_number.set_value
+                action: input_number.set_value
                 target:
                   entity_id: input_number.yuri_room_distance
                 data:
                   value: NaN
               - alias: "Set Yuri at home"
-                service: input_boolean.turn_off
+                action: input_boolean.turn_off
                 target:
                   entity_id: input_boolean.yuri_at_home
     mode: queued

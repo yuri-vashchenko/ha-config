@@ -46,7 +46,7 @@ script:
     alias: Запись момента начала стирки
     sequence:
       - alias: запись момента начала стирки
-        service: mqtt.publish
+        action: mqtt.publish
         data:
           topic: >
             events/date_time/notification/washing_machine/started
@@ -72,16 +72,16 @@ script:
   bathroom_washer_machine_washing_complete:
     alias: Завершение стирки
     sequence:
-      - service: telegram_bot.send_message
+      - action: telegram_bot.send_message
         data:
           target: !secret telegram_id_yuri
           message: |
-                {{"\U0001F9D9"}} Стирка завершена {{ states('sensor.time_date') }}
+            {{"\U0001F9D9"}} Стирка завершена {{ states('sensor.time_date') }}
       - alias: Не отправлять нотификации ночью
         condition: state
         entity_id: binary_sensor.night
         state: "off"
-      - service: script.bathroom_washer_machine_washing_complete_notification
+      - action: script.bathroom_washer_machine_washing_complete_notification
 
 automation:
   - alias: bathroom_washer_machine_washing_complete
@@ -91,18 +91,18 @@ automation:
     trigger:
       - platform: state
         entity_id: binary_sensor.bathroom_washer_machine_washing
-        from: 'off'
-        to: 'on'
+        from: "off"
+        to: "on"
         id: washing_started
       - platform: state
         entity_id: binary_sensor.bathroom_washer_machine_washing
-        from: 'on'
-        to: 'off'
+        from: "on"
+        to: "off"
         id: washing_completed
     condition:
       - condition: state
         entity_id: binary_sensor.main_control
-        state: 'on'
+        state: "on"
     action:
       - alias: Запуск или остановка стирки
         choose:
@@ -111,10 +111,10 @@ automation:
               id: washing_started
             sequence:
               - alias: Запуск скрипта оповещения о начале стирки
-                service: script.bathroom_washer_machine_washing_start
+                action: script.bathroom_washer_machine_washing_start
           - conditions:
               condition: trigger
               id: washing_completed
             sequence:
               - alias: Запуск скрипта оповещения об окончании стирки
-                service: script.bathroom_washer_machine_washing_complete
+                action: script.bathroom_washer_machine_washing_complete

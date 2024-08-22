@@ -24,7 +24,7 @@ automation:
         {{ trigger.payload_json['volume'] or '100' }}
     action:
       - alias: "play ringtone"
-        service: xiaomi_aqara.play_ringtone
+        action: xiaomi_aqara.play_ringtone
         data_template:
           gw_mac: "{{ mac }}"
           ringtone_id: "{{ ringtone }}"

@@ -1,7 +1,8 @@
 blueprint:
   name: Control Yeelight 650 with Xiaomi Button
   source_url: https://gist.github.com/yuri-vashchenko/bddb24fbafdac3ab5e4dece17a5ce2b5
-  description: "Control Yeelight 650 celing light with Xiaomi button:\n  - Single\
+  description:
+    "Control Yeelight 650 celing light with Xiaomi button:\n  - Single\
     \ press: If the night light or main light is on, turns if off, otherwise turns\
     \ on last active mode (night light or main light)\n  - Double press: Toggles main/night\
     \ light; If night light is on, switches it to main light and vice versa.\n  -\
@@ -17,7 +18,8 @@ blueprint:
   input:
     trigger_entity:
       name: Trigger Entity
-      description: When trigger entity enters trigger entity state (see below) it
+      description:
+        When trigger entity enters trigger entity state (see below) it
         will trigger light change
       selector:
         entity: {}
@@ -41,7 +43,8 @@ blueprint:
           domain: binary_sensor
     ambilight_entity:
       name: (Optional) Ambilight entity
-      description: Ambilight entity will be turened on/off with main or nighlight
+      description:
+        Ambilight entity will be turened on/off with main or nighlight
         entity
       default: []
       selector:
@@ -49,14 +52,16 @@ blueprint:
           domain: light
     hold_action:
       name: (Optional) Action to execute on holding button
-      description: This optional action will execute on long button press (see trigger_entity
+      description:
+        This optional action will execute on long button press (see trigger_entity
         and trigger_entity_state3)
       default: []
       selector:
         action: {}
     enabling_entity:
       name: (Optional) Enabling entity
-      description: If this entity's state is set to enable entity state (see below)
+      description:
+        If this entity's state is set to enable entity state (see below)
         automation will trigger. This may be used to make automation triggering based
         on other entity state
       default:
@@ -65,24 +70,24 @@ blueprint:
     enabling_entity_state:
       name: (Optional) Enabling entity state
       description: If enabling entity is in this state the automation will trigger
-      default: 'on'
+      default: "on"
       selector:
         entity:
           domain: input_text
 variables:
-  trigger_entity: !input 'trigger_entity'
-  trigger_entity_state_value: '{{ states[trigger_entity].state }}'
-  mainlight_entity: !input 'mainlight_entity'
-  nightlight_entity: !input 'nightlight_entity'
-  ambilight_entity: !input 'ambilight_entity'
-  mode_entity: !input 'mode_entity'
+  trigger_entity: !input "trigger_entity"
+  trigger_entity_state_value: "{{ states[trigger_entity].state }}"
+  mainlight_entity: !input "mainlight_entity"
+  nightlight_entity: !input "nightlight_entity"
+  ambilight_entity: !input "ambilight_entity"
+  mode_entity: !input "mode_entity"
   toggle_entity: >
     {% if states[mode_entity].state == 'off' %}
       {{mainlight_entity}}
     {% else %}
       {{nightlight_entity}}
     {% endif %}
-  toggle_service: >
+  toggle_action: >
     {% if states[toggle_entity].state == 'off' %}
       light.turn_on
     {% else %}
@@ -100,18 +105,18 @@ variables:
     {% else %}
       {{ nightlight_entity }}
     {% endif %}
-  ambilight_service: >
+  ambilight_action: >
     {% if states[mainlight_entity].state == 'off' and states[nightlight_entity].state == 'off' %}
       light.turn_on
     {% else %}
       light.turn_off
     {% endif %}
-  hold_action: !input 'hold_action'
-  enabling_entity: !input 'enabling_entity'
-  enabling_entity_state: !input 'enabling_entity_state'
+  hold_action: !input "hold_action"
+  enabling_entity: !input "enabling_entity"
+  enabling_entity_state: !input "enabling_entity_state"
 trigger:
   - platform: state
-    entity_id: !input 'trigger_entity'
+    entity_id: !input "trigger_entity"
     to:
       - single
       - double
@@ -124,50 +129,50 @@ action:
           {{ trigger.to_state.state == 'single' }}
         sequence:
           - alias: "log single click event"
-            service: logbook.log
+            action: logbook.log
             data_template:
               name: "Button single click"
               message: >
                 Processing button {{ trigger.entity_id }} single click.
                 toggle_entity: {{ toggle_entity }},
-                toggle_service: {{ toggle_service }},
-                ambilight_service: {{ ambilight_service }}
+                toggle_action: {{ toggle_service }},
+                ambilight_action: {{ ambilight_service }}
               entity_id: "{{ toggle_entity }}"
               domain: light
           - alias: "toggle ambilight"
-            service: "{{ ambilight_service }}"
+            action: "{{ ambilight_service }}"
             target:
               entity_id: "{{ ambilight_entity }}"
           - alias: "toogle light"
-            service: "{{ toggle_service }}"
+            action: "{{ toggle_service }}"
             target:
               entity_id: "{{ toggle_entity }}"
       - conditions: >
           {{ trigger.to_state.state == 'double' }}
         sequence:
           - alias: "log double click event"
-            service: logbook.log
+            action: logbook.log
             data_template:
               name: "Button double click"
               message: >
                 Processing button {{ trigger.entity_id }} double click.
                 mainlight_entity: {{ mainlight_entity }},
-                ambilight_service: {{ ambilight_entity }}
+                ambilight_action: {{ ambilight_entity }}
               entity_id: "{{ toggle_entity }}"
               domain: light
           - alias: "set mode main/nightlight"
-            service: yeelight.set_mode
+            action: yeelight.set_mode
             target:
-              entity_id: '{{ mainlight_entity }}'
+              entity_id: "{{ mainlight_entity }}"
             data_template:
-              mode: '{{ light_mode }}'
+              mode: "{{ light_mode }}"
           - alias: "turn on ambilight"
-            service: light.turn_on
+            action: light.turn_on
             target:
               entity_id: "{{ ambilight_entity }}"
       - conditions:
           - "{{ hold_action != '' }}"
           - "{{ trigger.to_state.state == 'hold' }}"
-        sequence: !input 'hold_action'
+        sequence: !input "hold_action"
     default: []
 mode: restart

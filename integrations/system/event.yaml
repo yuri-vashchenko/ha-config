@@ -110,7 +110,7 @@ script:
               repeat:
                 for_each: "{{ scripts }}"
                 sequence:
-                  - service: script.turn_on
+                  - action: script.turn_on
                     target:
                       entity_id: "script.{{ repeat.item }}"
 
@@ -124,7 +124,7 @@ script:
             - number.notifications
           sequence:
             - alias: "turn off everything"
-              service: number.set_value
+              action: number.set_value
               target:
                 entity_id: "{{ repeat.item }}"
               data:
@@ -149,7 +149,7 @@ automation:
         state: "on"
     action:
       - alias: "Обновить счётчик тревог"
-        service: number.set_value
+        action: number.set_value
         target:
           entity_id: number.alarms
         data:
@@ -173,7 +173,7 @@ automation:
         state: "on"
     action:
       - alias: "Запустить скрипт для генерации или отключения события"
-        service: script.trigger_event
+        action: script.trigger_event
     mode: queued
 
   - id: cancel_all_on_button_press
@@ -189,4 +189,4 @@ automation:
         state: "on"
     action:
       alias: "Cancell all alarms, notifications and warnings"
-      service: script.cancel_all
+      action: script.cancel_all

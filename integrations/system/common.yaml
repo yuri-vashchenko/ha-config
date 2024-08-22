@@ -53,14 +53,14 @@ script:
           - "{{ is_state(entity_id, state) }}"
         then:
           - alias: "Запустить скрипт с данными"
-            service: "{{ script_if_true }}"
+            action: "{{ script_if_true }}"
             data: "{{ data_true }}"
         else:
           - if:
               - "{{ is_state(entity_id_else, state_else) }}"
             then:
               - alias: "Запустить скрипт с данными"
-                service: "{{ script_if_false }}"
+                action: "{{ script_if_false }}"
                 data: "{{ data_false }}"
 
   increment_number:
@@ -81,7 +81,7 @@ script:
       new_value: "{{ min(current_value + step, max_value) }}"
     sequence:
       - alias: "Установить новое значение"
-        service: number.set_value
+        action: number.set_value
         target:
           entity_id: "{{ entity_id }}"
         data:
@@ -104,7 +104,7 @@ script:
       new_value: "{{ max(current_value - step, min_value) }}"
     sequence:
       - alias: "Установить новое значение"
-        service: number.set_value
+        action: number.set_value
         target:
           entity_id: "{{ entity_id }}"
         data:

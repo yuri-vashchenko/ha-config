@@ -114,11 +114,11 @@ blueprint:
         text:
 mode: parallel
 variables:
-  event_severity: !input 'event_severity'
-  _event_type: !input 'event_type'
+  event_severity: !input "event_severity"
+  _event_type: !input "event_type"
   event_type: "{{ _event_type or '' | lower | trim }}"
-  event_id: !input 'event_id'
-  _announcement_message: !input 'announcement_message'
+  event_id: !input "event_id"
+  _announcement_message: !input "announcement_message"
   _am: "{{ _announcement_message or '' }}"
   announcement_message: >-
     {% if _am == '' %}
@@ -132,18 +132,18 @@ variables:
     {% else %}
       {{ _am }}
     {% endif %}
-  announcement_volume: !input 'announcement_volume'
-  _announcement_message_repeat: !input 'announcement_message_repeat'
+  announcement_volume: !input "announcement_volume"
+  _announcement_message_repeat: !input "announcement_message_repeat"
   announcement_message_repeat: >-
     {{ _announcement_message_repeat or "Повторяю! " + announcement_message }}
-  _announcement_message_end: !input 'announcement_message_end'
+  _announcement_message_end: !input "announcement_message_end"
   announcement_message_end: "{{ _announcement_message_end or '' }}"
-  ringtone_id: !input 'ringtone_id'
-  ringtone_volume: !input 'ringtone_volume'
-  gateway_mac: !input 'gateway_mac'
-  max_repeats: !input 'max_repeats'
-  wait_entity: !input 'wait_entity'
-  _wait_entity_state: !input 'wait_entity_state'
+  ringtone_id: !input "ringtone_id"
+  ringtone_volume: !input "ringtone_volume"
+  gateway_mac: !input "gateway_mac"
+  max_repeats: !input "max_repeats"
+  wait_entity: !input "wait_entity"
+  _wait_entity_state: !input "wait_entity_state"
   wait_entity_state: "{{ _wait_entity_state or '' }}"
   play_ringtone_payload: >
     {"mac": "{{ gateway_mac }}",
@@ -161,31 +161,31 @@ variables:
   number_entity_name: number.{{ event_severity }}s
 sequence:
   - alias: запись момента конкретного события
-    service: mqtt.publish
+    action: mqtt.publish
     data:
       topic: >
         events/date_time/{{ event_severity }}/{{ event_type }}/{{ event_id }}
       payload: "{{ now() }}"
       retain: true
   - alias: запись момента события
-    service: mqtt.publish
+    action: mqtt.publish
     data:
       topic: >
         events/date_time/{{ event_severity }}/{{ event_type }}
       payload: "{{ now() }}"
       retain: true
   - alias: публикация сообщения для проигрывания рингтона
-    service: mqtt.publish
+    action: mqtt.publish
     data:
       topic: "home/system/notification/xiaomi/play_ringtone"
       payload: "{{play_ringtone_payload}}"
   - alias: публикация голосового оповещения
-    service: mqtt.publish
+    action: mqtt.publish
     data:
       topic: "home/system/announcement/all"
       payload: "{{announcement_payload}}"
   - alias: увеличение счётчика событий
-    service: script.increment_number
+    action: script.increment_number
     data:
       entity_id: "{{ number_entity_name }}"
   - alias: ожидание завершения события
@@ -195,12 +195,12 @@ sequence:
           (max_repeats == 0 or repeat.index <= max_repeats) }}
       sequence:
         - alias: публикация команды для воспроизведения рингтона повторения
-          service: mqtt.publish
+          action: mqtt.publish
           data:
             topic: "home/system/notification/xiaomi/play_ringtone"
             payload: "{{play_ringtone_payload}}"
         - alias: публикация команды для повторного голосового сообщения
-          service: mqtt.publish
+          action: mqtt.publish
           data:
             topic: "home/system/announcement/all"
             payload: "{{ announcement_payload_repeat }}"
@@ -208,15 +208,15 @@ sequence:
           wait_template: >
             {{ is_state(wait_entity, wait_entity_state) }}
           timeout:
-            seconds: !input 'delay_between_repeats'
+            seconds: !input "delay_between_repeats"
   - alias: уменьшение счётчика событий
-    service: script.decrement_number
+    action: script.decrement_number
     data:
       entity_id: "{{ number_entity_name }}"
   - condition: template
     value_template: "{{ announcement_message_end != '' }}"
   - alias: публикация голосового сообщения об окончании события
-    service: mqtt.publish
+    action: mqtt.publish
     data:
       topic: "home/system/announcement/all"
       payload: "{{ announcement_payload_end }}"

@@ -26,9 +26,9 @@ automation:
           {{ trigger.event.data.text in ["whoami"] }}
       - condition: state
         entity_id: binary_sensor.main_control
-        state: 'on'
+        state: "on"
     action:
-      - service: telegram_bot.send_message
+      - action: telegram_bot.send_message
         data_template:
           target: "{{ trigger.event.data.chat_id }}"
           message: |

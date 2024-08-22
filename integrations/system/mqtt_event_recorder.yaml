@@ -31,7 +31,7 @@ automation:
       - "{{ is_state('binary_sensor.main_control', 'on') }}"
     action:
       - alias: Publish event to MQTT topic
-        service: mqtt.publish
+        action: mqtt.publish
         data_template:
           topic: >
             {{ 'events/date_time/' + trigger.to_state.object_id + '/' + trigger.to_state.state }}

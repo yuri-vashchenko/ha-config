@@ -120,7 +120,7 @@ script:
   led_strip_toggle:
     alias: led_strip_toggle
     sequence:
-      - service: remote.send_command
+      - action: remote.send_command
         data:
           entity_id: remote.elena_remote_broadlink
           device: led_strip
@@ -128,7 +128,7 @@ script:
 
   learn_led_strip_toggle:
     sequence:
-      - service: remote.learn_command
+      - action: remote.learn_command
         data:
           entity_id: remote.elena_remote_broadlink
           device: led_strip
@@ -137,23 +137,23 @@ script:
   elena_turn_off_tv_light_ac:
     sequence:
       - alias: "Turn off TV"
-        service: media_player.turn_off
+        action: media_player.turn_off
         target:
           entity_id: media_player.elena_tv
       - alias: "Turn off the light"
-        service: light.turn_off
+        action: light.turn_off
         target:
           entity_id:
             - group.elena_light_yeelight
             - light.elena_tv_wled
       - alias: "Turn off the AC"
-        service: climate.turn_off
+        action: climate.turn_off
         target:
           entity_id: climate.elena_ac
 
   romantic:
     sequence:
-      - service: script.led_strip_toggle
+      - action: script.led_strip_toggle
 
 scene:
   - name: Movies
@@ -183,7 +183,7 @@ automation:
         ambilight_entity: light.elena_yeelight_ambilight
         enabling_entity: binary_sensor.light_control
         hold_action:
-          service: script.led_strip_toggle
+          action: script.led_strip_toggle
 
   - id: "elena_light_control_button_y"
     alias: "elena_light_control_button_y"
@@ -198,7 +198,7 @@ automation:
         ambilight_entity: light.elena_yeelight_ambilight
         enabling_entity: binary_sensor.light_control
         hold_action:
-          service: script.led_strip_toggle
+          action: script.led_strip_toggle
 
   - id: run_turnoff_script_when_all_hosts_leave_home
     alias: Run the turnoff script when all hosts leave home
@@ -214,7 +214,7 @@ automation:
         state: "on"
     action:
       - alias: "Run turnoff script"
-        service: script.turn_on
+        action: script.turn_on
         target:
           entity_id: script.elena_turn_off_tv_light_ac
 
@@ -238,7 +238,7 @@ automation:
         state: "off"
     action:
       - alias: "action alias (name)"
-        service: light.turn_on
+        action: light.turn_on
         target:
           entity_id: light.elena_yeelight_ambilight
 
@@ -276,6 +276,6 @@ automation:
         state: "on"
     action:
       - alias: "Turn on the light"
-        service: light.turn_on
+        action: light.turn_on
         target:
           entity_id: light.elena_yeelight_nightlight

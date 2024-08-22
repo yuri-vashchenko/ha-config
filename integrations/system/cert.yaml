@@ -5,7 +5,7 @@ automation:
       - platform: homeassistant
         event: start
       - platform: time
-        at: '02:00:00'
+        at: "02:00:00"
     condition: >
       {{ states('sensor.cert_expiry_timestamp_vashchenko_me') not in
         ['unknown', 'unavailable'] }}
@@ -16,6 +16,6 @@ automation:
           {{ (states('sensor.cert_expiry_timestamp_vashchenko_me') |
             as_datetime - now()) < timedelta(days=30) }}
       - alias: "review certificate"
-        service: hassio.addon_start
+        action: hassio.addon_start
         data:
           addon: core_letsencrypt

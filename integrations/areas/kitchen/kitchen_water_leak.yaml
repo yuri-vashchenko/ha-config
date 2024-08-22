@@ -53,4 +53,4 @@ automation:
         to: "on"
     condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
     action:
-      service: script.kitchen_water_leak_triggered
+      action: script.kitchen_water_leak_triggered

@@ -23,13 +23,13 @@ automation:
       - platform: homeassistant
         event: start
     action:
-      - service: mqtt.publish
+      - action: mqtt.publish
         data_template:
           topic: "instance/{{ states('sensor.local_ip') }}/sensor/system/state"
           payload: 'starting'
           retain: true
       - delay: 00:00:10
-      - service: mqtt.publish
+      - action: mqtt.publish
         data_template:
           topic: "instance/{{ states('sensor.local_ip') }}/sensor/system/state"
           payload: 'running'
@@ -42,7 +42,7 @@ automation:
       - platform: homeassistant
         event: shutdown
     action:
-      - service: mqtt.publish
+      - action: mqtt.publish
         data_template:
           topic: "instance/{{ states('sensor.local_ip') }}/sensor/system/state"
           payload: 'shutdown'
@@ -59,7 +59,7 @@ automation:
       - platform: state
         entity_id: sensor.time_date
     action:
-      - service: mqtt.publish
+      - action: mqtt.publish
         data_template:
           topic: "instance/{{ states('sensor.local_ip') }}/sensor/keepalive/state"
           payload: "{{ now() }}"
@@ -74,7 +74,7 @@ automation:
         from: 'running'
         to: 'starting'
     action:
-      - service: mqtt.publish
+      - action: mqtt.publish
         data_template:
           topic: "instance/{{ states('sensor.local_ip') }}/sensor/unexpected_reboot"
           payload: "1"

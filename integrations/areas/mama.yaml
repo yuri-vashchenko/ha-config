@@ -65,7 +65,7 @@ script:
         entity_id: binary_sensor.light_control
         state: "on"
       - alias: Переключить свет
-        service: switch.toggle
+        action: switch.toggle
         target:
           entity_id: switch.mama_switch_light
   mama_button_double_click:
@@ -79,12 +79,12 @@ script:
             state: "off"
         then:
           - alias: Включить телевизор
-            service: media_player.turn_on
+            action: media_player.turn_on
             target:
               entity_id: media_player.mama_tv
         else:
           - alias: Выключить телевизор
-            service: media_player.turn_off
+            action: media_player.turn_off
             target:
               entity_id: media_player.mama_tv
   mama_button_hold_click:
@@ -95,7 +95,7 @@ script:
         entity_id: binary_sensor.sound_control
         state: "on"
       - alias: Позвать во всех колонках
-        service: script.all_say
+        action: script.all_say
         data:
           message: Подойдите в мамину комнату
 
@@ -120,6 +120,6 @@ automation:
         state: "on"
     action:
       - alias: Запуск скрипта по нажатию
-        service: script.turn_on
+        action: script.turn_on
         target:
           entity_id: "{{ script_name }}"

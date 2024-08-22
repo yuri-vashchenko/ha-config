@@ -13,7 +13,7 @@ script:
                 state: "on"
             sequence:
               - alias: "Turn domofon sound off"
-                service: switch.turn_off
+                action: switch.turn_off
                 target:
                   entity_id: switch.domofon_sound
           - conditions:
@@ -23,7 +23,7 @@ script:
                 state: "off"
             sequence:
               - alias: "Turn domofon sound on"
-                service: switch.turn_on
+                action: switch.turn_on
                 target:
                   entity_id: switch.domofon_sound
 
@@ -50,6 +50,6 @@ automation:
         state: "on"
     action:
       - alias: "turn domofon sound on or off"
-        service: script.turn_on
+        action: script.turn_on
         target:
           entity_id: script.domofon_turn_sound_off_at_night

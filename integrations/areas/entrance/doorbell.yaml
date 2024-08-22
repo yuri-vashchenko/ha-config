@@ -104,11 +104,11 @@ script:
     alias: Прихожая - показать картинку с камеры по нажатию кнопки звонка
     sequence:
       - alias: "Wake tablet"
-        service: script.turn_on
+        action: script.turn_on
         target:
           entity_id: script.wake_corridor_wall_panel
       - alias: "Display popup"
-        service: browser_mod.popup
+        action: browser_mod.popup
         data:
           dismissable: true
           autoclose: false
@@ -127,7 +127,7 @@ script:
           entity_id: binary_sensor.entrance_door_contact
           to: "on"
       - alias: "Close popup"
-        service: browser_mod.close_popup
+        action: browser_mod.close_popup
         data:
           deviceID: corridor_tablet
     mode: single
@@ -154,7 +154,7 @@ automation:
         state: "on"
     action:
       - alias: Переключение состояния
-        service: select.select_option
+        action: select.select_option
         data:
           option: "{{ trigger.to_state.state or 'off' }}"
         target:
@@ -182,13 +182,13 @@ automation:
       state: "on"
     action:
       - alias: Запуск соответствующего скрипта
-        service: script.turn_on
+        action: script.turn_on
         target:
           entity_id:
             - "{{ script_name }}"
             - script.entrance_display_camera_stream
       - alias: Отправка фотографии в телеграм
-        service: input_button.press
+        action: input_button.press
         target:
           entity_id: input_button.entrance_cam_send_photo_to_telegram
     mode: single

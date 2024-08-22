@@ -53,19 +53,19 @@ automation:
                         state: "not_home"
             sequence:
               - alias: "Set Elena room"
-                service: input_text.set_value
+                action: input_text.set_value
                 target:
                   entity_id: input_text.elena_room
                 data:
                   value: "{{ states('sensor.room_elena_phone_ble') }}"
               - alias: "Set Elena room distance"
-                service: input_number.set_value
+                action: input_number.set_value
                 target:
                   entity_id: input_number.elena_room_distance
                 data:
                   value: "{{ state_attr('sensor.room_elena_phone_ble', 'distance') }}"
               - alias: "Set Elena at home"
-                service: input_boolean.turn_on
+                action: input_boolean.turn_on
                 target:
                   entity_id: input_boolean.elena_at_home
           - conditions:
@@ -81,19 +81,19 @@ automation:
                     state: "not_home"
             sequence:
               - alias: "Set Elena room"
-                service: input_text.set_value
+                action: input_text.set_value
                 target:
                   entity_id: input_text.elena_room
                 data:
                   value: "not_home"
               - alias: "Set Elena room distance"
-                service: input_number.set_value
+                action: input_number.set_value
                 target:
                   entity_id: input_number.elena_room_distance
                 data:
                   value: NaN
               - alias: "Set Elena at home"
-                service: input_boolean.turn_off
+                action: input_boolean.turn_off
                 target:
                   entity_id: input_boolean.elena_at_home
     mode: restart

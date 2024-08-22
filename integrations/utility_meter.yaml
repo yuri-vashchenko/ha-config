@@ -121,12 +121,12 @@ automation:
         - alias: Установка ночного тарифа
           conditions: "{{ now().hour < 7 or now().hour >= 23 }}"
           sequence:
-            - service: select.select_option
+            - action: select.select_option
               target:
                 entity_id: select.daily_energy
               data:
                 option: night
-            - service: select.select_option
+            - action: select.select_option
               target:
                 entity_id: select.monthly_energy
               data:
@@ -134,12 +134,12 @@ automation:
         - alias: Установка дневного тарифа
           conditions: "{{ now().hour >= 7 and now().hour < 23 }}"
           sequence:
-            - service: select.select_option
+            - action: select.select_option
               target:
                 entity_id: select.daily_energy
               data:
                 option: day
-            - service: select.select_option
+            - action: select.select_option
               target:
                 entity_id: select.monthly_energy
               data:

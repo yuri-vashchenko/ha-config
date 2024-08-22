@@ -1,7 +1,8 @@
 blueprint:
   name: Reset WLED if unavailable
   source_url: https://gist.github.com/yuri-vashchenko/4caac2ec589da09d4a8a5ce732831779
-  description: "Resets a WLED if it becomes unavailable by pusting a message to its\n
+  description:
+    "Resets a WLED if it becomes unavailable by pusting a message to its\n
     IP address.\nRequired inputs:\n  - wled_entity (Entity ID of WLED to monitor)\n
     \  - rest_command (REST command to run to reset WLED. Must have 'ip' parameter)\n
     \  - wled_ip (WLED ip address) - Should be saved or hardcoded, because ip sensor
@@ -13,7 +14,8 @@ blueprint:
   input:
     wled_entity:
       name: Entity ID of wled to monitor
-      description: Automation will monitor this entity and resets it once it becomes
+      description:
+        Automation will monitor this entity and resets it once it becomes
         unavailable
       selector:
         entity:
@@ -30,7 +32,8 @@ blueprint:
           multiple: false
     wled_ip:
       name: WLED ip address
-      description: Should be saved or hardcoded, because ip sensor for WLED is also
+      description:
+        Should be saved or hardcoded, because ip sensor for WLED is also
         unavailable when the whole WLED is unavailable
       selector:
         entity:
@@ -39,7 +42,8 @@ blueprint:
           multiple: false
     enabling_entity:
       name: (Optional) Enabling entity
-      description: If this entity's state is set to enable entity state (see below)
+      description:
+        If this entity's state is set to enable entity state (see below)
         automation will trigger. This may be used to make automation triggering based
         on other entity state
       default:
@@ -49,7 +53,7 @@ blueprint:
     enabling_entity_state:
       name: (Optional) Enabling entity state
       description: If enabling entity is in this state the automation will trigger
-      default: 'on'
+      default: "on"
       selector:
         entity:
           domain:
@@ -69,7 +73,7 @@ trigger:
   - platform: time_pattern
     hours: "/1"
 condition:
-  - '{{ enabling_entity == none or is_state(enabling_entity, enabling_entity_state) }}'
+  - "{{ enabling_entity == none or is_state(enabling_entity, enabling_entity_state) }}"
 action:
   - alias: Run rest command while WLED is not available
     repeat:
@@ -77,7 +81,7 @@ action:
         - "{{ states(wled_entity) in ['unknown', 'unavailable']}}"
       sequence:
         - alias: Run REST command
-          service: rest_command.{{ wled_reset }}
+          action: rest_command.{{ wled_reset }}
           data:
             ip: !input wled_ip
         - alias: Wait for WLED to restart

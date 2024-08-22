@@ -65,5 +65,5 @@ automation:
         entity_id: binary_sensor.main_control
         state: "on"
     action:
-      service: script.entrance_door_opened
+      action: script.entrance_door_opened
     mode: single

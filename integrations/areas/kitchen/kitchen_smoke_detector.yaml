@@ -55,7 +55,7 @@ automation:
         to: "on"
     condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
     action:
-      service: script.kitchen_smoke_detector_triggered
+      action: script.kitchen_smoke_detector_triggered
 
   - id: stop_alarm_on_cancel_all_button_press
     alias: Stops script execution when "Cancel all button pressed"
@@ -66,6 +66,6 @@ automation:
     condition: "{{ is_state('binary_sensor.main_control', 'on') }}"
     action:
       - alias: "Stop kitchen_smoke_detector_triggered script"
-        service: script.turn_off
+        action: script.turn_off
         target:
           entity_id: script.kitchen_smoke_detector_triggered

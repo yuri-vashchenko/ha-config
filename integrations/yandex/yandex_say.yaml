@@ -21,7 +21,7 @@ automation:
         {{ trigger.payload_json['volume'] or "80" }}
     action:
       - alias: "publish yandex_say mqtt message"
-        service: mqtt.publish
+        action: mqtt.publish
         data_template:
           topic: "home/system/announcement/yandex"
           retain: false
@@ -47,7 +47,7 @@ automation:
       target: >
         {{ trigger.payload_json['target'] or 'group.alice' }}
     action:
-      - service: media_player.play_media
+      - action: media_player.play_media
         target:
           entity_id: "{{ target }}"
         data_template:

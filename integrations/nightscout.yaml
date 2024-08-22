@@ -31,7 +31,7 @@ automation:
         state: "home"
     action:
       - alias: Озвучка предупреждения
-        service: script.turn_on
+        action: script.turn_on
         target:
           entity_id: script.elena_yandex_station_say
         data_template:
@@ -61,7 +61,7 @@ automation:
         state: "home"
     action:
       - alias: Озвучка предупреждения
-        service: script.turn_on
+        action: script.turn_on
         target:
           entity_id: script.elena_yandex_station_say
         data_template:

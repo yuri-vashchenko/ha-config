@@ -1,7 +1,6 @@
 # Ванная
 
 homeassistant:
-
   customize_glob:
     "*158d00047f8591*":
       friendly_name: Ванная - датчик протечки воды
@@ -55,4 +54,4 @@ automation:
         to: "on"
     condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
     action:
-      service: script.bathroom_water_leak_triggered
+      action: script.bathroom_water_leak_triggered

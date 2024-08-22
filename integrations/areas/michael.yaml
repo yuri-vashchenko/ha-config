@@ -72,7 +72,7 @@ automation:
     condition: "{{ is_state('binary_sensor.main_control', 'on') }}"
     action:
       - alias: turn off the plug
-        service: switch.turn_off
+        action: switch.turn_off
         target:
           entity_id: switch.michael_plug_yuri
     mode: restart

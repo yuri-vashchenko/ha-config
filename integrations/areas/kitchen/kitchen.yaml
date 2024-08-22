@@ -161,7 +161,7 @@ automation:
     action:
       - delay:
           minutes: "{{ (states('number.kitchen_hold_light_on_timeout') | int(60)) }}"
-      - service: switch.turn_off
+      - action: switch.turn_off
         target:
           entity_id: switch.kitchen_hold_light_on
     mode: restart
@@ -180,7 +180,7 @@ automation:
     action:
       - delay:
           minutes: "{{ (states('number.kitchen_hold_light_off_timeout') | int(60)) }}"
-      - service: switch.turn_off
+      - action: switch.turn_off
         target:
           entity_id: switch.kitchen_hold_light_off
     mode: restart

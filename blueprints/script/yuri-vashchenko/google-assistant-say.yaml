@@ -14,8 +14,7 @@ blueprint:
           domain: media_player
     speaker_language:
       name: Speaker Language
-      description:
-        "Select Language code.
+      description: "Select Language code.
         This defaults to ru (russian) so you do not have to send the data from the
         calling script if you don't need to change it. "
       default: ru
@@ -28,7 +27,7 @@ blueprint:
           multiline: true
 mode: queued
 sequence:
-  - service: tts.google_say
+  - action: tts.google_say
     alias: Произнести сообщение через гугл
     data:
       entity_id: !input "speaker_target"

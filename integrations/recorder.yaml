@@ -11,12 +11,12 @@ recorder:
       - light
       - number
       # entities:
-  exclude:    # Eliminate anything that you never graph or refer back to
+  exclude: # Eliminate anything that you never graph or refer back to
     domains:
       - automation
       - script
       - updater
-      - weather  # Ignore weather
+      - weather # Ignore weather
     entities:
       - sun.sun
       - sensor.season
@@ -30,9 +30,9 @@ automation:
     initial_state: true
     trigger:
       - platform: time
-        at: '01:00:00'
+        at: "01:00:00"
     action:
-      - service: recorder.purge
+      - action: recorder.purge
         data:
           keep_days: 30
           repack: true

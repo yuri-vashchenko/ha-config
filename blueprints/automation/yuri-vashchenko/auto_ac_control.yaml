@@ -70,7 +70,8 @@ blueprint:
           domain: input_number
     enabling_entity:
       name: (Optional) Enabling entity
-      description: If this entity's state is set to enable entity state (see below)
+      description:
+        If this entity's state is set to enable entity state (see below)
         automation will trigger. This may be used to make automation triggering based
         on other entity state
       default:
@@ -79,7 +80,7 @@ blueprint:
     enabling_entity_state:
       name: (Optional) Enabling entity state
       description: If enabling entity is in this state the automation will trigger
-      default: 'on'
+      default: "on"
       selector:
         entity:
           domain: input_text
@@ -236,7 +237,7 @@ action:
         - "{{ need_off }}"
       sequence:
         - alias: "log event"
-          service: logbook.log
+          action: logbook.log
           data_template:
             name: "turning Elena AC OFF"
             message: >
@@ -274,7 +275,7 @@ action:
             entity_id: climate.elena_ac
             domain: climate
         - alias: "turn AC off"
-          service: climate.turn_off
+          action: climate.turn_off
           target:
             entity_id: "{{ climate_entity }}"
     - alias: elena_ac_heat
@@ -283,7 +284,7 @@ action:
         - "{{ is_cold and can_heat }}"
       sequence:
         - alias: "log event"
-          service: logbook.log
+          action: logbook.log
           data_template:
             name: "Turn AC on (heat)"
             message: >
@@ -321,7 +322,7 @@ action:
             entity_id: "{{ climate_entity }}"
             domain: climate
         - alias: "Turn AC on (heat)"
-          service: climate.set_temperature
+          action: climate.set_temperature
           data:
             entity_id: "{{ climate_entity }}"
             temperature: "{{ heat_target_temperature }}"
@@ -332,7 +333,7 @@ action:
         - "{{ is_hot and can_cool }}"
       sequence:
         - alias: "log event"
-          service: logbook.log
+          action: logbook.log
           data_template:
             name: "Turn AC on (cool)"
             message: >
@@ -370,7 +371,7 @@ action:
             entity_id: climate_entity
             domain: climate
         - alias: "Turn AC on (cool)"
-          service: climate.set_temperature
+          action: climate.set_temperature
           data:
             entity_id: "{{ climate_entity }}"
             temperature: "{{ cool_target_temperature }}"
@@ -381,7 +382,7 @@ action:
         - "{{ is_warm and is_humid and can_dry }}"
       sequence:
         - alias: "log event"
-          service: logbook.log
+          action: logbook.log
           data_template:
             name: "Turn AC on (dry)"
             message: >
@@ -419,14 +420,14 @@ action:
             entity_id: climate.elena_ac
             domain: climate
         - alias: "Turn AC on (dry)"
-          service: climate.set_temperature
+          action: climate.set_temperature
           data:
             entity_id: "{{ climate_entity }}"
             temperature: "{{ dry_target_temperature }}"
             hvac_mode: "{{ dry_hvac_mode }}"
   default:
     - alias: "log event"
-      service: logbook.log
+      action: logbook.log
       data_template:
         name: "Just log message"
         message: >
