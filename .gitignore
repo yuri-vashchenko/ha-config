@@ -3,6 +3,7 @@ custom_components
 home-assistant.log*
 image
 .storage
+.ssh
 home-assistant_v2.db
 .HA_VERSION
 tts
