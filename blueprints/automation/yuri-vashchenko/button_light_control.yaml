@@ -135,16 +135,16 @@ action:
               message: >
                 Processing button {{ trigger.entity_id }} single click.
                 toggle_entity: {{ toggle_entity }},
-                toggle_action: {{ toggle_service }},
-                ambilight_action: {{ ambilight_service }}
+                toggle_action: {{ toggle_action }},
+                ambilight_action: {{ ambilight_action }}
               entity_id: "{{ toggle_entity }}"
               domain: light
           - alias: "toggle ambilight"
-            action: "{{ ambilight_service }}"
+            action: "{{ ambilight_action }}"
             target:
               entity_id: "{{ ambilight_entity }}"
           - alias: "toogle light"
-            action: "{{ toggle_service }}"
+            action: "{{ toggle_action }}"
             target:
               entity_id: "{{ toggle_entity }}"
       - conditions: >
