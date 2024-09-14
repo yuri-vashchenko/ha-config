@@ -64,7 +64,8 @@ script:
         event_id: "complete"
         wait_entity: binary_sensor.bathroom_washer_machine_washing
         wait_entity_state: "off"
-        ringtone_id: "11"
+        ringtone_id: "21"
+        announcement_volume: 50
         announcement_message: "Стирка завершена. Не забудьте повесить бельё сушиться"
         delay_between_repeats: 1
         max_repeats: 1
