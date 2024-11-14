@@ -35,15 +35,13 @@ script:
           topic: home/corridor/wallpanel/command
           payload: '{"wake": true}'
           retain: false
-
-binary_sensor:
-  - platform: template
-    sensors:
-      wake_corridor_wall_panel:
-        friendly_name: "Условие для включения панели в коридоре"
-        value_template: >
+template:
+  - binary_sensor:
+      - name: wake_corridor_wall_panel
+        state: >
           {{ is_state('binary_sensor.corridor_motion_entrance_occupancy', 'on') or
-            not is_state('sensor.entrance_button_doorbell_action', 'None') }}
+            states('sensor.entrance_button_doorbell_action') not in
+              ['unknown', 'unavailable', 'None'] }}
 
 # sensors
 mqtt:
