@@ -13,7 +13,7 @@ automation:
   - id: nightscout_wakeup_at_night
     alias: Мониторинг глюкозы - разбудить ночью при гипогликемии
     trigger:
-      - platform: numeric_state
+      - trigger: numeric_state
         entity_id: sensor.blood_sugar_mmol
         below: 4
     condition:
@@ -39,7 +39,7 @@ automation:
             message: Внимание! Гипогликемия! Срочно съешь что-нибудь
             volume: 40
       - wait_for_trigger:
-          - platform: numeric_state
+          - trigger: numeric_state
             entity_id: sensor.blood_sugar_mmol
             above: 5
     mode: single
@@ -47,7 +47,7 @@ automation:
   - id: nightscout_high_blood_glucose
     alias: Мониторинг глюкозы - очень высокий сахар
     trigger:
-      - platform: numeric_state
+      - trigger: numeric_state
         entity_id: sensor.blood_sugar_mmol
         above: 19.99
     condition:
@@ -67,9 +67,9 @@ automation:
         data_template:
           variables:
             message: Внимание! Очень высокий сахар! Возможно сенсор не работает
-            volume: 80
+            volume: 40
       - wait_for_trigger:
-          - platform: numeric_state
+          - trigger: numeric_state
             entity_id: sensor.blood_sugar_mmol
             below: 15
     mode: single
