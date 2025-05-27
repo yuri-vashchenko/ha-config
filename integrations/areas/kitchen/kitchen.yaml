@@ -202,3 +202,28 @@ automation:
         sun_elevation_below: 7
         trigger_timeout: 60
         alt_trigger_timeouts: "17:00:00-22:00:00,1200;05:00:00-08:00:00,1200"
+
+  - id: play_notification_when_kettle_completes
+    alias: Оповещение при отключении чайника
+    description: ""
+    triggers:
+      - trigger: state
+        entity_id: water_heater.kettle_pwk_1746ca_water_heater
+        from: "performance"
+        to: "off"
+    conditions:
+      - condition: state
+        entity_id: binary_sensor.main_control
+        state: "on"
+      - condition: state
+        entity_id: binary_sensor.day
+        state: "on"
+      - condition: state
+        entity_id: binary_sensor.sound_control
+        state: "on"
+    actions:
+      - action: script.all_say
+        data:
+          message: Чайник скипел!
+          volume: 50
+    mode: single
