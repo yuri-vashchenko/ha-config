@@ -1,6 +1,7 @@
 esphome:
   name: rgb-led-controller-weather
-  platform: ESP32
+
+esp32:
   board: esp-wrover-kit
 
 wifi:
