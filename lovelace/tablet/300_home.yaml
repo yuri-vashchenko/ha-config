@@ -39,7 +39,7 @@ cards:
                   - value: 26
                     color: "#ff0000"
               - type: weather-forecast
-                entity: weather.yandex_weather
+                entity: weather.yandex_pogoda
                 show_forecast: false
           - type: vertical-stack
             cards:
@@ -49,30 +49,21 @@ cards:
                 hour24: true
                 entities:
                   - sensor.street_thermometer_humidity
-              - type: custom:mini-graph-card
-                name: Улица давление
-                hour24: true
-                height: 75
-                decimals: 0
-                entities:
-                  - sensor.street_thermometer_pressure
               - type: custom:compass-card
                 indicator_sensors:
-                  - sensor: weather.gismeteo_hourly
+                  - sensor: weather.yandex_pogoda
                     attribute: wind_bearing
                     indicator:
                       type: arrow_inward
                 value_sensors:
-                  - sensor: weather.gismeteo_hourly
-                    attribute: wind_speed
+                  - sensor: sensor.yandex_pogoda_wind_speed
                 header:
                   title:
                     value: Ветер
                     icon:
                     color: green # default color (for state is less than the lowest dynamic_style.bands.from_value)
                     dynamic_style:
-                      sensor: weather.gismeteo_hourly
-                      attribute: wind_speed
+                      sensor: sensor.yandex_pogoda_wind_speed
                       bands:
                         - from_value: 5
                           color: yellow
@@ -86,8 +77,7 @@ cards:
                   circle:
                     color: green # default color (for state is less than the lowest dynamic_style.bands.from_value)
                     dynamic_style:
-                      sensor: weather.gismeteo_hourly
-                      attribute: wind_speed
+                      sensor: sensor.yandex_pogoda_wind_speed
                       bands:
                         - from_value: 5
                           color: yellow
@@ -101,38 +91,21 @@ cards:
       - type: vertical-stack
         cards:
           - type: custom:clock-weather-card
-            entity: weather.gismeteo_hourly
+            entity: weather.yandex_pogoda
             title: Погода во Владивостоке
             sun_entity: sun.sun
             temperature_sensor: sensor.street_thermometer_temperature
             weather_icon_type: fill
             animated_icon: true
-            forecast_rows: 12
+            forecast_rows: 24
             locale: ru
             time_format: 24
-            date_pattern: P
+            date_pattern: ccc, d.MM.yy
             hide_today_section: false
             hide_forecast_section: false
             hide_clock: false
             hide_date: false
             hourly_forecast: true
-            use_browser_time: true
-          - type: custom:clock-weather-card
-            entity: weather.gismeteo_daily
-            title: Погода на неделю
-            sun_entity: sun.sun
-            temperature_sensor: sensor.street_thermometer_temperature
-            weather_icon_type: fill
-            animated_icon: true
-            forecast_rows: 7
-            locale: ru
-            time_format: 24
-            date_pattern: P
-            hide_today_section: true
-            hide_forecast_section: false
-            hide_clock: true
-            hide_date: true
-            hourly_forecast: false
             use_browser_time: true
       - type: vertical-stack
         cards:
@@ -154,3 +127,22 @@ cards:
             entity: sensor.next_bus
             state_color: true
             name: Следующий 66й
+          - type: vertical-stack
+            cards:
+              - type: custom:flipdown-timer-card
+                entity: timer.timer
+                show_hour: true
+                show_title: true
+                show_header: true
+                theme: dark
+                duration: "00:00:00"
+                styles:
+                  rotor:
+                    width: 60px
+                    height: 80px
+                    fontsize: 4rem
+                  button:
+                    width: 60px
+                    height: 30px
+                    fontsize: 1.5em
+                    location: bottom
