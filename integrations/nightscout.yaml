@@ -42,6 +42,8 @@ automation:
           - trigger: numeric_state
             entity_id: sensor.blood_sugar_mmol
             above: 5
+      - delay:
+          minutes: 30
     mode: single
     max_exceeded: silent
   - id: nightscout_high_blood_glucose
