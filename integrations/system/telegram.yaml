@@ -18,7 +18,7 @@ automation:
     alias: get_telegram_id
     initial_state: true
     trigger:
-      - platform: event
+      - trigger: event
         event_type: telegram_text
     condition:
       - condition: template

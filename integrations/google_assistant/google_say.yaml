@@ -5,7 +5,7 @@ automation:
     alias: publish_google_say_on_all_say
     initial_state: true
     trigger:
-      - platform: mqtt
+      - trigger: mqtt
         topic: "home/system/announcement/all"
     condition:
       - alias: "main controller"
@@ -32,7 +32,7 @@ automation:
     alias: google_say_message_on_mqtt
     initial_state: true
     trigger:
-      - platform: mqtt
+      - trigger: mqtt
         topic: "home/system/announcement/google"
     condition:
       - alias: "sound controller"
