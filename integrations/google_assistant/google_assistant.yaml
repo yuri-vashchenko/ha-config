@@ -1,145 +1,145 @@
 # Google Assistant
 # https://www.home-assistant.io/integrations/google_assistant/
 
-google_assistant:
-  project_id: home-nev
-  service_account: !include service_account.json
-  expose_by_default: false
-  report_state: true
-  entity_config:
-    # Lena's room
-    vacuum.elena_vacuum:
-      name: Berta
-      expose: true
-      aliases:
-        - Bob
-        - Robert
-      room: Lena
-    light.elena_yeelight:
-      name: Sun
-      expose: true
-      aliases:
-        - Star
-        - Light
-      room: Lena
-    light.elena_yeelight_nightlight:
-      name: Moon
-      expose: true
-      aliases:
-        - Night Light
-      room: Lena
-    light.elena_yeelight_ambilight:
-      name: Ambilight
-      expose: true
-      aliases:
-        - Color Light
-      room: Lena
-    light.elena_tv_wled:
-      name: LED
-      expose: true
-      aliases:
-        - TV LED
-      room: Lena
-    climate.elena_ac:
-      name: AC
-      expose: true
-      aliases:
-        - Air conditioner
-      room: Lena
-    sensor.elena_room_temperature:
-      name: Temperature
-      expose: true
-      room: Lena
-    sensor.elena_room_humidity:
-      name: Humidity
-      expose: true
-      room: Lena
-    script.led_strip_toggle:
-      name: LED
-      expose: true
-      aliases:
-        - LED Strip
-        - Romantic Light
-      room: Lena
-    script.romantic:
-      name: Romantic
-      expose: true
-      room: Lena
-    media_player.elena_tv:
-      name: TV
-      expose: true
-      aliases:
-        - Televisor
-      room: Lena
-    scene.movies:
-      name: Movies
-      expose: true
-      room: Lena
-    scene.sport:
-      name: Sport
-      expose: true
-      room: Lena
+# google_assistant:
+#   project_id: home-nev
+#   service_account: !include service_account.json
+#   expose_by_default: false
+#   report_state: true
+#   entity_config:
+#     # Lena's room
+#     vacuum.elena_vacuum:
+#       name: Berta
+#       expose: true
+#       aliases:
+#         - Bob
+#         - Robert
+#       room: Lena
+#     light.elena_yeelight:
+#       name: Sun
+#       expose: true
+#       aliases:
+#         - Star
+#         - Light
+#       room: Lena
+#     light.elena_yeelight_nightlight:
+#       name: Moon
+#       expose: true
+#       aliases:
+#         - Night Light
+#       room: Lena
+#     light.elena_yeelight_ambilight:
+#       name: Ambilight
+#       expose: true
+#       aliases:
+#         - Color Light
+#       room: Lena
+#     light.elena_tv_wled:
+#       name: LED
+#       expose: true
+#       aliases:
+#         - TV LED
+#       room: Lena
+#     climate.elena_ac:
+#       name: AC
+#       expose: true
+#       aliases:
+#         - Air conditioner
+#       room: Lena
+#     sensor.elena_room_temperature:
+#       name: Temperature
+#       expose: true
+#       room: Lena
+#     sensor.elena_room_humidity:
+#       name: Humidity
+#       expose: true
+#       room: Lena
+#     script.led_strip_toggle:
+#       name: LED
+#       expose: true
+#       aliases:
+#         - LED Strip
+#         - Romantic Light
+#       room: Lena
+#     script.romantic:
+#       name: Romantic
+#       expose: true
+#       room: Lena
+#     media_player.elena_tv:
+#       name: TV
+#       expose: true
+#       aliases:
+#         - Televisor
+#       room: Lena
+#     scene.movies:
+#       name: Movies
+#       expose: true
+#       room: Lena
+#     scene.sport:
+#       name: Sport
+#       expose: true
+#       room: Lena
 
-    # Kitchen
-    light.kitchen_switch_light:
-      name: Light
-      expose: true
-      room: Kitchen
+#     # Kitchen
+#     light.kitchen_switch_light:
+#       name: Light
+#       expose: true
+#       room: Kitchen
 
-    # Mama
-    light.mama_main:
-      name: Light
-      expose: true
-      room: Mama
-    sensor.mama_thermometer_temperature:
-      name: Temperature
-      expose: true
-      room: Mama
-    sensor.mama_thermometer_humidity:
-      name: Humidity
-      expose: true
-      room: Mama
+#     # Mama
+#     light.mama_main:
+#       name: Light
+#       expose: true
+#       room: Mama
+#     sensor.mama_thermometer_temperature:
+#       name: Temperature
+#       expose: true
+#       room: Mama
+#     sensor.mama_thermometer_humidity:
+#       name: Humidity
+#       expose: true
+#       room: Mama
 
-    # Michael
-    sensor.michael_thermometer_temperature:
-      name: Temperature
-      expose: true
-      room: Michael
-    sensor.michael_thermometer_humidity:
-      name: Humidity
-      expose: true
-      room: Michael
+#     # Michael
+#     sensor.michael_thermometer_temperature:
+#       name: Temperature
+#       expose: true
+#       room: Michael
+#     sensor.michael_thermometer_humidity:
+#       name: Humidity
+#       expose: true
+#       room: Michael
 
-    # Michael
-    sensor.svetlana_thermometer_temperature:
-      name: Temperature
-      expose: true
-      room: Svetlana
-    sensor.svetlana_thermometer_humidity:
-      name: Humidity
-      expose: true
-      room: Svetlana
+#     # Michael
+#     sensor.svetlana_thermometer_temperature:
+#       name: Temperature
+#       expose: true
+#       room: Svetlana
+#     sensor.svetlana_thermometer_humidity:
+#       name: Humidity
+#       expose: true
+#       room: Svetlana
 
-    # Balcony
-    sensor.balcony_thermometer_temperature:
-      name: Temperature
-      expose: true
-      room: Balcony
-    sensor.balcony_thermometer_humidity:
-      name: Humidity
-      expose: true
-      room: Balcony
+#     # Balcony
+#     sensor.balcony_thermometer_temperature:
+#       name: Temperature
+#       expose: true
+#       room: Balcony
+#     sensor.balcony_thermometer_humidity:
+#       name: Humidity
+#       expose: true
+#       room: Balcony
 
-    # Street
-    sensor.street_thermometer_temperature:
-      name: Temperature
-      expose: true
-      room: Street
-    sensor.street_thermometer_humidity:
-      name: Humidity
-      expose: true
-      room: Street
-    sensor.street_thermometer_pressure:
-      name: Pressure
-      expose: true
-      room: Street
+#     # Street
+#     sensor.street_thermometer_temperature:
+#       name: Temperature
+#       expose: true
+#       room: Street
+#     sensor.street_thermometer_humidity:
+#       name: Humidity
+#       expose: true
+#       room: Street
+#     sensor.street_thermometer_pressure:
+#       name: Pressure
+#       expose: true
+#       room: Street
