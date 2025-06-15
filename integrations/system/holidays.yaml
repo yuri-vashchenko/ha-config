@@ -1,0 +1,8 @@
+template:
+  - sensor:
+      - name: holiday_next_date
+        state: '{{state_attr("calendar.holidays", "next_date")}}'
+        unique_id: "system_calendar_holiday_next_date"
+      - name: holiday_next_name
+        state: '{{state_attr("calendar.holidays", "next_holiday")}}'
+        unique_id: "system_calendar_holiday_next_name"
