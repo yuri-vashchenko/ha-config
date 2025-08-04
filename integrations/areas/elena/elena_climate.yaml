@@ -32,7 +32,7 @@ mqtt:
       icon: "mdi:thermometer-high"
       command_topic: "home/elena/settings/hot_threshold"
       state_topic: "home/elena/settings/hot_threshold"
-      min: 25.0
+      min: 20.0
       max: 40.0
       step: 1
       retain: true
@@ -114,6 +114,7 @@ template:
           {% set ns.state = ns.state and (states('binary_sensor.balcony_door_elena_contact') | bool(true)) %}
           {% set ns.state = ns.state or (states('binary_sensor.elena_door_contact') | bool(true)) %}
           {{ ns.state }}
+        delay_on: "00:01:00"
 
   - sensor:
       - unique_id: elena_room_temperature
