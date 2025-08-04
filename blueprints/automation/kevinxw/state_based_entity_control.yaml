@@ -20,7 +20,8 @@ blueprint:
       default: "on"
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
     trigger_entity_state_off:
       name: (Optional) Trigger Entity Off States
       description: >-
@@ -34,7 +35,8 @@ blueprint:
       default:
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
     target_entity:
       name: Target Entity
       description: Any entity that can be operated with below target entity turn on/off action.
@@ -54,7 +56,8 @@ blueprint:
       default: "on"
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
     target_entity_action_on:
       name: (Optional) Target Entity Turn On Action
       description: >-
@@ -63,7 +66,8 @@ blueprint:
       default: "homeassistant.turn_on"
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
     target_entity_action_off:
       name: (Optional) Target Entity Turn Off Action
       description: >-
@@ -74,7 +78,8 @@ blueprint:
       default: "homeassistant.turn_off"
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
     target_entity_off:
       name: (Optional) Turn Off Target Entity
       description: >-
@@ -106,7 +111,8 @@ blueprint:
       default:
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
     timeout_blocker_entity:
       name: (OPTIONAL) Timeout Blocking Entity
       description: >-
@@ -127,15 +133,17 @@ blueprint:
       default:
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
     illuminance_sensor:
       name: (Optional) Illuminance Sensor
       description: This sensor will be used to determine the illumination.
       default:
       selector:
         entity:
-          domain: sensor
-          device_class: illuminance
+          filter:
+            domain: sensor
+            device_class: illuminance
     illuminance_below:
       name: (Optional) Illuminance Below
       description: >-
@@ -146,7 +154,8 @@ blueprint:
       default:
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
     sun_elevation_below:
       name: (Optional) Sun Elevation Below
       description: >-
@@ -157,7 +166,8 @@ blueprint:
       default:
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
     trigger_timeout:
       name: (Optional) Trigger Timeout.
       description: >-
@@ -169,7 +179,8 @@ blueprint:
       default: "30"
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
     alt_trigger_timeouts:
       name: (OPTIONAL) Alternate Trigger Timeout
       description: >-
@@ -189,7 +200,8 @@ blueprint:
       default:
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
     execution_time_ranges:
       name: (OPTIONAL) Execution Time Ranges
       description: >-
@@ -205,7 +217,8 @@ blueprint:
       default:
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
 
 mode: restart
 
@@ -324,16 +337,16 @@ variables:
   sun_elevation_below: !input sun_elevation_below
 
 trigger:
-  - platform: event
+  - trigger: event
     # Check immediately after the automation is changed.
     event_type: automation_reloaded
-  - platform: homeassistant
+  - trigger: homeassistant
     # Check immediately after homeassistant is started.
     event: start
-  - platform: state
+  - trigger: state
     # Trigger on any state change of the motion sensor, so we make sure the delay in action will be restarted every time.
     entity_id: !input trigger_entity
-  - platform: state
+  - trigger: state
     # Trigger on any state change of the target, including manually turned on the target from switch/hass app.
     entity_id: !input target_entity
     # Prevent this automation from triggerring if the light was on and off immediately.

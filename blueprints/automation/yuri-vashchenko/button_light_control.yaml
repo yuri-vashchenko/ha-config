@@ -28,19 +28,22 @@ blueprint:
       description: Target Entity (Yeelight 650 Main light entity)
       selector:
         entity:
-          domain: light
+          filter:
+            domain: light
     nightlight_entity:
       name: nightlight_entity
       description: Nightlight Entity (Yeelight 650 Night light entity)
       selector:
         entity:
-          domain: light
+          filter:
+            domain: light
     mode_entity:
       name: mode_entity
       description: Mode Entity (Yeelight 650 Nightlight binary sensor)
       selector:
         entity:
-          domain: binary_sensor
+          filter:
+            domain: binary_sensor
     ambilight_entity:
       name: (Optional) Ambilight entity
       description:
@@ -49,7 +52,8 @@ blueprint:
       default: []
       selector:
         entity:
-          domain: light
+          filter:
+            domain: light
     hold_action:
       name: (Optional) Action to execute on holding button
       description:
@@ -73,7 +77,8 @@ blueprint:
       default: "on"
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
 variables:
   trigger_entity: !input "trigger_entity"
   trigger_entity_state_value: "{{ states[trigger_entity].state }}"
@@ -115,7 +120,7 @@ variables:
   enabling_entity: !input "enabling_entity"
   enabling_entity_state: !input "enabling_entity_state"
 trigger:
-  - platform: state
+  - trigger: state
     entity_id: !input "trigger_entity"
     to:
       - single

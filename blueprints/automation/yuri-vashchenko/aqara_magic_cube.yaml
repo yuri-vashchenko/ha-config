@@ -13,7 +13,8 @@ blueprint:
       description: Select the number input for tracking active face
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
     flip_90:
       name: Flip 90 degrees
       description: "Actions to run when cube flips 90 degrees.
@@ -530,42 +531,42 @@ variables:
       {{ from_side }}
     {% endif %}"
 trigger:
-  - platform: state
+  - trigger: state
     entity_id: !input "remote"
     attribute: action
     to: "wakeup"
     id: "wakeup"
-  - platform: state
+  - trigger: state
     entity_id: !input "remote"
     attribute: action
     to: "flip90"
     id: "flip90"
-  - platform: state
+  - trigger: state
     entity_id: !input "remote"
     attribute: action
     to: "flip180"
     id: "flip180"
-  - platform: state
+  - trigger: state
     entity_id: !input "remote"
     attribute: action
     to: "tap"
     id: "tap"
-  - platform: state
+  - trigger: state
     entity_id: !input "remote"
     attribute: action
     to: "slide"
     id: "slide"
-  - platform: state
+  - trigger: state
     entity_id: !input "remote"
     attribute: action
     to: "drop"
     id: "drop"
-    # - platform: template
+    # - trigger: template
     #   value_template: >
     #     {{ is_state_attr(cube_entity, 'action', 'rotate') and
     #       state_attr(cube_entity, 'angle') | int < 0 }}
     #   id: 'rotate_left'
-    # - platform: template
+    # - trigger: template
     #   value_template: >
     #     {{ is_state_attr(cube_entity, 'action', 'rotate') and
     #       state_attr(cube_entity, 'angle') | int > 0 }}

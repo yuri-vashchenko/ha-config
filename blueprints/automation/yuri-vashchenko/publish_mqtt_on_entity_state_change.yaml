@@ -39,19 +39,20 @@ blueprint:
       default: "on"
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
 variables:
   enabling_entity: !input "enabling_entity"
   enabling_entity_state: !input "enabling_entity_state"
   trigger_entity: !input "trigger_entity"
 trigger:
-  - platform: homeassistant
+  - trigger: homeassistant
     event: "start"
     id: "start"
-  - platform: event
+  - trigger: event
     event_type: automation_reloaded
     id: "start"
-  - platform: state
+  - trigger: state
     entity_id: !input "trigger_entity"
     id: "state"
 condition: >

@@ -19,16 +19,18 @@ blueprint:
         unavailable
       selector:
         entity:
-          domain:
-            - light
+          filter:
+            domain:
+              - light
           multiple: false
     wled_reset:
       name: wled_reset REST command
       description: REST command to run to reset WLED. Must have 'ip' parameter
       selector:
         entity:
-          domain:
-            - rest_command
+          filter:
+            domain:
+              - rest_command
           multiple: false
     wled_ip:
       name: WLED ip address
@@ -37,8 +39,9 @@ blueprint:
         unavailable when the whole WLED is unavailable
       selector:
         entity:
-          domain:
-            - input_text
+          filter:
+            domain:
+              - input_text
           multiple: false
     enabling_entity:
       name: (Optional) Enabling entity
@@ -56,8 +59,9 @@ blueprint:
       default: "on"
       selector:
         entity:
-          domain:
-            - input_text
+          filter:
+            domain:
+              - input_text
           multiple: false
 variables:
   wled_entity: !input wled_entity
@@ -65,12 +69,12 @@ variables:
   enabling_entity: !input enabling_entity
   enabling_entity_state: !input enabling_entity_state
 trigger:
-  - platform: state
+  - trigger: state
     entity_id: !input wled_entity
     to:
       - unknown
       - unavailable
-  - platform: time_pattern
+  - trigger: time_pattern
     hours: "/1"
 condition:
   - "{{ enabling_entity == none or is_state(enabling_entity, enabling_entity_state) }}"

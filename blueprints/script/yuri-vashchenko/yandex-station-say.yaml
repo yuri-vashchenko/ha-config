@@ -13,7 +13,8 @@ blueprint:
       description: yandex station media player entity
       selector:
         entity:
-          domain: media_player
+          filter:
+            domain: media_player
     announcement_message:
       name: Spoken message
       description: Type your message here

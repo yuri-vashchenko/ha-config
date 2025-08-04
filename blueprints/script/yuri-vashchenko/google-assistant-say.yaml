@@ -11,7 +11,8 @@ blueprint:
       description: ""
       selector:
         entity:
-          domain: media_player
+          filter:
+            domain: media_player
     speaker_language:
       name: Speaker Language
       description: "Select Language code.

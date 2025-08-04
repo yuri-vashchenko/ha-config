@@ -7,67 +7,83 @@ blueprint:
     climate_entity:
       selector:
         entity:
-          domain: climate
+          filter:
+            domain: climate
     temperature_entity:
       selector:
         entity:
-          domain: sensor
+          filter:
+            domain: sensor
     humidity_entity:
       selector:
         entity:
-          domain: sensor
+          filter:
+            domain: sensor
     out_temperature_entity:
       selector:
         entity:
-          domain: sensor
+          filter:
+            domain: sensor
     cold_threshold:
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
     hot_threshold:
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
     humid_threshold:
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
     warm_diff:
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
     windows_entity:
       selector:
         entity:
-          domain: binary_sensor
+          filter:
+            domain: binary_sensor
     window_open_duration:
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
     cool_hvac_mode:
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
     cool_target_temperature:
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
     heat_hvac_mode:
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
     heat_target_temperature:
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
     dry_hvac_mode:
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
     dry_target_temperature:
       selector:
         entity:
-          domain: input_number
+          filter:
+            domain: input_number
     enabling_entity:
       name: (Optional) Enabling entity
       description:
@@ -83,36 +99,37 @@ blueprint:
       default: "on"
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
 trigger_variables:
   _window_open_duration: !input window_open_duration
   window_open_duration: >
     {{ _window_open_duration | default(60) }}
 
 trigger:
-  - platform: homeassistant
+  - trigger: homeassistant
     event: start
     id: started
-  - platform: event
+  - trigger: event
     event_type: automation_reloaded
     id: started
-  - platform: state
+  - trigger: state
     entity_id: !input windows_entity
     to: "on"
     for:
       seconds: "{{ window_open_duration }} "
     id: window_opened
-  - platform: state
+  - trigger: state
     entity_id: !input windows_entity
     to: "off"
     id: window_closed
-  - platform: state
+  - trigger: state
     entity_id: !input temperature_entity
     not_to:
       - unknown
       - unavailable
     id: temperature
-  - platform: state
+  - trigger: state
     entity_id: !input humidity_entity
     not_to:
       - unknown
@@ -267,6 +284,7 @@ action:
                 has_out_temp: {{ has_out_temp }},
                 out_temp: {{ out_temp }},
                 windows_state: {{ windows_state }},
+                window_open_duration: {{ window_open_duration }},
                 ac_state: {{ ac_state }},
                 need_off: {{ need_off }},
                 can_heat: {{ can_heat }},

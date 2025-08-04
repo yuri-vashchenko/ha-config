@@ -18,7 +18,8 @@ blueprint:
       description: The full topic will be '<topic>/<trigger_entity_name>/<trigger_entity_state>'
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
     trigger_entity:
       name: Trigger Entity
       description:
@@ -26,8 +27,9 @@ blueprint:
         corresponding MQTT message will be published
       selector:
         entity:
-          domain: binary_sensor
-          device_class: motion
+          filter:
+            domain: binary_sensor
+            device_class: motion
     trigger_entity_state:
       name: (Optional) Trigger Entity State
       description:
@@ -36,14 +38,16 @@ blueprint:
       default:
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
     retain:
       name: (Optional) retain
       description: Set this to 'true' if you want MQTT message to be retained
       default: true
       selector:
         entity:
-          domain: input_boolean
+          filter:
+            domain: input_boolean
     enabling_entity:
       name: (Optional) Enabling entity
       description:
@@ -59,7 +63,8 @@ blueprint:
       default: "on"
       selector:
         entity:
-          domain: input_text
+          filter:
+            domain: input_text
 variables:
   trigger_entity: !input "trigger_entity"
   trigger_entity_state: !input "trigger_entity_state"
@@ -69,7 +74,7 @@ variables:
   enabling_entity: !input "enabling_entity"
   enabling_entity_state: !input "enabling_entity_state"
 trigger:
-  - platform: state
+  - trigger: state
     entity_id: !input "trigger_entity"
 condition:
   - "{{ trigger_entity_state == none or is_state(trigger_entity, trigger_entity_state) }}"
