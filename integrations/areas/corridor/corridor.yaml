@@ -62,7 +62,7 @@ automation:
     alias: corridor_turn_on_tablet_on_motion
     description: "turn on tablet screen on motion"
     trigger:
-      platform: state
+      trigger: state
       entity_id: binary_sensor.wake_corridor_wall_panel
       to: "on"
     condition:
@@ -76,7 +76,7 @@ automation:
     alias: corridor_rgb_led_strip_on_motion
     description: "turn on the rgb led strip in coridor for short time on motion"
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.corridor_motion_entrance_occupancy
         from: "off"
         to: "on"
@@ -90,7 +90,7 @@ automation:
         target:
           entity_id: switch.need_to_show_temperature
       - wait_for_trigger:
-          - platform: state
+          - trigger: state
             entity_id: binary_sensor.corridor_motion_entrance_occupancy
             from: "on"
             to: "off"

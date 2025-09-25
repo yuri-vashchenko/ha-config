@@ -19,9 +19,6 @@ homeassistant:
     switch.kitchen_plug_tv_power_on_state:
       friendly_name: Розетка телевизора на кухне состояние при подаче питания
 
-    media_player.yandex_station_ff98f02959560d534ab998c1:
-      friendly_name: yandex_station_nev11
-
     media_player.yandex_station_mk0000000000000856020000ea9f455c:
       friendly_name: yandex_station_kitchen
 

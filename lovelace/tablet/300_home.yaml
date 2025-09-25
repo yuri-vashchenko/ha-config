@@ -123,26 +123,59 @@ cards:
             card:
               type: glance
               title: Пользователи дома
-          - type: entity
-            entity: sensor.next_bus
-            state_color: true
-            name: Следующий 66й
-          - type: vertical-stack
-            cards:
-              - type: custom:flipdown-timer-card
-                entity: timer.timer
-                show_hour: true
-                show_title: true
-                show_header: true
-                theme: dark
-                duration: "00:00:00"
+          - type: custom:button-card
+            entity: select.domofon_mode
+            name: "Состояние домофона"
+            color_type: icon
+            layout: icon_label
+            label: >
+              [[[
+                var domofon_mode = states['select.domofon_mode'].state
+                var translated = domofon_mode;
+                switch (domofon_mode) {
+                  case 'drop':
+                    translated = 'Сбрасывать';
+                    break;
+                  case 'always':
+                    translated = 'Открывать';
+                    break;
+                  case 'never':
+                    translated = 'Не открывать';
+                    break;
+                  case 'once':
+                    translated = 'Единожды';
+                    break;
+                }
+                return 'Домофон: ' + translated;
+              ]]]
+            show_label: true
+            show_name: false
+            styles:
+              card:
+                - height: 100px
+              label:
+                - color: gray
+                - font-size: 20px
+                - justify-self: start
+                - padding: 0px 5px
+            state:
+              - value: "drop"
+                icon: mdi:lock
                 styles:
-                  rotor:
-                    width: 60px
-                    height: 80px
-                    fontsize: 4rem
-                  button:
-                    width: 60px
-                    height: 30px
-                    fontsize: 1.5em
-                    location: bottom
+                  label:
+                    - color: red
+              - value: "never"
+                icon: mdi:lock
+                styles:
+                  label:
+                    - color: red
+              - value: "once"
+                icon: mdi:lock-open-minus
+                styles:
+                  label:
+                    - color: yellow
+              - value: "always"
+                icon: mdi:lock-open
+                styles:
+                  label:
+                    - color: green

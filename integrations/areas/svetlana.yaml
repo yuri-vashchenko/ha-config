@@ -14,6 +14,9 @@ homeassistant:
     sensor.svetlana_thermometer_pressure:
       friendly_name: Света давление
 
+    media_player.yandex_station_ff98f02959560d534ab998c1:
+      friendly_name: yandex_station_lida
+
   customize_glob:
     # Датчики
     "*158d00044f944b*":

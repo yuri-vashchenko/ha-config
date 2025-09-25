@@ -54,6 +54,9 @@ yandex_smart_home:
       name: Лампа
       room: Мама
 
+    light.lidiya_light:
+      name: Лампа
+      room: Света
     media_player.elena_tv:
       type: devices.types.media_device.tv
       name: Телевизор
