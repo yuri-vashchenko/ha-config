@@ -13,11 +13,16 @@ homeassistant:
       friendly_name: Всего за день по двуставочному тарифу
     sensor.monthly_energy_total_cost_double_tariff:
       friendly_name: Всего за месяц по двуставочному тарифу
+    number.energy_single_tariff:
+      friendly_name: Одноставочный тариф
+    number.energy_day_tariff:
+      friendly_name: Дневной тариф
+    number.energy_night_tariff:
+      friendly_name: Ночной тариф
 
 mqtt:
   number:
-    - object_id: energy_single_tariff
-      name: Одноставочный тариф
+    - name: number.energy_single_tariff
       command_topic: home/system/settings/energy/tariffs/single
       entity_category: config
       min: 0.0
@@ -25,8 +30,7 @@ mqtt:
       step: 0.01
       retain: true
       icon: mdi:cash-100
-    - object_id: energy_day_tariff
-      name: Дневной тариф
+    - name: energy_day_tariff
       command_topic: home/system/settings/energy/tariffs/day
       entity_category: config
       min: 0.0
@@ -34,8 +38,7 @@ mqtt:
       step: 0.01
       icon: mdi:cash-100
       retain: true
-    - object_id: energy_night_tariff
-      name: Ночной тариф
+    - name: energy_night_tariff
       command_topic: home/system/settings/energy/tariffs/night
       entity_category: config
       min: 0.0

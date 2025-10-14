@@ -4,12 +4,12 @@ homeassistant:
   customize_glob:
     "*158d00047f8591*":
       friendly_name: Ванная - датчик протечки воды
-
+  customize:
+    binary_sensor.mqtt_bathroom_water_leak:
+      friendly_name: Ванная - mqtt датчик протечки воды
 mqtt:
   binary_sensor:
-    - object_id: mqtt_bathroom_water_leak
-      unique_id: mqtt_bathroom_water_leak
-      name: Ванная - mqtt датчик протечки воды
+    - name: mqtt_bathroom_water_leak
       state_topic: "home/bathroom/water_leak"
       payload_on: "on"
       payload_off: "off"

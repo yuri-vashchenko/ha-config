@@ -150,6 +150,11 @@ cards:
               ]]]
             show_label: true
             show_name: false
+            tap_action:
+              action: call-service
+              service: select.select_next
+              target:
+                entity_id: "[[[ return entity.entity_id ]]]"
             styles:
               card:
                 - height: 100px

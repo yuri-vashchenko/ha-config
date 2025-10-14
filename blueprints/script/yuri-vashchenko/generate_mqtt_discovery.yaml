@@ -15,7 +15,7 @@ blueprint:
       description: One of the supported MQTT components, eg. binary_sensor.
       selector:
         text:
-    object_id:
+    unique_id:
       name: Object ID
       description:
         The ID of the device. This is only to allow for separate topics for each device and is not used for the entity_id.
@@ -48,7 +48,7 @@ blueprint:
 variables:
   discovery_prefix: !input discovery_prefix
   component: !input component
-  object_id: !input object_id
+  unique_id: !input object_id
   payload: !input payload
   topic: >
     {{ discovery_prefix + '/' + component + '/' + object_id + '/config'}}

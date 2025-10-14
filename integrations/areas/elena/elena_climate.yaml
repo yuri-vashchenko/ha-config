@@ -12,12 +12,19 @@ homeassistant:
       friendly_name: Температура в Лениной комнате
     sensor.elena_room_humidity:
       friendly_name: Влажность в Лениной комнате
+    number.elena_room_cold_threshold:
+      friendly_name: Холодно, если температура ниже
+    number.elena_room_hot_threshold:
+      friendly_name: Жарко, если температура выше
+    number.elena_room_dry_threshold:
+      friendly_name: Сухо, если влажность ниже
+    number.elena_room_humid_threshold:
+      friendly_name: Влажно, если влажность выше
 
 mqtt:
   number:
     # Low temperature threshold for 'cold' condition
-    - name: "Холодно, если температура ниже"
-      object_id: elena_room_cold_threshold
+    - name: elena_room_cold_threshold
       icon: "mdi:thermometer-low"
       command_topic: "home/elena/settings/cold_threshold"
       state_topic: "home/elena/settings/cold_threshold"
@@ -27,8 +34,7 @@ mqtt:
       retain: true
 
     # High temperature threshold for 'hot' condition
-    - name: "Жарко, если температура выше"
-      object_id: elena_room_hot_threshold
+    - name: elena_room_hot_threshold
       icon: "mdi:thermometer-high"
       command_topic: "home/elena/settings/hot_threshold"
       state_topic: "home/elena/settings/hot_threshold"
@@ -38,8 +44,7 @@ mqtt:
       retain: true
 
     # Low humidity threshold for 'dry' condition
-    - name: "Сухо, если влажность ниже"
-      object_id: elena_room_dry_threshold
+    - name: elena_room_dry_threshold
       icon: "mdi:water-percent-alert"
       command_topic: "home/elena/settings/dry_threshold"
       state_topic: "home/elena/settings/dry_threshold"
@@ -49,8 +54,7 @@ mqtt:
       retain: true
 
     # High humidity threshold for 'humid' condition
-    - name: "Влажно, если влажность выше"
-      object_id: elena_room_humid_threshold
+    - name: elena_room_humid_threshold
       icon: "mdi:water-percent-alert"
       command_topic: "home/elena/settings/humid_threshold"
       state_topic: "home/elena/settings/humid_threshold"
