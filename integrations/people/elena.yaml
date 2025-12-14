@@ -24,10 +24,10 @@ automation:
     alias: Sets room which Elena is in based on ESPresence
     trigger:
       - id: elena_phone_ble
-        platform: state
+        trigger: state
         entity_id: sensor.room_elena_phone_ble
       - id: not_home
-        platform: state
+        trigger: state
         entity_id: sensor.room_elena_phone_ble
         to: not_home
     condition:

@@ -8,7 +8,7 @@ automation:
     alias: xiaomi_gateway_play_ringtone_on_mqtt
     initial_state: true
     trigger:
-      - platform: mqtt
+      - trigger: mqtt
         topic: "home/system/notification/xiaomi/play_ringtone"
     condition:
       - alias: "sound controller"

@@ -5,31 +5,37 @@
 #       - !secret telegram_id_yuri
 #       - !secret telegram_id_alerts
 
+homeassistant:
+  # Allow access to /media to let telegram to send files
+  allowlist_external_dirs:
+    - "/media"
+
 notify:
   - platform: telegram
     name: yuri
     chat_id: !secret telegram_id_yuri
+
   - platform: telegram
     name: alerts
     chat_id: !secret telegram_id_alerts
 
-automation:
-  - id: Получение ID в телеграмм
-    alias: get_telegram_id
-    initial_state: true
-    trigger:
-      - trigger: event
-        event_type: telegram_text
-    condition:
-      - condition: template
-        value_template: >-
-          {{ trigger.event.data.text in ["whoami"] }}
-      - condition: state
-        entity_id: binary_sensor.main_control
-        state: "on"
-    action:
-      - action: telegram_bot.send_message
-        data_template:
-          target: "{{ trigger.event.data.chat_id }}"
-          message: |
-            Твой ID {{ trigger.event.data.user_id }}
+# automation:
+#   - id: Получение ID в телеграмм
+#     alias: get_telegram_id
+#     initial_state: true
+#     trigger:
+#       - trigger: event
+#         event_type: telegram_text
+#     condition:
+#       - condition: template
+#         value_template: >-
+#           {{ trigger.event.data.text in ["whoami"] }}
+#       - condition: state
+#         entity_id: binary_sensor.main_control
+#         state: "on"
+#     action:
+#       - action: telegram_bot.send_message
+#         data_template:
+#           target: "{{ trigger.event.data.chat_id }}"
+#           message: |
+#             Твой ID {{ trigger.event.data.user_id }}

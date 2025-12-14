@@ -24,19 +24,19 @@ automation:
     alias: Sets room which Yuri is in based on ESPresence
     trigger:
       - id: yuri_watch_ble
-        platform: state
+        trigger: state
         entity_id: sensor.room_yuri_watch_ble
         not_to: not_home
       - id: yuri_phone_ble
-        platform: state
+        trigger: state
         entity_id: sensor.room_yuri_phone_ble
         not_to: not_home
       - id: not_home
-        platform: state
+        trigger: state
         entity_id: sensor.room_yuri_watch_ble
         to: not_home
       - id: not_home
-        platform: state
+        trigger: state
         entity_id: sensor.room_yuri_phone_ble
         to: not_home
     condition:

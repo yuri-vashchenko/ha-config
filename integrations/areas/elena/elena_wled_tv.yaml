@@ -192,15 +192,15 @@ automation:
     alias: Перезагрузить WLED если недоступен
     description: "Перезагрузить WLED если недоступен"
     trigger:
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
-      - platform: event
+      - trigger: event
         event_type: automation_reloaded
-      - platform: state
+      - trigger: state
         entity_id: light.elena_tv_wled
         to:
           - unavailable
-      - platform: time_pattern
+      - trigger: time_pattern
         minutes: "/15"
     condition:
       - alias: "Control mode"
@@ -221,18 +221,18 @@ automation:
   - id: Elena TV WLED main controller
     alias: Переключить режим WLED если необходимо
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: light.elena_tv_wled
         from:
           - "unknown"
           - "unavailable"
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.elena_tv_power
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.elena_motion_low_light
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
-      - platform: event
+      - trigger: event
         event_type: automation_reloaded
     condition:
       - condition: state
@@ -298,7 +298,7 @@ automation:
   - id: save_elena_wled_tv_ip
     alias: Когда WLED становится доступным, сохранить его IP адрес
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: sensor.elena_tv_wled_ip
         from:
           - unknown

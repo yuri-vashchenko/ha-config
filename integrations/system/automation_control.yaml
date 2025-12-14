@@ -42,38 +42,41 @@ mqtt:
         - !secret instance_ip_hams_ns
         - !secret instance_ip_habs_ns
 
-binary_sensor:
-  - platform: template
-    sensors:
-      light_control:
-        value_template: >-
+template:
+  - binary_sensor:
+      - default_entity_id: binary_sensor.light_control
+        state: >-
           {% set ip = states("sensor.local_ip") %}
           {% if is_state("select.light_controller", ip) -%}
               ON
           {%- else -%}
               OFF
           {%- endif %}
-      main_control:
-        value_template: >-
+        name: light_control
+      - default_entity_id: binary_sensor.main_control
+        state: >-
           {% set ip = states("sensor.local_ip") %}
           {% if is_state("select.main_controller", ip) -%}
               ON
           {%- else -%}
               OFF
           {%- endif %}
-      sound_control:
-        value_template: >-
+        name: main_control
+      - default_entity_id: binary_sensor.sound_control
+        state: >-
           {% set ip = states("sensor.local_ip") %}
           {% if is_state("select.sound_controller", ip) -%}
               ON
           {%- else -%}
               OFF
           {%- endif %}
-      climate_control:
-        value_template: >-
+        name: sound_control
+      - default_entity_id: binary_sensor.climate_control
+        state: >-
           {% set ip = states("sensor.local_ip") %}
           {% if is_state("select.climate_controller", ip) -%}
               ON
           {%- else -%}
               OFF
           {%- endif %}
+        name: climate_control

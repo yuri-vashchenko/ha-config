@@ -31,15 +31,15 @@ automation:
   - id: domofon_turn_off_sound_at_night
     alias: Turn off domofon sound at night
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.night
         from: "off"
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.night
         from: "on"
         to: "off"
-      - platform: event
+      - trigger: event
         event_type:
           - automation_reloaded
           - homeassistant_started

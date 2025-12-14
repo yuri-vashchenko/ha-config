@@ -2,37 +2,45 @@ binary_sensor:
   # time of day
   - platform: tod
     name: night
-    after: '23:00'
-    before: '07:00'
+    after: "23:00"
+    before: "07:00"
+    unique_id: night_sensor
 
   - platform: tod
     name: morning
-    after: '07:00'
-    before: '09:00'
+    after: "07:00"
+    before: "09:00"
 
   - platform: tod
+    name: Late Morning
+    after: "10:00"
+    before: "12:00"
+    unique_id: late_morning_sensor
+  - platform: tod
     name: day
-    after: '09:00'
-    before: '18:00'
+    after: "09:00"
+    before: "18:00"
 
   - platform: tod
     name: evening
-    after: '18:00'
-    before: '23:00'
+    after: "18:00"
+    before: "23:00"
 
 sensor:
   # date/time
   - platform: time_date
     display_options:
-      - 'time'
-      - 'date'
-      - 'time_date'
-  - platform: template
-    sensors:
-      greeting:
-        friendly_name: "Greeting"
-        value_template: >
+      - "time"
+      - "date"
+      - "time_date"
+
+template:
+  - sensor:
+      - default_entity_id: sensor.greeting
+        name: Greeting
+        state: >-
           {{iif(is_state("binary_sensor.morning", "on"), "Доброе утро",
-              iif(is_state("binary_sensor.day", "on"), "Добрый день",
-                iif(is_state("binary_sensor.evening", "on"), "Добрый вечер",
-                  "Доброй ночи")))}}
+            iif(is_state("binary_sensor.day", "on"), "Добрый день",
+              iif(is_state("binary_sensor.evening", "on"),
+                "Добрый вечер",
+                  "Доброй ночи")))}}"

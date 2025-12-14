@@ -103,7 +103,7 @@ automation:
   - id: mama_button_click
     alias: Мама - нажатие на кнопку
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: sensor.mama_button_bed_action
         to:
           - single

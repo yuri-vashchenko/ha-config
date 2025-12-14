@@ -203,7 +203,7 @@ automation:
   - id: run_turnoff_script_when_all_hosts_leave_home
     alias: Run the turnoff script when all hosts leave home
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.host_occupancy
         from: "on"
         to: "off"
@@ -221,10 +221,10 @@ automation:
   - id: Включить ambilight при включении света
     alias: Включить ambilight при включении света
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: light.elena_yeelight
         to: "on"
-      - platform: state
+      - trigger: state
         entity_id: light.elena_yeelight_nightlight
         to: "on"
     condition:
@@ -245,7 +245,7 @@ automation:
   - id: Включить свет когда кто-то зашёл и вечер и темно
     alias: Включить свет когда кто-то зашёл и вечер и темно
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: sensor.users_in_elena_room
         from: "0"
         to: "1"

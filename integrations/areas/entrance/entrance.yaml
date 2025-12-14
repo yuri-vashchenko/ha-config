@@ -55,7 +55,7 @@ automation:
     alias: Прихожая - входная дверь открыта слишком долго
     initial_state: true
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.entrance_door_contact
         to: "on"
         for:

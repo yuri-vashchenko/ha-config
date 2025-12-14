@@ -32,13 +32,13 @@ mqtt:
 #       all_list: >
 #         {{ switch_list + light_list }}
 #     trigger:
-#       - platform: homeassistant
+#       - trigger: homeassistant
 #         event: start
 #         id: started
-#       - platform: event
+#       - trigger: event
 #         event_type: automation_reloaded
 #         id: started
-#       - platform: state
+#       - trigger: state
 #         entity_id:
 #           - "{{all_list}}"
 #         id: state_change

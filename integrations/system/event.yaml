@@ -136,10 +136,10 @@ automation:
   - id: trigger alarm when smoke or water leak detected
     alias: Включить тревогу при срабатывании датчика дыма или датчика протечки
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: sensor.smoke_detected
         id: smoke
-      - platform: state
+      - trigger: state
         entity_id: sensor.water_leak_detected
         id: water_leak
     condition:
@@ -160,11 +160,11 @@ automation:
   - id: trigger event
     alias: Запустить или выключить режим тревоги, предупреждения или нотификации
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: number.notifications
-      - platform: state
+      - trigger: state
         entity_id: number.warnings
-      - platform: state
+      - trigger: state
         entity_id: number.alarms
     condition:
       - alias: "Main control is on"
@@ -179,7 +179,7 @@ automation:
   - id: cancel_all_on_button_press
     alias: cancell all on button press
     trigger:
-      platform: mqtt
+      trigger: mqtt
       topic: home/system/cancel_all
       payload: PRESS
     condition:

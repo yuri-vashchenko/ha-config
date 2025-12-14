@@ -73,9 +73,8 @@ script:
   bathroom_washer_machine_washing_complete:
     alias: Завершение стирки
     sequence:
-      - action: telegram_bot.send_message
+      - action: notify.yuri
         data:
-          target: !secret telegram_id_yuri
           message: |
             {{"\U0001F9D9"}} Стирка завершена {{ states('sensor.time_date') }}
       - alias: Не отправлять нотификации ночью

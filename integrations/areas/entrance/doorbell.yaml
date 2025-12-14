@@ -123,7 +123,7 @@ script:
             style: "ha-card { height: 50px; }"
       - alias: "Wait for door open"
         wait_for_trigger:
-          platform: state
+          trigger: state
           entity_id: binary_sensor.entrance_door_contact
           to: "on"
       - alias: "Close popup"
@@ -137,7 +137,7 @@ automation:
   - id: entrance_doorbell_control
     alias: Прихожая - обновление MQTT состояния кнопки
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: sensor.entrance_button_doorbell_action
         to:
           - "single"
@@ -165,7 +165,7 @@ automation:
   - id: entrance_doorbell_mqtt_control
     alias: Прихожая - кнопка дверного звонка MQTT
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: select.entrance_doorbell
         to:
           - single

@@ -113,11 +113,11 @@ automation:
   - id: utility_meter_set_tariff
     alias: Энергопотребление - смена тарифа
     trigger:
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
-      - platform: time
+      - trigger: time
         at: "07:00:00"
-      - platform: time
+      - trigger: time
         at: "23:00:00"
     action:
       choose:

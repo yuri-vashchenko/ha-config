@@ -29,7 +29,7 @@ automation:
     alias: Система - Ежедневная чистка базы данных
     initial_state: true
     trigger:
-      - platform: time
+      - trigger: time
         at: "01:00:00"
     action:
       - action: recorder.purge

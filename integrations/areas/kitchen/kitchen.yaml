@@ -147,12 +147,12 @@ automation:
   - id: kitchen_hold_light_on_timer
     alias: kitchen_hold_light_on_timer
     trigger:
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
-      - platform: event
+      - trigger: event
         event_type:
           - automation_reloaded
-      - platform: state
+      - trigger: state
         entity_id: switch.kitchen_hold_light_on
     condition: "{{ states('binary_sensor.light_control') == 'on' }}"
     action:
@@ -166,12 +166,12 @@ automation:
   - id: kitchen_hold_light_off_timer
     alias: kitchen_hold_light_off_timer
     trigger:
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
-      - platform: event
+      - trigger: event
         event_type:
           - automation_reloaded
-      - platform: state
+      - trigger: state
         entity_id: switch.kitchen_hold_light_off
     condition: "{{ states('binary_sensor.light_control') == 'on' }}"
     action:

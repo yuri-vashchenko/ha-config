@@ -49,7 +49,7 @@ automation:
     alias: Ванная - запуск скрипта при срабатывании датчика протечки воды
     description: "Ванная - запуск скрипта при срабатывании датчика протечки воды"
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.mqtt_bathroom_water_leak
         to: "on"
     condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"

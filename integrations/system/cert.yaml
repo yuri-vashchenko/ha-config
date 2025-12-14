@@ -2,9 +2,9 @@ automation:
   - id: cert_checker
     alias: Проверка https сертификата
     trigger:
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
-      - platform: time
+      - trigger: time
         at: "02:00:00"
     condition: >
       {{ states('sensor.cert_expiry_timestamp_vashchenko_me') not in

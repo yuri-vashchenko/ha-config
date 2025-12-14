@@ -4,7 +4,7 @@ automation:
   - id: Record_events_as_mqtt_messages
     alias: Record_events_as_mqtt_messages
     trigger:
-      - platform: state
+      - trigger: state
         entity_id:
           # Water leak detectors
           - binary_sensor.toilet_water_leak_water_leak

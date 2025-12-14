@@ -88,7 +88,7 @@ automation:
     alias: toilet_water_leak_detector_alarm
     description: Trigger alarm on MQTT message when toilet water leak triggers
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.toilet_water_leak
         to: "on"
     condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
@@ -110,7 +110,7 @@ automation:
   - id: dim_light_in_toilet
     alias: Dim light in toilet on long stay
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.toilet_presence
     condition: "{{ is_state('binary_sensor.light_control', 'on') }}"
     action:
@@ -138,7 +138,7 @@ automation:
                         brightness_step_pct: "{{ states('number.toilet_light_brightness_step') | int(-2) }}"
                     - wait_for_trigger:
                         - alias: Wait until light is off
-                          platform: state
+                          trigger: state
                           entity_id: binary_sensor.toilet_presence
                           to: "off"
                       timeout:
@@ -153,7 +153,7 @@ automation:
   - id: toilet_light_press_button_on_dnd_mode_change
     alias: Туалет - при включении режима DND нажать на кнопку для отправки фото в телеграм
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: switch.toilet_light_do_not_disturb
         to: "on"
     condition:

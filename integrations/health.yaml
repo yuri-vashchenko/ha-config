@@ -6,57 +6,57 @@ mqtt:
     - name: system_state_192_168_0_6
       state_topic: "instance/192.168.0.6/sensor/system/state"
 
-sensor:
-  - platform: template
-    sensors:
-      system_state:
-        value_template: >-
-          {% set ip = states("sensor.local_ip") | replace('.', '_') %}
-          {% set sensor_name = 'sensor.system_state_' + ip %}
+template:
+  - sensor:
+      - default_entity_id: sensor.system_state
+        state: >-
+          {% set ip = states("sensor.local_ip") | replace(".", "_") %}
+          {% set sensor_name = "sensor.system_state_" + ip %}
           {{ states(sensor_name) }}
+        name: system_state
 
 automation:
   - id: system_start
     alias: Система - запуск
     initial_state: true
     trigger:
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
     action:
       - action: mqtt.publish
         data_template:
           topic: "instance/{{ states('sensor.local_ip') }}/sensor/system/state"
-          payload: 'starting'
+          payload: "starting"
           retain: true
       - delay: 00:00:10
       - action: mqtt.publish
         data_template:
           topic: "instance/{{ states('sensor.local_ip') }}/sensor/system/state"
-          payload: 'running'
+          payload: "running"
           retain: true
 
   - id: system_shutdown
     alias: Система - выключение
     initial_state: true
     trigger:
-      - platform: homeassistant
+      - trigger: homeassistant
         event: shutdown
     action:
       - action: mqtt.publish
         data_template:
           topic: "instance/{{ states('sensor.local_ip') }}/sensor/system/state"
-          payload: 'shutdown'
+          payload: "shutdown"
           retain: true
 
   - id: system_keepalive
     alias: Система - периодическое состояние
     initial_state: true
     trigger:
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
-      - platform: event
+      - trigger: event
         event_type: automation_reloaded
-      - platform: state
+      - trigger: state
         entity_id: sensor.time_date
     action:
       - action: mqtt.publish
@@ -69,10 +69,10 @@ automation:
     alias: Система - неожиданная перезагрузка
     initial_state: true
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: sensor.system_state
-        from: 'running'
-        to: 'starting'
+        from: "running"
+        to: "starting"
     action:
       - action: mqtt.publish
         data_template:

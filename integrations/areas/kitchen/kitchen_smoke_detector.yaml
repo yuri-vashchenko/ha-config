@@ -50,7 +50,7 @@ automation:
     alias: kitchen_smoke_detector_alarm
     description: "Trigger alarm on MQTT message when kitchen smoke detector triggers"
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.kitchen_smoke_detector
         to: "on"
     condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
@@ -60,7 +60,7 @@ automation:
   - id: stop_alarm_on_cancel_all_button_press
     alias: Stops script execution when "Cancel all button pressed"
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: button.cancel_all
         to: "PRESSED"
     condition: "{{ is_state('binary_sensor.main_control', 'on') }}"

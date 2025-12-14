@@ -40,7 +40,7 @@ automation:
     description: Прихожая - отправка фото с камеры глазка в телеграм по нажатию кнопки
     initial_state: true
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: input_button.entrance_cam_send_photo_to_telegram
     condition:
       - condition: state
@@ -56,15 +56,15 @@ automation:
   - id: entrance_cam_reset_if_unavailable
     alias: Прихожая - перезагрузить розетку камеры если она недоступна
     trigger:
-      - platform: state
+      - trigger: state
         entity_id: binary_sensor.entrance_cam_status
         to: "on"
         for:
           seconds: 300
-      - platform: homeassistant
+      - trigger: homeassistant
         event: start
         id: restart
-      - platform: event
+      - trigger: event
         # Check immediately after the automation is changed.
         event_type: automation_reloaded
         id: restart
