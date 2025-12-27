@@ -125,9 +125,7 @@ automation:
                 data:
                   brightness_pct: "{{ states('number.toilet_light_brightness_max') | int(30) }}"
               - repeat:
-                  while: >
-                    {{ state_attr('light.toilet_light', 'brightness') / 2.55 >
-                      states('number.toilet_light_brightness_min') | int(2) }}
+                  while: "{{ state_attr('light.toilet_light', 'brightness') / 2.55 > states('number.toilet_light_brightness_min') | int(2) }}"
                   sequence:
                     - alias: Dim light
                       action: light.turn_on
