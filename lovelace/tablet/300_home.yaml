@@ -10,57 +10,48 @@ cards:
     layout:
       width: 300
     cards:
-      - type: horizontal-stack
+      - type: vertical-stack
         cards:
-          - type: vertical-stack
+          - type: custom:mini-graph-card
+            height: 75
+            width: 300
+            font_size: 200
+            hour24: true
+            decimals: 1
+            entities:
+              - sensor.street_thermometer_temperature
+            color_thresholds:
+              - value: 0
+                color: "#CCE5FF"
+              - value: 10
+                color: "#66B2FF"
+              - value: 18
+                color: "#0080FF"
+              - value: 20
+                color: "#87c087"
+              - value: 21
+                color: "#389638"
+              - value: 24
+                color: "#FF9932"
+              - value: 25
+                color: "#FF8000"
+              - value: 26
+                color: "#ff0000"
+          - type: custom:mini-graph-card
+            height: 75
+            decimals: 1
+            hour24: true
+            entities:
+              - sensor.street_thermometer_humidity
+          - type: horizontal-stack
             cards:
-              - type: custom:mini-graph-card
-                height: 75
-                font_size: 200
-                hour24: true
-                decimals: 1
-                entities:
-                  - sensor.street_thermometer_temperature
-                color_thresholds:
-                  - value: 0
-                    color: "#CCE5FF"
-                  - value: 10
-                    color: "#66B2FF"
-                  - value: 18
-                    color: "#0080FF"
-                  - value: 20
-                    color: "#87c087"
-                  - value: 21
-                    color: "#389638"
-                  - value: 24
-                    color: "#FF9932"
-                  - value: 25
-                    color: "#FF8000"
-                  - value: 26
-                    color: "#ff0000"
               - type: weather-forecast
                 entity: weather.yandex_pogoda
                 show_forecast: false
-          - type: vertical-stack
-            cards:
-              - type: custom:mini-graph-card
-                height: 75
-                decimals: 1
-                hour24: true
-                entities:
-                  - sensor.street_thermometer_humidity
               - type: custom:compass-card
-                indicator_sensors:
-                  - sensor: weather.yandex_pogoda
-                    attribute: wind_bearing
-                    indicator:
-                      type: arrow_inward
-                value_sensors:
-                  - sensor: sensor.yandex_pogoda_wind_speed
                 header:
                   title:
                     value: Ветер
-                    icon:
                     color: green # default color (for state is less than the lowest dynamic_style.bands.from_value)
                     dynamic_style:
                       sensor: sensor.yandex_pogoda_wind_speed
@@ -73,6 +64,14 @@ cards:
                           color: red
                         - from_value: 20
                           color: purple
+                  icon:
+                    show: false
+                indicator_sensors:
+                  - sensor: sensor.yandex_pogoda_wind_bearing
+                    indicator:
+                      image: arrow_inward
+                value_sensors:
+                  - sensor: sensor.yandex_pogoda_wind_speed
                 compass:
                   circle:
                     color: green # default color (for state is less than the lowest dynamic_style.bands.from_value)

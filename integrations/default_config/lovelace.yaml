@@ -49,13 +49,6 @@ lovelace:
     - url: /hacsfiles/weather-chart-card/weather-chart-card.js
       type: module
   dashboards:
-    lovelace-graph:
-      mode: yaml
-      filename: ui-graph.yaml
-      title: Графики
-      icon: mdi:chart-bell-curve-cumulative
-      show_in_sidebar: true
-      require_admin: true
     lovelace-tablet:
       mode: yaml
       filename: ui-tablet.yaml
