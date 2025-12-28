@@ -107,7 +107,7 @@ template:
             is_state("binary_sensor.elena_room_is_humidity_normal", "on") }}
       - unique_id: elena_ac_control
         state: >
-          {{ is_state("binary_sensor.main_control", "on") and
+          {{ is_state("binary_sensor.climate_control", "on") and
             is_state("binary_sensor.night", "off") }}
       - unique_id: elena_doors_windows
         state: >
@@ -183,5 +183,5 @@ automation:
         heat_target_temperature: 30.0
         dry_hvac_mode: "dry"
         dry_target_temperature: 22.0
-        enabling_entity: binary_sensor.elena_ac_control
+        enabling_entity: binary_sensor.climate_control
         enabling_entity_state: "on"
