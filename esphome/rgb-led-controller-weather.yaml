@@ -3,6 +3,8 @@ esphome:
 
 esp32:
   board: esp-wrover-kit
+  framework:
+    type: esp-idf
 
 wifi:
   ssid: !secret wifi_ssid
@@ -55,8 +57,8 @@ ota:
     password: !secret rgb_led_controller_weather_ota
 
 light:
-  - platform: fastled_clockless
-    chipset: WS2812B
+  - platform: esp32_rmt_led_strip
+    chipset: WS2812
     pin: GPIO12
     num_leds: 144
     rgb_order: GRB
