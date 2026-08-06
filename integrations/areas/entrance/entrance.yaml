@@ -47,7 +47,7 @@ automation:
       input:
         trigger_entity: binary_sensor.entrance_motion_occupancy
         target_entity: switch.entrance_switch_light
-        blocker_entity: binary_sensor.light_control
+        blocker_entity: input_boolean.light_control
         blocker_entity_state: "off"
         trigger_timeout: 60
 
@@ -62,7 +62,7 @@ automation:
           seconds: "{{ states('number.entrance_door_warning_open_duration') | int(120)}}"
     condition:
       - condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
     action:
       action: script.entrance_door_opened

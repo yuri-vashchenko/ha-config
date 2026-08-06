@@ -7,11 +7,11 @@ mqtt:
       retain: true
 
 template:
-  binary_sensor:
-    - name: show_temperature
-      state: >
-        {{ is_state("switch.need_to_show_temperature", "on") and
-          is_state("binary_sensor.event", "off") }}
+  - binary_sensor:
+      - name: show_temperature
+        state: >
+          {{ is_state("switch.need_to_show_temperature", "on") and
+            is_state("binary_sensor.event", "off") }}
 
 script:
   corridor_rgb_led_turn_off:
@@ -123,7 +123,7 @@ automation:
     condition:
       - alias: "Light control is on"
         condition: state
-        entity_id: binary_sensor.light_control
+        entity_id: input_boolean.light_control
         state: "on"
     action:
       - alias: "Включить режим температуры на ленте в коридоре"

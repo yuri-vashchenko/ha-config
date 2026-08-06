@@ -19,7 +19,7 @@ automation:
     condition:
       - alias: Проверка контроля звука
         condition: state
-        entity_id: binary_sensor.sound_control
+        entity_id: input_boolean.sound_control
         state: "on"
       - alias: Проверка времени суток
         condition: state
@@ -55,7 +55,7 @@ automation:
     condition:
       - alias: Проверка контроля звука
         condition: state
-        entity_id: binary_sensor.sound_control
+        entity_id: input_boolean.sound_control
         state: "on"
       - alias: Проверка присутствия
         condition: state

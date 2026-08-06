@@ -13,9 +13,9 @@ script:
                 state: "on"
             sequence:
               - alias: "Turn domofon sound off"
-                action: switch.turn_off
+                action: switch.turn_on
                 target:
-                  entity_id: switch.domofon_sound
+                  entity_id: switch.smartintercom_ru_otkliuchit_trubku_domofona
           - conditions:
               - alias: "Day"
                 condition: state
@@ -23,9 +23,9 @@ script:
                 state: "off"
             sequence:
               - alias: "Turn domofon sound on"
-                action: switch.turn_on
+                action: switch.turn_off
                 target:
-                  entity_id: switch.domofon_sound
+                  entity_id: switch.smartintercom_ru_otkliuchit_trubku_domofona
 
 automation:
   - id: domofon_turn_off_sound_at_night
@@ -46,7 +46,7 @@ automation:
     condition:
       - alias: "Control mode"
         condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
     action:
       - alias: "turn domofon sound on or off"

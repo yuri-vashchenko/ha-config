@@ -83,7 +83,7 @@ automation:
         trigger_entity: binary_sensor.toilet_water_leak_water_leak
         topic: home/toilet/water_leak
         retain: true
-        enabling_entity: binary_sensor.main_control
+        enabling_entity: input_boolean.main_control
   - id: toilet_water_leak_detector_alarm
     alias: toilet_water_leak_detector_alarm
     description: Trigger alarm on MQTT message when toilet water leak triggers
@@ -91,7 +91,7 @@ automation:
       - trigger: state
         entity_id: binary_sensor.toilet_water_leak
         to: "on"
-    condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
+    condition: "{{ is_state('input_boolean.sound_control', 'on') }}"
     action:
       action: script.toilet_water_leak_triggered
 
@@ -103,7 +103,7 @@ automation:
       input:
         trigger_entity: binary_sensor.toilet_presence
         target_entity: light.toilet_light
-        blocker_entity: binary_sensor.light_control
+        blocker_entity: input_boolean.light_control
         blocker_entity_state: "off"
         trigger_timeout: 1
 
@@ -112,7 +112,7 @@ automation:
     trigger:
       - trigger: state
         entity_id: binary_sensor.toilet_presence
-    condition: "{{ is_state('binary_sensor.light_control', 'on') }}"
+    condition: "{{ is_state('input_boolean.light_control', 'on') }}"
     action:
       - alias: "Fork on presence state"
         choose:
@@ -148,24 +148,3 @@ automation:
                 target:
                   entity_id: light.toilet_light
     mode: restart
-  - id: toilet_light_press_button_on_dnd_mode_change
-    alias: Туалет - при включении режима DND нажать на кнопку для отправки фото в телеграм
-    trigger:
-      - trigger: state
-        entity_id: switch.toilet_light_do_not_disturb
-        to: "on"
-    condition:
-      condition: state
-      entity_id: binary_sensor.main_control
-      state: "on"
-    action:
-      - alias: Отправка фотографии в телеграм
-        action: input_button.press
-        target:
-          entity_id: input_button.entrance_cam_send_photo_to_telegram
-      - alias: Выключение DND переключателя
-        action: switch.turn_off
-        target:
-          entity_id: switch.toilet_light_do_not_disturb
-    mode: single
-    max_exceeded: silent

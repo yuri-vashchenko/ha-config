@@ -3,7 +3,7 @@ yandex_smart_home:
     include_domains:
       - light
     include_entities:
-      - button.cancel_all
+      - input_button.cancel_all
       - climate.elena_ac
       - media_player.elena_tv
       - media_player.kitchen_tv
@@ -21,7 +21,6 @@ yandex_smart_home:
       - sensor.michael_thermometer_humidity
       - sensor.street_thermometer_temperature
       - sensor.street_thermometer_humidity
-      - sensor.street_thermometer_pressure
       - sensor.svetlana_thermometer_temperature
       - sensor.svetlana_thermometer_humidity
       - switch.kitchen_hold_light_on
@@ -32,7 +31,7 @@ yandex_smart_home:
       room: Лена
       type: devices.types.thermostat.ac
 
-    button.cancel_all:
+    input_button.cancel_all:
       name: Отключить тревогу
 
     light.elena_tv_wled:
@@ -125,8 +124,6 @@ yandex_smart_home:
           entity: sensor.street_thermometer_temperature
         - type: humidity
           entity: sensor.street_thermometer_humidity
-        - type: pressure
-          entity: sensor.street_thermometer_pressure
     temperature_humidity.svetlana:
       name: Температура
       room: Света

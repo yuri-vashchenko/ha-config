@@ -13,31 +13,15 @@ homeassistant:
       friendly_name: Всего за день по двуставочному тарифу
     sensor.monthly_energy_total_cost_double_tariff:
       friendly_name: Всего за месяц по двуставочному тарифу
-    number.energy_single_tariff:
+    input_number.energy_single_tariff:
       friendly_name: Одноставочный тариф
-    number.energy_day_tariff:
+    input_number.energy_day_tariff:
       friendly_name: Дневной тариф
-    number.energy_night_tariff:
+    input_number.energy_night_tariff:
       friendly_name: Ночной тариф
 
 mqtt:
   number:
-    - name: number.energy_single_tariff
-      command_topic: home/system/settings/energy/tariffs/single
-      entity_category: config
-      min: 0.0
-      max: 20.0
-      step: 0.01
-      retain: true
-      icon: mdi:cash-100
-    - name: energy_day_tariff
-      command_topic: home/system/settings/energy/tariffs/day
-      entity_category: config
-      min: 0.0
-      max: 20.0
-      step: 0.01
-      icon: mdi:cash-100
-      retain: true
     - name: energy_night_tariff
       command_topic: home/system/settings/energy/tariffs/night
       entity_category: config
@@ -54,11 +38,11 @@ template:
         icon: mdi:cash-100
         unit_of_measurement: "RUB/kWh"
         state: >
-          {{ states("number.energy_single_tariff") | float(3.75) }}
+          {{ states("input_number.energy_single_tariff") | float(3.75) }}
         # {% if is_state("utility_meter.daily_energy", "day") -%}
-        #   {{ states("number.energy_day_tariff") | float(7.0) }}
+        #   {{ states("input_number.energy_day_tariff") | float(7.0) }}
         # {% elif is_state("utility_meter.daily_energy", "night") -%}
-        #   {{ states("number.energy_night_tariff") | float(2.0) }}
+        #   {{ states("input_number.energy_night_tariff") | float(2.0) }}
         # {%- endif %}
       - name: daily_energy_total_cost_single_tariff
         device_class: monetary
@@ -67,7 +51,7 @@ template:
         state: |
           {% set d_day = states("sensor.daily_energy_day") | float(0) %}
           {% set d_night = states("sensor.daily_energy_night") | float(0) %}
-          {{ ((d_day + d_night) * (states("number.energy_single_tariff") | float(3.75))) | round(2) }}
+          {{ ((d_day + d_night) * (states("input_number.energy_single_tariff") | float(3.75))) | round(2) }}
       - name: monthly_energy_total_cost_single_tariff
         device_class: monetary
         icon: mdi:cash-100
@@ -75,7 +59,7 @@ template:
         state: |
           {% set m_day = states("sensor.monthly_energy_day") | float(0) %}
           {% set m_night = states("sensor.monthly_energy_night") | float(0) %}
-          {{ ((m_day + m_night) * states("number.energy_single_tariff") | float(3.75)) | round(2) }}
+          {{ ((m_day + m_night) * states("input_number.energy_single_tariff") | float(3.75)) | round(2) }}
       - name: daily_energy_total_cost_double_tariff
         device_class: monetary
         icon: mdi:cash-100
@@ -83,7 +67,7 @@ template:
         state: |
           {% set d_day = states("sensor.daily_energy_day") | float(0) %}
           {% set d_night = states("sensor.daily_energy_night") | float(0) %}
-          {{ ((d_day * states("number.energy_day_tariff") | float(7.0)) + (d_night * states("number.energy_night_tariff") | float(2.0))) | round(2) }}
+          {{ ((d_day * states("input_number.energy_day_tariff") | float(7.0)) + (d_night * states("input_number.energy_night_tariff") | float(2.0))) | round(2) }}
       - name: monthly_energy_total_cost_double_tariff
         device_class: monetary
         icon: mdi:cash-100
@@ -91,7 +75,7 @@ template:
         state: |
           {% set m_day = states("sensor.monthly_energy_day") | float(0) %}
           {% set m_night = states("sensor.monthly_energy_night") | float(0) %}
-          {{ (m_day * (states("number.energy_day_tariff") | float(7.0)) + (m_night * states("number.energy_night_tariff") | float(2.0))) | round(2) }}
+          {{ (m_day * (states("input_number.energy_day_tariff") | float(7.0)) + (m_night * states("input_number.energy_night_tariff") | float(2.0))) | round(2) }}
 
 utility_meter:
   daily_energy:

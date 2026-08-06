@@ -13,3 +13,4 @@ ip_bans.yaml
 watchman_report.txt
 home-assistant-rollback.log
 .ha_run.lock
+.cache

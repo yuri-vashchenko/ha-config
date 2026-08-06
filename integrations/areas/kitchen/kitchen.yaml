@@ -3,21 +3,9 @@
 homeassistant:
   # customizations
   customize:
-    # Розетки и выключатели
-    switch.kitchen_power_strip:
-      friendly_name: Удлинитель
-      icon: mdi:power-plug
-    sensor.kitchen_switch_load_power:
-      icon: mdi:gauge
-      unit: Вт
-
     # Розетка мультиварки
     switch.kitchen_plug_multipot_power_outage_memory:
       friendly_name: Розетка mainsrv 65 память отключения
-
-    # Розетка телевизора на кухне
-    switch.kitchen_plug_tv_power_on_state:
-      friendly_name: Розетка телевизора на кухне состояние при подаче питания
 
     media_player.yandex_station_mk0000000000000856020000ea9f455c:
       friendly_name: yandex_station_kitchen
@@ -47,8 +35,6 @@ homeassistant:
 # Kitchen power strip - convert power to energy to be able to monitor daily consumption
 template:
   - sensor:
-      - name: kitchen_switch_load_power
-        state: "{{ state_attr('switch.kitchen_power_strip', 'load_power') }}"
       - name: kitchen_total_power
         state: >
           {% set ns = namespace(states=[]) -%}
@@ -96,22 +82,15 @@ template:
       # Prevents turning on the light
       - name: kitchen_hold_light_off
         state: >
-          {{ states('binary_sensor.light_control') == 'off' or
+          {{ states('input_boolean.light_control') == 'off' or
             states('switch.kitchen_hold_light_off') == 'on' }}
 
       # Prevents turning off the light
       - name: kitchen_hold_light_on
         state: >
-          {{ is_state('binary_sensor.light_control', 'off') or
+          {{ is_state('input_boolean.light_control', 'off') or
             is_state('switch.kitchen_hold_light_on', 'on') or
             is_state('binary_sensor.kitchen_ble_presence', 'on') }}
-
-sensor:
-  - platform: integration
-    source: sensor.kitchen_switch_load_power
-    name: kitchen_switch_energy
-    unit_prefix: k
-    round: 2
 
 # switches
 mqtt:
@@ -154,7 +133,7 @@ automation:
           - automation_reloaded
       - trigger: state
         entity_id: switch.kitchen_hold_light_on
-    condition: "{{ states('binary_sensor.light_control') == 'on' }}"
+    condition: "{{ states('input_boolean.light_control') == 'on' }}"
     action:
       - delay:
           minutes: "{{ (states('number.kitchen_hold_light_on_timeout') | int(60)) }}"
@@ -173,7 +152,7 @@ automation:
           - automation_reloaded
       - trigger: state
         entity_id: switch.kitchen_hold_light_off
-    condition: "{{ states('binary_sensor.light_control') == 'on' }}"
+    condition: "{{ states('input_boolean.light_control') == 'on' }}"
     action:
       - delay:
           minutes: "{{ (states('number.kitchen_hold_light_off_timeout') | int(60)) }}"
@@ -210,16 +189,16 @@ automation:
         to: "off"
     conditions:
       - condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
       - condition: state
         entity_id: binary_sensor.day
         state: "on"
       - condition: state
-        entity_id: binary_sensor.sound_control
+        entity_id: input_boolean.sound_control
         state: "on"
     actions:
-      - action: script.all_say
+      - action: script.alice_say
         data:
           message: Чайник скипел!
           volume: 50

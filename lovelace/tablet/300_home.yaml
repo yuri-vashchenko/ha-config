@@ -117,69 +117,51 @@ cards:
               - person.oleg_vashchenko
               - person.galina_vashchenko
               - person.alexey_vashchenko
-            state_filter:
-              - home
+            conditions:
+              - condition: state
+                state: home
             card:
               type: glance
               title: Пользователи дома
-          - type: custom:button-card
-            entity: select.domofon_mode
-            name: "Состояние домофона"
-            color_type: icon
-            layout: icon_label
-            label: >
-              [[[
-                var domofon_mode = states['select.domofon_mode'].state
-                var translated = domofon_mode;
-                switch (domofon_mode) {
-                  case 'drop':
-                    translated = 'Сбрасывать';
-                    break;
-                  case 'always':
-                    translated = 'Открывать';
-                    break;
-                  case 'never':
-                    translated = 'Не открывать';
-                    break;
-                  case 'once':
-                    translated = 'Единожды';
-                    break;
-                }
-                return 'Домофон: ' + translated;
-              ]]]
-            show_label: true
-            show_name: false
+          - type: entity-filter
+            entities:
+              - entity: button.smartintercom_ru_propustit
+                name: "Пропустить"
+                tap_action:
+                  action: button.smartintercom_ru_propustit.press
+              - entity: button.smartintercom_ru_kurer
+                name: "Пропустить курьера"
+                tap_action:
+                  action: button.smartintercom_ru_kurer.press
+              - entity: button.smartintercom_ru_otkazat
+                name: "Отказать"
+                tap_action:
+                  action: button.smartintercom_ru_otkazat.press
+            card:
+              type: glance
+              show_state: false
+
+              title: Домофон
+            conditions:
+              - condition: state
+                state_not: unavailable
+          - type: tile
+            entity: switch.smartintercom_ru_otkryvat_kureru_na_sleduiushchii_zvonok
+            name: "Открывать курьеру на следующий звонок"
             tap_action:
-              action: call-service
-              service: select.select_next
-              target:
-                entity_id: "[[[ return entity.entity_id ]]]"
-            styles:
-              card:
-                - height: 100px
-              label:
-                - color: gray
-                - font-size: 20px
-                - justify-self: start
-                - padding: 0px 5px
-            state:
-              - value: "drop"
-                icon: mdi:lock
-                styles:
-                  label:
-                    - color: red
-              - value: "never"
-                icon: mdi:lock
-                styles:
-                  label:
-                    - color: red
-              - value: "once"
-                icon: mdi:lock-open-minus
-                styles:
-                  label:
-                    - color: yellow
-              - value: "always"
-                icon: mdi:lock-open
-                styles:
-                  label:
-                    - color: green
+              action: toggle
+          - type: tile
+            entity: switch.smartintercom_ru_otkryvat_na_sleduiushchii_zvonok
+            name: "Открывать на следующий звонок"
+            tap_action:
+              action: toggle
+          - type: tile
+            entity: switch.smartintercom_ru_otkryvat_vsegda
+            name: "Открывать всегда"
+            tap_action:
+              action: toggle
+          - type: tile
+            entity: switch.smartintercom_ru_vsegda_sbrasyvat
+            name: "Всегда сбрасывать"
+            tap_action:
+              action: toggle

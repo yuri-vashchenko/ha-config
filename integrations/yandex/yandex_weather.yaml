@@ -11,10 +11,10 @@ template:
   - sensor:
       - name: yandex_weather_picture
         state: >
-            {{ state_attr("weather.yandex_weather", "entity_picture") }}
+          {{ state_attr("weather.yandex_pogoda", "entity_picture") }}
 
       - name: yandex_weather_current_temperature
         state: >
-          {{ state_attr("weather.yandex_weather", "temperature") }}
+          {{ state_attr("weather.yandex_pogoda", "temperature") }}
         device_class: temperature
         unit_of_measurement: "°C"

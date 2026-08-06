@@ -67,7 +67,7 @@ automation:
       to: "on"
     condition:
       - condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
     action:
       - action: script.wake_corridor_wall_panel
@@ -82,7 +82,7 @@ automation:
         to: "on"
     condition:
       - condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
     action:
       - alias: "Select Temperature effect on motion"

@@ -633,7 +633,6 @@ cards:
                       - attribute: color_temp
                         name: Температура
               exclude:
-                - entity_id: light.front_infra_red_lights_in_night_mode
                 - entity_id: light.*_screen
 
       ################# Активные термостаты #################

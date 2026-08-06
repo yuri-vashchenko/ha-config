@@ -18,5 +18,3 @@ homeassistant:
       friendly_name: Улица давление
     sensor.street_thermometer_battery:
       friendly_name: Улица климат
-    sensor.street_thermometer_linkquality:
-      friendly_name: Улица климат

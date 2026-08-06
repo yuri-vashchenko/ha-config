@@ -69,7 +69,7 @@ automation:
       - trigger: state
         entity_id: device_tracker.a0_ce_c8_ed_8d_45
         from: home
-    conditions: "{{ is_state('binary_sensor.main_control', 'on') }}"
+    conditions: "{{ is_state('input_boolean.main_control', 'on') }}"
     actions:
       - alias: turn off the plug
         action: switch.turn_off
@@ -84,7 +84,7 @@ automation:
       - trigger: state
         entity_id: device_tracker.a0_ce_c8_ed_8d_45
         to: home
-    conditions: "{{ is_state('binary_sensor.main_control', 'on') }}"
+    conditions: "{{ is_state('input_boolean.main_control', 'on') }}"
     actions:
       - alias: turn on the plug
         action: switch.turn_on

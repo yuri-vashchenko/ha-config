@@ -79,7 +79,7 @@ blueprint:
       name: Ringtone ID
       # https://www.home-assistant.io/integrations/xiaomi_aqara/#service-xiaomi_aqaraplay_ringtone
       description: Ringtone id
-      default: 10
+      default: 0
       selector:
         number:
           min: 0
@@ -95,7 +95,7 @@ blueprint:
           max: 100
           step: 1
           mode: slider
-      default: 100
+      default: 50
     gateway_mac:
       name: Xiaomi aqara gateway MAC
       description: Xiaomi aqara gateway MAC address to play ringtone on
@@ -158,7 +158,7 @@ variables:
   announcement_payload_end: >
     {"message": "{{ announcement_message_end }}",
       "volume": "{{ announcement_volume }}"}
-  number_entity_name: number.{{ event_severity }}s
+  counter_entity_name: counter.{{ event_severity }}s
 sequence:
   - alias: запись момента конкретного события
     action: mqtt.publish
@@ -174,20 +174,23 @@ sequence:
         events/date_time/{{ event_severity }}/{{ event_type }}
       payload: "{{ now() }}"
       retain: true
-  - alias: публикация сообщения для проигрывания рингтона
-    action: mqtt.publish
-    data:
-      topic: "home/system/notification/xiaomi/play_ringtone"
-      payload: "{{play_ringtone_payload}}"
+  - if:
+      - "{{ (ringtone_id | int) > 0 }}"
+    then:
+      - alias: публикация сообщения для проигрывания рингтона
+        action: mqtt.publish
+        data:
+          topic: "home/system/notification/xiaomi/play_ringtone"
+          payload: "{{ play_ringtone_payload }}"
   - alias: публикация голосового оповещения
     action: mqtt.publish
     data:
       topic: "home/system/announcement/all"
-      payload: "{{announcement_payload}}"
+      payload: "{{ announcement_payload }}"
   - alias: увеличение счётчика событий
-    action: script.increment_number
+    action: counter.increment
     data:
-      entity_id: "{{ number_entity_name }}"
+      entity_id: "{{ counter_entity_name }}"
   - alias: ожидание завершения события
     repeat:
       while: >
@@ -198,7 +201,7 @@ sequence:
           action: mqtt.publish
           data:
             topic: "home/system/notification/xiaomi/play_ringtone"
-            payload: "{{play_ringtone_payload}}"
+            payload: "{{ play_ringtone_payload }}"
         - alias: публикация команды для повторного голосового сообщения
           action: mqtt.publish
           data:
@@ -210,9 +213,9 @@ sequence:
           timeout:
             seconds: !input "delay_between_repeats"
   - alias: уменьшение счётчика событий
-    action: script.decrement_number
+    action: counter.decrement
     data:
-      entity_id: "{{ number_entity_name }}"
+      entity_id: "{{ counter_entity_name }}"
   - condition: template
     value_template: "{{ announcement_message_end != '' }}"
   - alias: публикация голосового сообщения об окончании события

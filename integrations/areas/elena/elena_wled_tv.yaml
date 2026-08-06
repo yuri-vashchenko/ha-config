@@ -51,6 +51,13 @@ template:
                   false
           }}
         device_class: motion
+      - name: elena_wled_tv_unavailable
+        unique_id: elena_wled_tv_unavailable
+        state: >
+          {{ is_state('light.elena_tv_wled', 'unavailable') }}
+        delay_on:
+          minutes: 5
+        device_class: problem
 
 mqtt:
   sensor:
@@ -58,9 +65,16 @@ mqtt:
       state_topic: home/wled/elena-tv-wled/ip
       icon: mdi:ip-network
 
-rest_command:
-  wled_reset:
-    url: "http://{{ ip }}/reset"
+input_button:
+  elena_wled_tv_reset:
+    name: Elena WLED TV reboot
+
+input_number:
+  elena_wled_tv_reboot_attempt:
+    name: Elena WLED TV reboot
+    min: 0
+    max: 3
+    step: 1
 
 script:
   wled_control_test:
@@ -177,17 +191,6 @@ script:
           entity_id: switch.elena_plug_tv_wled
 
 automation:
-  # - id: reset_wled_if_unavailable
-  #   alias: Перезагрузить WLED если недоступен
-  #   description: "Перезагрузить WLED если недоступен"
-  #   use_blueprint:
-  #     path: yuri-vashchenko/reset_wled_if_unavailable.yaml
-  #     input:
-  #       wled_entity: light.elena_tv_wled
-  #       wled_reset: wled_reset
-  #       wled_ip: "{{ states('sensor.elena_tv_wled_ip_saved') }}"
-  #       enabling_entity: binary_sensor.main_control
-
   - id: reset_wled_if_unavailable
     alias: Перезагрузить WLED если недоступен
     description: "Перезагрузить WLED если недоступен"
@@ -205,7 +208,7 @@ automation:
     condition:
       - alias: "Control mode"
         condition: state
-        entity_id: binary_sensor.light_control
+        entity_id: input_boolean.light_control
         state: "on"
       - alias: "WLED unavailable"
         condition: state
@@ -236,7 +239,7 @@ automation:
         event_type: automation_reloaded
     condition:
       - condition: state
-        entity_id: binary_sensor.light_control
+        entity_id: input_boolean.light_control
         state: "on"
     action:
       - alias: "Включить необходимый режим"
@@ -306,7 +309,7 @@ automation:
     condition:
       - alias: "Проверка control"
         condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
     action:
       - alias: "Публикация IP адреса MQTT топик"
@@ -316,3 +319,33 @@ automation:
           payload: "{{ states('sensor.elena_tv_wled_ip') }}"
           retain: true
     mode: restart
+
+  - alias: elena_wled_tv_reboot
+    id: elena_wled_tv_reboot
+    description: Елена - перезагрузка WLED когда недоступен
+    initial_state: true
+    triggers:
+      - trigger: time_pattern
+        minutes: "/5"
+      - trigger: state
+        entity_id: input_button.elena_wled_tv_reset
+    condition:
+      - alias: "Проверка control"
+        condition: state
+        entity_id: input_boolean.main_control
+        state: "on"
+      - condition: state
+        entity_id: binary_sensor.elena_wled_tv_unavailable
+        state: "on"
+      - condition: template
+        value_template: "{{ states('input_number.elena_wled_tv_reboot_attempt') | int < 3 }}"
+    actions:
+      - action: script.elena_tv_wled_powercycle
+      - action: input_number.increment
+        entity_id: input_number.elena_wled_tv_reboot_attempt
+      - alias: Send message to telegram
+        action: notify.send_message
+        data:
+          message: |
+            {{"\U0001F916"}} WLED в Лениной комнате недоступен. Попытка перезагрузить {{ states('input_number.elena_wled_tv_reboot_attempt') | int }} из 3 {{ states('sensor.time_date') }}
+          entity_id: notify.telegram_bot_1092482274_4189636841

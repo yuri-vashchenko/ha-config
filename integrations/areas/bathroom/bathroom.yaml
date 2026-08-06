@@ -44,7 +44,7 @@ automation:
         trigger_entity: binary_sensor.bathroom_water_leak_water_leak
         topic: "home/bathroom/water_leak"
         retain: true
-        enabling_entity: binary_sensor.main_control
+        enabling_entity: input_boolean.main_control
   - id: bathroom_water_leak_detector_alarm
     alias: Ванная - запуск скрипта при срабатывании датчика протечки воды
     description: "Ванная - запуск скрипта при срабатывании датчика протечки воды"
@@ -52,6 +52,6 @@ automation:
       - trigger: state
         entity_id: binary_sensor.mqtt_bathroom_water_leak
         to: "on"
-    condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
+    condition: "{{ is_state('input_boolean.sound_control', 'on') }}"
     action:
       action: script.bathroom_water_leak_triggered

@@ -138,7 +138,7 @@ trigger:
 condition:
   - alias: "climate control is on"
     condition: state
-    entity_id: binary_sensor.climate_control
+    entity_id: input_boolean.climate_control
     state: "on"
 variables:
   climate_entity: !input climate_entity
@@ -300,6 +300,7 @@ action:
       conditions:
         # turn on heating if cold
         - "{{ is_cold and can_heat }}"
+        - "{{ is_state(enabling_entity, enabling_entity_state) }}"
       sequence:
         - alias: "log event"
           action: logbook.log
@@ -349,6 +350,7 @@ action:
       conditions:
         # turn on cooling if hot
         - "{{ is_hot and can_cool }}"
+        - "{{ is_state(enabling_entity, enabling_entity_state) }}"
       sequence:
         - alias: "log event"
           action: logbook.log
@@ -398,6 +400,7 @@ action:
       conditions:
         # turn on drying if warm and humid
         - "{{ is_warm and is_humid and can_dry }}"
+        - "{{ is_state(enabling_entity, enabling_entity_state) }}"
       sequence:
         - alias: "log event"
           action: logbook.log

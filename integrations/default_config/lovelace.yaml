@@ -2,7 +2,15 @@
 # https://www.home-assistant.io/lovelace/
 
 lovelace:
-  mode: yaml
+  resource_mode: yaml
+  dashboards:
+    lovelace-tablet:
+      mode: yaml
+      filename: ui-tablet.yaml
+      title: Планшет
+      icon: mdi:tablet-dashboard
+      show_in_sidebar: true
+      require_admin: false
   resources:
     - url: /hacsfiles/battery-state-card/battery-state-card.js
       type: module
@@ -48,11 +56,3 @@ lovelace:
       type: module
     - url: /hacsfiles/weather-chart-card/weather-chart-card.js
       type: module
-  dashboards:
-    lovelace-tablet:
-      mode: yaml
-      filename: ui-tablet.yaml
-      title: Планшет
-      icon: mdi:tablet-dashboard
-      show_in_sidebar: true
-      require_admin: false

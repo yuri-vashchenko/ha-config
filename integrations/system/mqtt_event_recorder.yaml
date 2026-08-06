@@ -28,7 +28,7 @@ automation:
           - binary_sensor.entrance_door_contact
           - binary_sensor.balcony_door_elena_contact
     condition:
-      - "{{ is_state('binary_sensor.main_control', 'on') }}"
+      - "{{ is_state('input_boolean.main_control', 'on') }}"
     action:
       - alias: Publish event to MQTT topic
         action: mqtt.publish

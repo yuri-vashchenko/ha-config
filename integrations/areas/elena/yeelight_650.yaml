@@ -45,11 +45,11 @@ mqtt:
 #     condition:
 #       - alias: "main control"
 #         condition: state
-#         entity_id: binary_sensor.main_control
+#         entity_id: input_boolean.main_control
 #         state: "on"
 #       - alias: "light control"
 #         condition: state
-#         entity_id: binary_sensor.light_control
+#         entity_id: input_boolean.light_control
 #         state: "on"
 #     variables:
 #       switch_list: >

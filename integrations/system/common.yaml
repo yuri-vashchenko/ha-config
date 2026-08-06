@@ -44,11 +44,13 @@ script:
         selector:
           text:
     variables:
-      state: "{{ entity_state | default(on) }}"
-      state_else: "{{ entity_state_else | default(on) }}"
+      state: "{{ entity_state | default('on') }}"
+      state_else: "{{ entity_state_else | default('on') }}"
       data_true: "{{ data_if_true | default({}) }}"
       data_false: "{{ data_if_false | default({}) }}"
     sequence:
+      - delay:
+          seconds: 1
       - if:
           - "{{ is_state(entity_id, state) }}"
         then:
@@ -62,50 +64,3 @@ script:
               - alias: "Запустить скрипт с данными"
                 action: "{{ script_if_false }}"
                 data: "{{ data_false }}"
-
-  increment_number:
-    alias: "Увеличивает число на шаг если новое значение не больше максимального"
-    mode: queued
-    fields:
-      entity_id:
-        name: Number to increment
-        description: Сущность домена number для увеличения
-        selector:
-          entity:
-            domain: number
-    variables:
-      min_value: "{{ state_attr(entity_id, 'min') | float(0.0)}}"
-      max_value: "{{ state_attr(entity_id, 'max') | float(100.0)}}"
-      step: "{{ state_attr(entity_id, 'step') | float(1.0)}}"
-      current_value: "{{ states(entity_id) | float(min_value)}}"
-      new_value: "{{ min(current_value + step, max_value) }}"
-    sequence:
-      - alias: "Установить новое значение"
-        action: number.set_value
-        target:
-          entity_id: "{{ entity_id }}"
-        data:
-          value: "{{ new_value }}"
-  decrement_number:
-    alias: "Уменьшает число на шаг если новое значение не меньше минимального"
-    mode: queued
-    fields:
-      entity_id:
-        name: Number to increment
-        description: Сущность домена number для увеличения
-        selector:
-          entity:
-            domain: number
-    variables:
-      min_value: "{{ state_attr(entity_id, 'min') | float(0.0)}}"
-      max_value: "{{ state_attr(entity_id, 'max') | float(100.0)}}"
-      step: "{{ state_attr(entity_id, 'step') | float(1.0)}}"
-      current_value: "{{ states(entity_id) | float(min_value)}}"
-      new_value: "{{ max(current_value - step, min_value) }}"
-    sequence:
-      - alias: "Установить новое значение"
-        action: number.set_value
-        target:
-          entity_id: "{{ entity_id }}"
-        data:
-          value: "{{ new_value }}"

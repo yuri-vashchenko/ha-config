@@ -62,7 +62,7 @@ script:
     sequence:
       - alias: Контроль управления светом
         condition: state
-        entity_id: binary_sensor.light_control
+        entity_id: input_boolean.light_control
         state: "on"
       - alias: Переключить свет
         action: switch.toggle
@@ -92,7 +92,7 @@ script:
     sequence:
       - alias: Контроль управления звуком
         condition: state
-        entity_id: binary_sensor.sound_control
+        entity_id: input_boolean.sound_control
         state: "on"
       - alias: Позвать во всех колонках
         action: script.all_say
@@ -116,7 +116,7 @@ automation:
     condition:
       - alias: Контроль управления светом
         condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
     action:
       - alias: Запуск скрипта по нажатию

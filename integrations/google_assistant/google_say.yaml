@@ -10,7 +10,7 @@ automation:
     condition:
       - alias: "main controller"
         condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
     variables:
       message: >
@@ -37,7 +37,7 @@ automation:
     condition:
       - alias: "sound controller"
         condition: state
-        entity_id: binary_sensor.sound_control
+        entity_id: input_boolean.sound_control
         state: "on"
     variables:
       message: >

@@ -43,7 +43,7 @@ automation:
         trigger_entity: binary_sensor.kitchen_water_leak_water_leak
         topic: "home/kitchen/water_leak"
         retain: true
-        enabling_entity: binary_sensor.main_control
+        enabling_entity: input_boolean.main_control
   - id: kitchen_water_leak_detector_alarm
     alias: kitchen_water_leak_detector_alarm
     description: "Trigger alarm on MQTT message when kitchen water leak triggers"
@@ -51,6 +51,6 @@ automation:
       - trigger: state
         entity_id: binary_sensor.kitchen_water_leak
         to: "on"
-    condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
+    condition: "{{ is_state('input_boolean.sound_control', 'on') }}"
     action:
       action: script.kitchen_water_leak_triggered

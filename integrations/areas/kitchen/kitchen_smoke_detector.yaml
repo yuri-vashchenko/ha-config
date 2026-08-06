@@ -44,7 +44,7 @@ automation:
         trigger_entity: binary_sensor.kitchen_smoke_detector_smoke
         topic: "home/kitchen/smoke_detector"
         retain: true
-        enabling_entity: binary_sensor.main_control
+        enabling_entity: input_boolean.main_control
 
   - id: kitchen_smoke_detector_alarm
     alias: kitchen_smoke_detector_alarm
@@ -53,7 +53,7 @@ automation:
       - trigger: state
         entity_id: binary_sensor.kitchen_smoke_detector
         to: "on"
-    condition: "{{ is_state('binary_sensor.sound_control', 'on') }}"
+    condition: "{{ is_state('input_boolean.sound_control', 'on') }}"
     action:
       action: script.kitchen_smoke_detector_triggered
 
@@ -61,9 +61,9 @@ automation:
     alias: Stops script execution when "Cancel all button pressed"
     trigger:
       - trigger: state
-        entity_id: button.cancel_all
+        entity_id: input_button.cancel_all
         to: "PRESSED"
-    condition: "{{ is_state('binary_sensor.main_control', 'on') }}"
+    condition: "{{ is_state('input_boolean.main_control', 'on') }}"
     action:
       - alias: "Stop kitchen_smoke_detector_triggered script"
         action: script.turn_off

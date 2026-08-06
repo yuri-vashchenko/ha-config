@@ -1,47 +1,4 @@
-# Notification/Warning/Alarm
-mqtt:
-  - button:
-      - name: "Cancel all"
-        unique_id: cancel_all
-        command_topic: "home/system/cancel_all"
-  - number:
-      - name: alarms
-        command_topic: home/system/alarm/count
-        min: 0
-        max: 100
-        step: 1
-        retain: true
-      - name: warnings
-        command_topic: home/system/warning/count
-        min: 0
-        max: 100
-        step: 1
-        retain: true
-      - name: notifications
-        command_topic: home/system/notification/count
-        min: 0
-        max: 100
-        step: 1
-        retain: true
-
 template:
-  - binary_sensor:
-      - name: alarm
-        state: "{{ (states('number.alarms') | int(0)) > 0 }}"
-        device_class: problem
-      - name: warning
-        state: "{{ (states('number.warnings') | int(0)) > 0 }}"
-        device_class: problem
-      - name: notification
-        state: "{{ (states('number.notifications') | int(0)) > 0 }}"
-        device_class: problem
-      - name: event
-        state: >
-          {{ is_state('binary_sensor.notification', 'on') or
-            is_state('binary_sensor.warning', 'on') or
-            is_state('binary_sensor.alarm', 'on') }}
-        device_class: problem
-
   - sensor:
       - name: smoke_detected
         state: >
@@ -87,7 +44,7 @@ script:
     sequence:
       - alias: "main control"
         condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
       - alias: "Iterate over notifications, warnings and errors"
         repeat:
@@ -119,12 +76,12 @@ script:
       - alias: "Cancel all"
         repeat:
           for_each:
-            - number.alarms
-            - number.warnings
-            - number.notifications
+            - counter.alarms
+            - counter.warnings
+            - counter.notifications
           sequence:
             - alias: "turn off everything"
-              action: number.set_value
+              action: counter.set_value
               target:
                 entity_id: "{{ repeat.item }}"
               data:
@@ -145,13 +102,13 @@ automation:
     condition:
       - alias: "Main control is on"
         condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
     action:
       - alias: "Обновить счётчик тревог"
-        action: number.set_value
+        action: counter.set_value
         target:
-          entity_id: number.alarms
+          entity_id: counter.alarms
         data:
           value: >
             {{ states('sensor.smoke_detected') | int(0) + states('sensor.water_leak_detected') | int(0) }}
@@ -161,15 +118,15 @@ automation:
     alias: Запустить или выключить режим тревоги, предупреждения или нотификации
     trigger:
       - trigger: state
-        entity_id: number.notifications
+        entity_id: counter.notifications
       - trigger: state
-        entity_id: number.warnings
+        entity_id: counter.warnings
       - trigger: state
-        entity_id: number.alarms
+        entity_id: counter.alarms
     condition:
       - alias: "Main control is on"
         condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
     action:
       - alias: "Запустить скрипт для генерации или отключения события"
@@ -179,13 +136,13 @@ automation:
   - id: cancel_all_on_button_press
     alias: cancell all on button press
     trigger:
-      trigger: mqtt
-      topic: home/system/cancel_all
-      payload: PRESS
+      - trigger: state
+        entity_id: input_button.cancel_all
+        to: "PRESSED"
     condition:
       - alias: "control mode"
         condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
     action:
       alias: "Cancell all alarms, notifications and warnings"

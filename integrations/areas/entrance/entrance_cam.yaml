@@ -44,7 +44,7 @@ automation:
         entity_id: input_button.entrance_cam_send_photo_to_telegram
     condition:
       - condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
     action:
       - alias: Запустить скрипт для снятия фото и его отправки в телеграм
@@ -70,7 +70,7 @@ automation:
         id: restart
     condition:
       - condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
       - condition: state
         entity_id: binary_sensor.entrance_cam_status

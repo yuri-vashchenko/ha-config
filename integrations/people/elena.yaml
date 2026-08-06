@@ -33,7 +33,7 @@ automation:
     condition:
       - alias: Main control
         condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
     action:
       - alias: "Choose by trigger id"

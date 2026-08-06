@@ -150,7 +150,7 @@ automation:
     condition:
       - alias: Проверка управления
         condition: state
-        entity_id: binary_sensor.main_control
+        entity_id: input_boolean.main_control
         state: "on"
     action:
       - alias: Переключение состояния
@@ -178,7 +178,7 @@ automation:
         script.entrance_doorbell_action_{{ trigger.to_state.state }}
     condition:
       condition: state
-      entity_id: binary_sensor.main_control
+      entity_id: input_boolean.main_control
       state: "on"
     action:
       - alias: Запуск соответствующего скрипта
