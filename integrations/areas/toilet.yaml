@@ -82,7 +82,7 @@ automation:
       input:
         trigger_entity: binary_sensor.toilet_water_leak_water_leak
         topic: home/toilet/water_leak
-        retain: true
+        retain: false
         enabling_entity: input_boolean.main_control
   - id: toilet_water_leak_detector_alarm
     alias: toilet_water_leak_detector_alarm

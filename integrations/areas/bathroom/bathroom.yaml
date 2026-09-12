@@ -43,7 +43,7 @@ automation:
       input:
         trigger_entity: binary_sensor.bathroom_water_leak_water_leak
         topic: "home/bathroom/water_leak"
-        retain: true
+        retain: false
         enabling_entity: input_boolean.main_control
   - id: bathroom_water_leak_detector_alarm
     alias: Ванная - запуск скрипта при срабатывании датчика протечки воды

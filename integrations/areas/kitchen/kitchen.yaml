@@ -97,13 +97,13 @@ mqtt:
   switch:
     # Prevents turning off the light
     - name: kitchen_hold_light_on
-      retain: true
+      retain: false
       command_topic: "home/kitchen/light/hold_on"
       state_topic: "home/kitchen/light/hold_on"
 
     # Prevents turning on the light
     - name: kitchen_hold_light_off
-      retain: true
+      retain: false
       command_topic: "home/kitchen/light/hold_off"
       state_topic: "home/kitchen/light/hold_off"
 

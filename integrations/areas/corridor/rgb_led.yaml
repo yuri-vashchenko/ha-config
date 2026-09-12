@@ -4,7 +4,7 @@ mqtt:
   switch:
     - name: need_to_show_temperature
       command_topic: "home/corridor/rgb_led/need_to_show_temperature"
-      retain: true
+      retain: false
 
 template:
   - binary_sensor:

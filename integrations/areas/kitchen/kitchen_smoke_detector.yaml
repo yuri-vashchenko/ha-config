@@ -43,7 +43,7 @@ automation:
       input:
         trigger_entity: binary_sensor.kitchen_smoke_detector_smoke
         topic: "home/kitchen/smoke_detector"
-        retain: true
+        retain: false
         enabling_entity: input_boolean.main_control
 
   - id: kitchen_smoke_detector_alarm
