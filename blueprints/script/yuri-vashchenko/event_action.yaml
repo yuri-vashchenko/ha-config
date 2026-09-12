@@ -191,10 +191,22 @@ sequence:
     action: counter.increment
     data:
       entity_id: "{{ counter_entity_name }}"
+  - alias: Показать popup
+    action: browser_mod.popup
+    data:
+      dismissable: true
+      autoclose: false
+      title: "{{ announcement_message }}"
+      content: "{{ announcement_payload }}"
+      right_button: Отключить
+      right_button_action:
+        service: script.cancel_all
+      timeout: 600000
+
   - alias: ожидание завершения события
     repeat:
       while: >
-        {{ not(is_state(wait_entity, wait_entity_state)) and
+        {{ counter.value > 0 and not(is_state(wait_entity, wait_entity_state)) and
           (max_repeats == 0 or repeat.index <= max_repeats) }}
       sequence:
         - alias: публикация команды для воспроизведения рингтона повторения

@@ -74,18 +74,44 @@ script:
   cancel_all:
     sequence:
       - alias: "Cancel all"
-        repeat:
-          for_each:
-            - counter.alarms
-            - counter.warnings
-            - counter.notifications
-          sequence:
-            - alias: "turn off everything"
-              action: counter.set_value
-              target:
-                entity_id: "{{ repeat.item }}"
-              data:
-                value: 0
+        sequence:
+          - repeat:
+              for_each:
+                - counter.alarms
+                - counter.warnings
+                - counter.notifications
+              sequence:
+                - alias: "turn off everything"
+                  action: counter.set_value
+                  target:
+                    entity_id: "{{ repeat.item }}"
+                  data:
+                    value: 0
+          - repeat:
+              for_each:
+                - bathroom/water_leak
+                - toilet/water_leak
+                - kitchen/water_leak
+                - kitchen/smoke_detector
+              sequence:
+                - alias: "Publish mqtt off"
+                  action: mqtt.publish
+                  data:
+                    payload: "off"
+                    topic: "home/{{ repeat.item }}"
+                    retain: false
+          - repeat:
+              for_each:
+                - alarm
+                - warning
+                - notification
+              sequence:
+                - alias: "Publish mqtt 0"
+                  action: mqtt.publish
+                  data:
+                    payload: 0
+                    topic: "home/system/{{ repeat.item }}/count"
+                    retain: true
     mode: queued
     max: 100
 

@@ -64,3 +64,14 @@ script:
               - alias: "Запустить скрипт с данными"
                 action: "{{ script_if_false }}"
                 data: "{{ data_false }}"
+
+automation:
+  - alias: Restart tuya integration after Home assistant restarted
+    triggers:
+      - trigger: homeassistant
+        event: start
+    actions:
+      - delay: "00:01:00"
+      - action: homeassistant.reload_config_entry
+        data:
+          entry_id: 9ef3449187f602bde72e1463c2a518a5
